@@ -1,0 +1,13 @@
+$ T=$(curl -s -X PUT http://169.254.169.254/latest/api/token -H "X-aws-ec2-metadata-token-ttl-seconds: 60"); m() { curl -s -H "X-aws-ec2-metadata-token: $T" http://169.254.169.254/latest/meta-data/$1; }; echo "instance-type : $(m instance-type)"; echo "instance-id   : $(m instance-id)"; echo "ami-id        : $(m ami-id)"; echo "az            : $(m placement/availability-zone)"; echo "lifecycle     : $(m instance-life-cycle)"; uname -srm; grep PRETTY_NAME /etc/os-release; lscpu | grep -E "Model name|^CPU\(s\)|Architecture"; free -m | sed -n 1,2p
+instance-type : c8g.large
+instance-id   : i-032699a1f497b886e
+ami-id        : ami-033e481a24f94c8cb
+az            : us-east-1d
+lifecycle     : spot
+Linux 6.17.0-1019-aws aarch64
+PRETTY_NAME="Ubuntu 24.04.3 LTS"
+Architecture:                            aarch64
+CPU(s):                                  2
+Model name:                              Neoverse-V2
+               total        used        free      shared  buff/cache   available
+Mem:            3801         395        3262           1         292        3406

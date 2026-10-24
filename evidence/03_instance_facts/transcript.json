@@ -1,0 +1,45 @@
+{
+ "shown_command": "T=$(curl -s -X PUT http://169.254.169.254/latest/api/token -H \"X-aws-ec2-metadata-token-ttl-seconds: 60\"); m() { curl -s -H \"X-aws-ec2-metadata-token: $T\" http://169.254.169.254/latest/meta-data/$1; }; echo \"instance-type : $(m instance-type)\"; echo \"instance-id   : $(m instance-id)\"; echo \"ami-id        : $(m ami-id)\"; echo \"az            : $(m placement/availability-zone)\"; echo \"lifecycle     : $(m instance-life-cycle)\"; uname -srm; grep PRETTY_NAME /etc/os-release; lscpu | grep -E \"Model name|^CPU\\(s\\)|Architecture\"; free -m | sed -n 1,2p",
+ "title": "ubuntu@ip-172-31-47-205: ~/humsight",
+ "caption": "instance facts from the EC2 metadata service (IMDSv2)",
+ "started_utc": "2026-10-24T08:59:45+00:00",
+ "exit_code": 0,
+ "events": [
+  {
+   "t": 2.811,
+   "text": "instance-type : c8g.large\n"
+  },
+  {
+   "t": 2.815,
+   "text": "instance-id   : i-032699a1f497b886e\n"
+  },
+  {
+   "t": 2.82,
+   "text": "ami-id        : ami-033e481a24f94c8cb\n"
+  },
+  {
+   "t": 2.824,
+   "text": "az            : us-east-1d\n"
+  },
+  {
+   "t": 2.829,
+   "text": "lifecycle     : spot\n"
+  },
+  {
+   "t": 2.829,
+   "text": "Linux 6.17.0-1019-aws aarch64\n"
+  },
+  {
+   "t": 2.83,
+   "text": "PRETTY_NAME=\"Ubuntu 24.04.3 LTS\"\n"
+  },
+  {
+   "t": 2.912,
+   "text": "Architecture:                            aarch64\nCPU(s):                                  2\nModel name:                              Neoverse-V2\n"
+  },
+  {
+   "t": 2.913,
+   "text": "               total        used        free      shared  buff/cache   available\nMem:            3801         395        3262           1         292        3406\n"
+  }
+ ]
+}

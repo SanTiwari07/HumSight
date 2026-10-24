@@ -1,0 +1,12 @@
+$ source /opt/cool/venvs/python_3.12/bin/activate && cd ~/humsight && python scripts/verify_cool.py
+python 3.12.3 aarch64
+cv2 5.1.0-dev /opt/cool/python_3.12/site-packages/cv2/python-3.12/cv2.cpython-312-aarch64-linux-gnu.so
+COOL path: True
+   CPU/HW features:
+   Baseline:                    SVE NEON FP16 NEON_DOTPROD NEON_FP16 NEON_BF16
+   Dispatched code generation:
+   requested:                 NEON_DOTPROD NEON_FP16 NEON_BF16
+   ASM kernels:               YES (ARM64: NEON SGEMM, NEON SGEMV)
+   Custom HAL:                  YES (carotene (ver 0.0.1) KleidiCV (ver 0.7.0))
+threads: 2
+phaseCorrelateIterative: True

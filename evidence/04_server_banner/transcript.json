@@ -1,0 +1,17 @@
+{
+ "shown_command": "head -n 1 ~/server.log; curl -s localhost:8000/api/health | python3 -m json.tool",
+ "title": "ubuntu@ip-172-31-47-205: ~/humsight",
+ "caption": "HumSight server started inside the COOL venv; banner prints COOL=True",
+ "started_utc": "2026-10-24T09:02:12+00:00",
+ "exit_code": 0,
+ "events": [
+  {
+   "t": 3.341,
+   "text": "[HumSight] cv2 5.1.0-dev @ /opt/cool/python_3.12/site-packages/cv2/python-3.12/cv2.cpython-312-aarch64-linux-gnu.so | COOL=True | KleidiCV=True | aarch64\n"
+  },
+  {
+   "t": 3.363,
+   "text": "{\n    \"ok\": true,\n    \"mode\": \"server\",\n    \"cv2_version\": \"5.1.0-dev\",\n    \"cv2_path\": \"/opt/cool/python_3.12/site-packages/cv2/python-3.12/cv2.cpython-312-aarch64-linux-gnu.so\",\n    \"cool\": true,\n    \"kleidicv\": true,\n    \"machine\": \"aarch64\",\n    \"threads\": 2,\n    \"has_iterative_phase_correlation\": true,\n    \"llm\": \"rules\"\n}\n"
+  }
+ ]
+}

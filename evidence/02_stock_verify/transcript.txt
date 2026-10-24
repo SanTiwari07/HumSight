@@ -1,0 +1,16 @@
+$ cd ~/humsight && ~/stock/bin/python scripts/verify_cool.py
+python 3.12.3 aarch64
+cv2 5.0.0 /home/ubuntu/stock/lib/python3.12/site-packages/cv2/__init__.py
+COOL path: False
+   CPU/HW features:
+   Baseline:                    NEON FP16
+   Dispatched code generation:  NEON_DOTPROD NEON_FP16 NEON_BF16
+   requested:                 NEON_FP16 NEON_BF16 NEON_DOTPROD
+   NEON_DOTPROD (3 files):    + NEON_DOTPROD
+   NEON_FP16 (6 files):       + NEON_FP16
+   NEON_BF16 (0 files):       + NEON_BF16
+   3rdparty dependencies:       ittnotify libprotobuf libjpeg-turbo libwebp libtiff libopenjp2 tegra_hal kleidicv_hal kleidicv kleidicv_thread
+   ASM kernels:               YES (ARM64: NEON SGEMM, NEON SGEMV)
+   Custom HAL:                  YES (carotene (ver 0.0.1) KleidiCV (ver 26.03))
+threads: 2
+phaseCorrelateIterative: True

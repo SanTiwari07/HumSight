@@ -1,0 +1,13 @@
+{
+ "shown_command": "cd ~/humsight && ~/stock/bin/python scripts/verify_cool.py",
+ "title": "ubuntu@ip-172-31-47-205: ~/humsight  (stock venv)",
+ "caption": "stock opencv-python-headless 5.0.0.93 on the SAME instance",
+ "started_utc": "2026-10-24T08:59:41+00:00",
+ "exit_code": 0,
+ "events": [
+  {
+   "t": 2.753,
+   "text": "python 3.12.3 aarch64\ncv2 5.0.0 /home/ubuntu/stock/lib/python3.12/site-packages/cv2/__init__.py\nCOOL path: False\n   CPU/HW features:\n   Baseline:                    NEON FP16\n   Dispatched code generation:  NEON_DOTPROD NEON_FP16 NEON_BF16\n   requested:                 NEON_FP16 NEON_BF16 NEON_DOTPROD\n   NEON_DOTPROD (3 files):    + NEON_DOTPROD\n   NEON_FP16 (6 files):       + NEON_FP16\n   NEON_BF16 (0 files):       + NEON_BF16\n   3rdparty dependencies:       ittnotify libprotobuf libjpeg-turbo libwebp libtiff libopenjp2 tegra_hal kleidicv_hal kleidicv kleidicv_thread\n   ASM kernels:               YES (ARM64: NEON SGEMM, NEON SGEMV)\n   Custom HAL:                  YES (carotene (ver 0.0.1) KleidiCV (ver 26.03))\nthreads: 2\nphaseCorrelateIterative: True\n"
+  }
+ ]
+}

@@ -1,0 +1,14 @@
+$ head -n 1 ~/server.log; curl -s localhost:8000/api/health | python3 -m json.tool
+[HumSight] cv2 5.1.0-dev @ /opt/cool/python_3.12/site-packages/cv2/python-3.12/cv2.cpython-312-aarch64-linux-gnu.so | COOL=True | KleidiCV=True | aarch64
+{
+    "ok": true,
+    "mode": "server",
+    "cv2_version": "5.1.0-dev",
+    "cv2_path": "/opt/cool/python_3.12/site-packages/cv2/python-3.12/cv2.cpython-312-aarch64-linux-gnu.so",
+    "cool": true,
+    "kleidicv": true,
+    "machine": "aarch64",
+    "threads": 2,
+    "has_iterative_phase_correlation": true,
+    "llm": "rules"
+}

@@ -1,0 +1,13 @@
+{
+ "shown_command": "source /opt/cool/venvs/python_3.12/bin/activate && cd ~/humsight && python scripts/verify_cool.py",
+ "title": "ubuntu@ip-172-31-47-205: ~/humsight  (COOL venv)",
+ "caption": "COOL build on c8g.large (Graviton4), AWS us-east-1",
+ "started_utc": "2026-10-24T08:59:36+00:00",
+ "exit_code": 0,
+ "events": [
+  {
+   "t": 2.837,
+   "text": "python 3.12.3 aarch64\ncv2 5.1.0-dev /opt/cool/python_3.12/site-packages/cv2/python-3.12/cv2.cpython-312-aarch64-linux-gnu.so\nCOOL path: True\n   CPU/HW features:\n   Baseline:                    SVE NEON FP16 NEON_DOTPROD NEON_FP16 NEON_BF16\n   Dispatched code generation:\n   requested:                 NEON_DOTPROD NEON_FP16 NEON_BF16\n   ASM kernels:               YES (ARM64: NEON SGEMM, NEON SGEMV)\n   Custom HAL:                  YES (carotene (ver 0.0.1) KleidiCV (ver 0.7.0))\nthreads: 2\nphaseCorrelateIterative: True\n"
+  }
+ ]
+}
