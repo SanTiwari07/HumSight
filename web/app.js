@@ -449,7 +449,8 @@ function showResult(r) {
 
   // video evidence
   const u = r.urls || {};
-  const vid = (x) => (x && /\.(webm|mp4|mov)$/i.test(x) ? abs(x) : null);
+  // presigned S3 URLs end in a query string, so test the path only
+  const vid = (x) => (x && /\.(webm|mp4|mov)$/i.test(x.split("?")[0]) ? abs(x) : null);
   const orig = vid(u.original) || vid(u.source), mag = vid(u.magnified);
   setVideo($("vOrig"), orig); setVideo($("vMag"), mag);
   $("magCap").textContent = fixed ? "Magnified (strongest peak, may be camera shake)" : "Magnified fault region (slowed, motion amplified)";
