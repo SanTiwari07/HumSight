@@ -7,6 +7,7 @@ import time
 
 from .tools import compact
 
+_LAST_CALL = [-1e9]   # process-wide, so pacing also holds across jobs
 DEFAULT_MODEL = os.environ.get("LLM_MODEL", "gemini-flash-latest")
 
 
@@ -39,9 +40,19 @@ class GeminiProvider:
             automatic_function_calling=t.AutomaticFunctionCallingConfig(disable=True),
             temperature=0.2)
 
+    def _pace(self) -> None:
+        """Optional client-side rate limit: GEMINI_MIN_INTERVAL_S seconds between calls (free tier)."""
+        gap = float(os.environ.get("GEMINI_MIN_INTERVAL_S", "0") or 0)
+        if gap > 0:
+            wait = _LAST_CALL[0] + gap - time.monotonic()
+            if wait > 0:
+                time.sleep(wait)
+        _LAST_CALL[0] = time.monotonic()
+
     def _generate(self):
         last = None
         for attempt in range(2):
+            self._pace()
             try:
                 return self.client.models.generate_content(
                     model=self.model, contents=self._contents, config=self._config)
@@ -49,7 +60,7 @@ class GeminiProvider:
                 last = e
                 code = getattr(e, "code", None) or getattr(e, "status_code", None)
                 if attempt == 0 and (code in (429, 500, 502, 503, 504) or code is None):
-                    time.sleep(2)
+                    time.sleep(float(os.environ.get("GEMINI_RETRY_SLEEP_S", "2")))
                     continue
                 raise
         raise last  # pragma: no cover

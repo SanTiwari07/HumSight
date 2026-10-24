@@ -196,48 +196,60 @@ def e5_clips(quick):
     return clips[:6] if quick else clips
 
 
-def e5(ex, quick):
-    clips = e5_clips(quick)
-    rules = pmap(ex, C.task_agent, [(s, "rules", None) for _, s, _ in clips], "E5 agent(rules)")
-    fixed = pmap(ex, C.task_fixed, [s for _, s, _ in clips], "E5 fixed")
-    llm = None
-    if os.environ.get("GEMINI_API_KEY"):
-        llm = [C.task_agent((s, "llm", None)) for _, s, _ in clips]   # sequential: free-tier rate limits
+def e5_judge(sp, expect, r):
+    """Correct verdict (and right frequency for FAULT); did the reported fault sit at the shake frequency?"""
+    shake_f = sp["shake"]["f_hz"] if sp["shake"] else None
+    f_true = sp["parts"][0]["f"] if sp["parts"] else None
+    fs = [f["f_hz"] for f in r["findings"]]
+    magnified_shake = bool(shake_f and any(abs(f - shake_f) < 1.0 for f in fs))
+    if expect == "FAULT":
+        ok = r["verdict"] == "FAULT" and any(abs(f - f_true) < 1.0 for f in fs)
+    else:
+        ok = r["verdict"] == "NO_FAULT"
+    return ok, magnified_shake
 
-    def judge(name, sp, expect, r):
-        shake_f = sp["shake"]["f_hz"] if sp["shake"] else None
-        f_true = sp["parts"][0]["f"] if sp["parts"] else None
-        fs = [f["f_hz"] for f in r["findings"]]
-        magnified_shake = bool(shake_f and any(abs(f - shake_f) < 1.0 for f in fs))
-        if expect == "FAULT":
-            ok = r["verdict"] == "FAULT" and any(abs(f - f_true) < 1.0 for f in fs)
-        else:
-            ok = r["verdict"] == "NO_FAULT"
-        return ok, magnified_shake
 
+def e5_table(clips, rules, fixed, llm, llm_note=""):
+    """Markdown for E5. llm is None (not run) or a list of per-clip results like rules/fixed."""
     rows, tot = [], {"rules": [0, 0], "fixed": [0, 0], "llm": [0, 0]}
     for i, (name, sp, expect) in enumerate(clips):
         row = [name, expect]
         for key, arr in (("rules", rules), ("llm", llm), ("fixed", fixed)):
             if arr is None:
-                row.append("not run (no key)")
+                row.append("not run")
                 continue
-            ok, ms = judge(name, sp, expect, arr[i])
+            ok, ms = e5_judge(sp, expect, arr[i])
             tot[key][0] += ok
             tot[key][1] += ms
             row.append(f"{arr[i]['verdict']} {'✓' if ok else '✗'}{' · shake magnified' if ms else ''}")
         rows.append(row)
     n = len(clips)
     L = ["## E5 Agent vs fixed pipeline", "",
-         "12 clips (4 groups x 3): shake + hidden fault, shake only, fault only, nothing. ✓ = correct verdict "
+         f"{n} clips (4 groups x 3): shake + hidden fault, shake only, fault only, nothing. ✓ = correct verdict "
          "(and for FAULT, the right frequency). 'shake magnified' = the reported fault frequency is the camera-shake frequency.", "",
          C.md_table(["clip", "truth", "agent (rules)", "agent (Gemini)", "fixed pipeline"], rows), "",
          C.md_table(["policy", "correct", "shake wrongly magnified"],
                     [["agent (rules)", f"{tot['rules'][0]}/{n}", tot["rules"][1]],
                      ["agent (Gemini)", f"{tot['llm'][0]}/{n}" if llm else "not run", tot["llm"][1] if llm else "-"],
                      ["fixed", f"{tot['fixed'][0]}/{n}", tot["fixed"][1]]])]
-    json.dump({"rules": rules, "fixed": fixed, "llm": llm}, open(os.path.join(C.RESULTS, "e5.json"), "w"))
+    if llm_note:
+        L += ["", llm_note]
     return "\n".join(L)
+
+
+def e5(ex, quick):
+    clips = e5_clips(quick)
+    rules = pmap(ex, C.task_agent, [(s, "rules", None) for _, s, _ in clips], "E5 agent(rules)")
+    fixed = pmap(ex, C.task_fixed, [s for _, s, _ in clips], "E5 fixed")
+    llm, note = None, ""
+    gj = os.path.join(C.RESULTS, "e5_gemini.json")      # written by eval/e5_gemini.py (live API, sequential)
+    if os.path.exists(gj) and not quick:
+        g = json.load(open(gj, encoding="utf-8"))
+        if len(g["results"]) == len(clips):
+            llm = g["results"]
+            note = g.get("note", "")
+    json.dump({"rules": rules, "fixed": fixed, "llm": llm}, open(os.path.join(C.RESULTS, "e5.json"), "w"))
+    return e5_table(clips, rules, fixed, llm, note)
 
 
 def e6(ex, quick):
