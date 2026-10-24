@@ -1,0 +1,10 @@
+{
+  "title": "Aliasing: 130 Hz fault at 240 fps (should be REVIEW)",
+  "description": "Expected frequency 130 Hz exceeds 0.45 x fps. The agent asks for a faster recording.",
+  "expect": "REVIEW",
+  "params": {
+    "expected_hz": 130
+  },
+  "fps": 240.0,
+  "duration": 3.0
+}

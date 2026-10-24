@@ -1,0 +1,8 @@
+{
+  "title": "Pump: hidden 58.5 Hz fault + handheld camera shake",
+  "description": "Ground truth: 58.5 Hz, 0.05 px at the bearing cap; 3.5 Hz camera shake of 0.6 px with drift.",
+  "expect": "FAULT",
+  "params": {},
+  "fps": 240.0,
+  "duration": 3.0
+}

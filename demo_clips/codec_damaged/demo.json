@@ -1,0 +1,8 @@
+{
+  "title": "Failure case: same fault as the pump clip, after lossy codec",
+  "description": "Identical scene as pump_shake_fault but round-tripped through an mp4v encoder. The codec smooths the 0.05 px motion away, so the fault is missed (documented limitation).",
+  "expect": "FAULT (expected miss)",
+  "params": {},
+  "fps": 240.0,
+  "duration": 3.0
+}

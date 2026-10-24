@@ -1,0 +1,8 @@
+{
+  "title": "Healthy machine, steady camera (should be NO_FAULT)",
+  "description": "No motion at all, only sensor noise.",
+  "expect": "NO_FAULT",
+  "params": {},
+  "fps": 240.0,
+  "duration": 3.0
+}

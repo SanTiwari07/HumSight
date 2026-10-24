@@ -1,0 +1,13 @@
+{
+  "fps": 240.0,
+  "n_frames": 720,
+  "width": 384,
+  "height": 216,
+  "parts": [],
+  "shake": null,
+  "noise_sigma": 0.004,
+  "jpeg_q": null,
+  "codec_roundtrip": false,
+  "quantized": true,
+  "seed": 42
+}

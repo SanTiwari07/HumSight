@@ -1,0 +1,39 @@
+{
+  "fps": 240.0,
+  "n_frames": 720,
+  "width": 384,
+  "height": 216,
+  "parts": [
+    {
+      "id": "bearing_cap",
+      "bbox": [
+        136,
+        56,
+        144,
+        108
+      ],
+      "f_hz": 58.5,
+      "amp_px": 0.05,
+      "dir": [
+        1.0,
+        0.0
+      ],
+      "phase": 0.3,
+      "harmonics": false
+    }
+  ],
+  "shake": {
+    "f_hz": 3.5,
+    "amp_px": 0.6,
+    "dir": [
+      0.7071,
+      0.7071
+    ],
+    "drift": true
+  },
+  "noise_sigma": 0.004,
+  "jpeg_q": null,
+  "codec_roundtrip": true,
+  "quantized": true,
+  "seed": 42
+}
