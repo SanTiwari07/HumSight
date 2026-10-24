@@ -1,11 +1,12 @@
 """Upload the demo clips to s3://BUCKET/demo/<id>/ with a browser-playable original.webm.
 
     python scripts/make_demo_clips.py
-    BUCKET=humsight-xxxx python scripts/upload_demo_s3.py
+    BUCKET=humsight-xxxx python scripts/upload_demo_s3.py [--only real_washer ...]
 
 Uploads clip.npz, demo.json, gt.json and original.webm (the clip re-encoded at 30 fps playback, so the
 page can show the original next to the magnified ROI). Needs AWS credentials (boto3). Not run by the tests.
 """
+import argparse
 import os
 import sys
 import tempfile
@@ -23,8 +24,13 @@ DEMO_ROOT = os.path.join(ROOT, "demo_clips")
 
 def main():
     import json
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--only", nargs="*")
+    a = ap.parse_args()
     s3 = boto3.client("s3")
     for demo in sorted(os.listdir(DEMO_ROOT)):
+        if a.only and demo not in a.only:
+            continue
         d = os.path.join(DEMO_ROOT, demo)
         if not os.path.exists(os.path.join(d, "clip.npz")):
             continue

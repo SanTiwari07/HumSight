@@ -10,6 +10,7 @@ function.zip
 .pytest_cache/
 eval/data/
 demo_clips/*/clip.npz
+demo_clips/*/source.webm
 bench/data/
 bench/_*
 eval/results/_*.log
