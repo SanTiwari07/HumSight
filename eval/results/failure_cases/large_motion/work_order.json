@@ -1,0 +1,76 @@
+{
+  "verdict": "FAULT",
+  "summary": "Localized vibration at 15.0 Hz with amplitude 5.63568 px (SNR 7505.15) in ROI [96, 32, 96, 96].",
+  "reason": null,
+  "suggestion": null,
+  "findings": [
+    {
+      "f_hz": 15.0,
+      "amp_px": 5.63568,
+      "snr": 7548.47,
+      "roi": [
+        96,
+        32,
+        96,
+        96
+      ],
+      "axis": [
+        1.0,
+        -0.007
+      ]
+    },
+    {
+      "f_hz": 104.978,
+      "amp_px": 0.08597,
+      "snr": 6.32,
+      "roi": [
+        32,
+        32,
+        96,
+        96
+      ],
+      "axis": [
+        1.0,
+        -0.016
+      ]
+    },
+    {
+      "f_hz": 59.979,
+      "amp_px": 0.06831,
+      "snr": 6.34,
+      "roi": [
+        32,
+        64,
+        96,
+        96
+      ],
+      "axis": [
+        1.0,
+        -0.005
+      ]
+    }
+  ],
+  "severity": null,
+  "capture": {
+    "fps": 240.0,
+    "duration_s": 4.0,
+    "width": 256,
+    "height": 192,
+    "n_frames": 960,
+    "scale": 1.0
+  },
+  "warnings": [],
+  "limitations": [
+    "Indicative, camera-based measurement. Not a certified ISO assessment.",
+    "Frequency is valid only up to Nyquist (fps/2); record at >= 2.5x the fault frequency.",
+    "Amplitude is in image pixels unless a scale reference was given.",
+    "Compression, low texture and lighting flicker can mask or fake sub-pixel motion."
+  ],
+  "outputs": {
+    "heatmap": "heatmap.png",
+    "spectrum": "spectrum.json"
+  },
+  "policy": "rules",
+  "timestamp": "2026-10-24T05:34:22+00:00",
+  "trace_steps": 5
+}

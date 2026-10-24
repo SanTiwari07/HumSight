@@ -1,0 +1,29 @@
+{
+  "verdict": "REVIEW",
+  "summary": "low texture: only 0% of patches have enough gradient energy for sub-pixel tracking",
+  "reason": "low texture: only 0% of patches have enough gradient energy for sub-pixel tracking",
+  "suggestion": "film a surface with visible texture or edges, add a tape or marker, or move closer",
+  "findings": [],
+  "severity": null,
+  "capture": {
+    "fps": 240.0,
+    "duration_s": 4.0,
+    "width": 256,
+    "height": 192,
+    "n_frames": 960,
+    "scale": 1.0
+  },
+  "warnings": [
+    "low texture: only 0% of patches are usable"
+  ],
+  "limitations": [
+    "Indicative, camera-based measurement. Not a certified ISO assessment.",
+    "Frequency is valid only up to Nyquist (fps/2); record at >= 2.5x the fault frequency.",
+    "Amplitude is in image pixels unless a scale reference was given.",
+    "Compression, low texture and lighting flicker can mask or fake sub-pixel motion."
+  ],
+  "outputs": {},
+  "policy": "rules",
+  "timestamp": "2026-10-24T05:34:14+00:00",
+  "trace_steps": 1
+}

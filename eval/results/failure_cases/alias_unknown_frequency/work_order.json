@@ -1,0 +1,46 @@
+{
+  "verdict": "FAULT",
+  "summary": "Localized vibration at 96.001 Hz with amplitude 0.18284 px (SNR 521.89) in ROI [64, 32, 128, 96].",
+  "reason": null,
+  "suggestion": null,
+  "findings": [
+    {
+      "f_hz": 96.001,
+      "amp_px": 0.18284,
+      "snr": 521.89,
+      "roi": [
+        64,
+        32,
+        128,
+        96
+      ],
+      "axis": [
+        0.98,
+        -0.057
+      ]
+    }
+  ],
+  "severity": null,
+  "capture": {
+    "fps": 240.0,
+    "duration_s": 4.0,
+    "width": 256,
+    "height": 192,
+    "n_frames": 960,
+    "scale": 1.0
+  },
+  "warnings": [],
+  "limitations": [
+    "Indicative, camera-based measurement. Not a certified ISO assessment.",
+    "Frequency is valid only up to Nyquist (fps/2); record at >= 2.5x the fault frequency.",
+    "Amplitude is in image pixels unless a scale reference was given.",
+    "Compression, low texture and lighting flicker can mask or fake sub-pixel motion."
+  ],
+  "outputs": {
+    "heatmap": "heatmap.png",
+    "spectrum": "spectrum.json"
+  },
+  "policy": "rules",
+  "timestamp": "2026-10-24T05:34:08+00:00",
+  "trace_steps": 5
+}

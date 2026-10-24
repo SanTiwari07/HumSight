@@ -1,0 +1,30 @@
+{
+  "verdict": "NO_FAULT",
+  "summary": "No localized vibration above SNR 6.0. Noise floor 0.003089 px; minimum detectable amplitude about 0.018533 px.",
+  "reason": null,
+  "suggestion": null,
+  "findings": [],
+  "severity": null,
+  "capture": {
+    "fps": 240.0,
+    "duration_s": 4.0,
+    "width": 256,
+    "height": 192,
+    "n_frames": 960,
+    "scale": 1.0
+  },
+  "warnings": [],
+  "limitations": [
+    "Indicative, camera-based measurement. Not a certified ISO assessment.",
+    "Frequency is valid only up to Nyquist (fps/2); record at >= 2.5x the fault frequency.",
+    "Amplitude is in image pixels unless a scale reference was given.",
+    "Compression, low texture and lighting flicker can mask or fake sub-pixel motion."
+  ],
+  "outputs": {
+    "heatmap": "heatmap.png",
+    "spectrum": "spectrum.json"
+  },
+  "policy": "rules",
+  "timestamp": "2026-10-24T05:33:58+00:00",
+  "trace_steps": 6
+}
