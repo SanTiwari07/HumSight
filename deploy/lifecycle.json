@@ -1,0 +1,6 @@
+{
+  "Rules": [
+    {"ID": "expire-uploads", "Status": "Enabled", "Filter": {"Prefix": "uploads/"}, "Expiration": {"Days": 7}},
+    {"ID": "expire-outputs", "Status": "Enabled", "Filter": {"Prefix": "outputs/"}, "Expiration": {"Days": 7}}
+  ]
+}

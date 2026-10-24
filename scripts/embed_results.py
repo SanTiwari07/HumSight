@@ -1,34 +1,48 @@
-"""Copy generated result files into README.md between markers, so no number is ever retyped.
+"""Copy generated result files into documents between markers, so no number is ever retyped.
 
-    python scripts/embed_results.py
+    python scripts/embed_results.py [doc ...]        (default: README.md docs/TECHNICAL_REPORT.md docs/COOL.md)
 
-Markers in README.md:  <!-- EMBED:eval/results/summary.md -->  ...  <!-- /EMBED -->
+Markers:  <!-- EMBED:eval/results/summary.md -->  ...  <!-- /EMBED -->
+Image links inside embedded files are rewritten relative to the document that embeds them.
 """
 import os
 import re
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-README = os.path.join(ROOT, "README.md")
+DEFAULT_DOCS = ["README.md", os.path.join("docs", "TECHNICAL_REPORT.md"), os.path.join("docs", "COOL.md")]
 PAT = re.compile(r"(<!-- EMBED:(?P<path>[^ ]+) -->)(.*?)(<!-- /EMBED -->)", re.S)
+NL = "\n"
 
 
-def render(m):
-    path = os.path.join(ROOT, m.group("path"))
-    if not os.path.exists(path):
-        body = f"\n_{m.group('path')} has not been generated yet._\n"
-    else:
-        body = "\n" + open(path, encoding="utf-8").read().replace("\n# ", "\n### ").lstrip("# ").strip() + "\n"
-        body = re.sub(r"\]\((?!http|/)([^)]+\.png)\)", lambda x: f"](eval/results/{x.group(1)})"
-                      if "eval/results" in m.group("path") else x.group(0), body)
-    return f"{m.group(1)}{body}{m.group(4)}"
+def render(m, doc_dir):
+    src = os.path.join(ROOT, m.group("path"))
+    if not os.path.exists(src):
+        return f"{m.group(1)}{NL}_{m.group('path')} has not been generated yet._{NL}{m.group(4)}"
+    body = open(src, encoding="utf-8").read().replace(NL + "# ", NL + "### ").lstrip("# ").strip()
+    rel = os.path.relpath(os.path.dirname(src), doc_dir).replace(os.sep, "/")
+
+    def fix(x):
+        link = x.group(1)
+        if re.match(r"(https?:|/|#)", link):
+            return x.group(0)
+        return f"]({rel}/{link})"
+
+    body = re.sub(r"\]\(([^)]+\.(?:png|svg|jpg))\)", fix, body)
+    return f"{m.group(1)}{NL}{body}{NL}{m.group(4)}"
 
 
 def main():
-    text = open(README, encoding="utf-8").read()
-    new, n = PAT.subn(render, text)
-    open(README, "w", encoding="utf-8").write(new)
-    print(f"embedded {n} block(s)")
+    docs = sys.argv[1:] or DEFAULT_DOCS
+    for d in docs:
+        path = os.path.join(ROOT, d)
+        if not os.path.exists(path):
+            continue
+        text = open(path, encoding="utf-8").read()
+        doc_dir = os.path.dirname(path)
+        new, n = PAT.subn(lambda m: render(m, doc_dir), text)
+        open(path, "w", encoding="utf-8").write(new)
+        print(f"{d}: embedded {n} block(s)")
 
 
 if __name__ == "__main__":
