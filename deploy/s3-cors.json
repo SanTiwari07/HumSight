@@ -1,6 +1,6 @@
 {
   "CORSRules": [
-    {"AllowedOrigins": ["https://SanTiwari07.github.io"], "AllowedMethods": ["GET", "PUT"],
+    {"AllowedOrigins": ["https://santiwari07.github.io"], "AllowedMethods": ["GET", "PUT"],
      "AllowedHeaders": ["*"], "MaxAgeSeconds": 3000}
   ]
 }

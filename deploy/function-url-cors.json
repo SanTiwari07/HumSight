@@ -1,5 +1,5 @@
 {
-  "AllowOrigins": ["https://SanTiwari07.github.io"],
+  "AllowOrigins": ["https://santiwari07.github.io"],
   "AllowMethods": ["GET", "POST"],
   "AllowHeaders": ["content-type", "x-demo-token"],
   "MaxAge": 3000
