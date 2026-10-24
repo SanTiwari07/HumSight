@@ -9,6 +9,7 @@ let PREFIX = "/api";       // "/api" for the FastAPI server, "" for Lambda
 let MODE = "server";
 let chart = null;
 
+const css = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 const abs = (u) => (!u ? u : /^https?:/.test(u) ? u : BASE + u);
 const hdrs = () => (window.DEMO_TOKEN ? { "X-Demo-Token": window.DEMO_TOKEN } : {});
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -31,7 +32,7 @@ async function init() {
   MODE = h.mode || "server";
   const tag = h.cool ? "COOL OpenCV" : "OpenCV " + h.cv2_version;
   $("envBadge").textContent = `${tag} · ${h.machine || ""} · LLM: ${h.llm}`;
-  $("envBadge").className = "badge " + (h.cool ? "ok" : "muted");
+  $("envBadge").className = "pill-tag" + (h.cool ? " ok" : "");
   $("envBadge").title = h.cv2_path || "";
   if (MODE === "lambda") $("replayTag").hidden = false;
   if (h.llm !== "gemini") {
@@ -194,26 +195,31 @@ function setVideo(el, url) { el.src = url || ""; el.parentElement.hidden = !url;
 
 function drawChart(sp) {
   if (chart) chart.destroy();
+  const forest = css("--forest"), clay = css("--clay"), ash = css("--ash");
+  Chart.defaults.font.family = css("--sans"); Chart.defaults.color = css("--stone");
   const ds = [];
-  if (sp.roi) ds.push({ label: "fault ROI (median)", data: sp.f.map((x, i) => ({ x, y: sp.roi[i] })), borderColor: "#0b7a6b", pointRadius: 0, borderWidth: 1.5 });
-  if (sp.bg) ds.push({ label: "background", data: sp.f.map((x, i) => ({ x, y: sp.bg[i] })), borderColor: "#b4531c", pointRadius: 0, borderWidth: 1.2 });
+  if (sp.roi) ds.push({ label: "fault ROI (median)", data: sp.f.map((x, i) => ({ x, y: sp.roi[i] })), borderColor: forest, pointRadius: 0, borderWidth: 1.6 });
+  if (sp.bg) ds.push({ label: "background", data: sp.f.map((x, i) => ({ x, y: sp.bg[i] })), borderColor: clay, pointRadius: 0, borderWidth: 1.2 });
   const marks = {
     id: "marks",
     afterDatasetsDraw(c) {
       const { ctx, chartArea: a, scales: { x } } = c; ctx.save();
       if (sp.band_hz) { const x0 = x.getPixelForValue(sp.band_hz[0]), x1 = x.getPixelForValue(sp.band_hz[1]);
-        ctx.fillStyle = "rgba(11,122,107,0.15)"; ctx.fillRect(x0, a.top, Math.max(2, x1 - x0), a.bottom - a.top); }
+        ctx.globalAlpha = 0.18; ctx.fillStyle = forest; ctx.fillRect(x0, a.top, Math.max(2, x1 - x0), a.bottom - a.top); ctx.globalAlpha = 1; }
       const xn = x.getPixelForValue(sp.f_nyquist);
-      if (xn >= a.left && xn <= a.right) { ctx.strokeStyle = "#b3261e"; ctx.setLineDash([5, 4]); ctx.beginPath(); ctx.moveTo(xn, a.top); ctx.lineTo(xn, a.bottom); ctx.stroke(); }
+      if (xn >= a.left && xn <= a.right) { ctx.strokeStyle = ash; ctx.setLineDash([5, 4]); ctx.beginPath(); ctx.moveTo(xn, a.top); ctx.lineTo(xn, a.bottom); ctx.stroke(); }
       ctx.restore();
     },
   };
+  const grid = { color: css("--hairline") };
   chart = new Chart($("chart"), {
     type: "line", data: { datasets: ds }, plugins: [marks],
-    options: { animation: false, parsing: false, scales: { x: { type: "linear", title: { display: true, text: "Hz" }, max: sp.f_nyquist },
-      y: { title: { display: true, text: "amplitude (px, zero-to-peak)" }, beginAtZero: true } }, plugins: { legend: { position: "bottom" } } },
+    options: { animation: false, parsing: false, scales: {
+      x: { type: "linear", title: { display: true, text: "Hz" }, max: sp.f_nyquist, grid },
+      y: { title: { display: true, text: "amplitude (px, zero-to-peak)" }, beginAtZero: true, grid } },
+      plugins: { legend: { position: "bottom" } } },
   });
-  $("chartHint").textContent = `Shaded: magnified band. Dashed red: Nyquist limit (${fmt(sp.f_nyquist)} Hz).`;
+  $("chartHint").textContent = `Shaded: magnified band. Dashed: Nyquist limit (${fmt(sp.f_nyquist)} Hz).`;
 }
 
 // ---- synchronised video controls -----------------------------------------------------------------

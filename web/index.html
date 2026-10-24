@@ -4,26 +4,34 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>HumSight</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..400;1,9..144,100..400&family=Hanken+Grotesk:wght@300;400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 </head>
 <body>
-<header class="top">
-  <div>
-    <h1>Hum<span>Sight</span></h1>
-    <p class="tag">See what machines are humming.</p>
-  </div>
+<div class="announce">Indicative, camera-based measurement &middot; not a certified ISO assessment</div>
+
+<header class="wrap nav">
+  <span class="mark">HumSight</span>
   <nav>
-    <span id="envBadge" class="badge muted">connecting…</span>
+    <span id="envBadge" class="pill-tag">connecting…</span>
     <a id="repoLink" href="#" target="_blank" rel="noopener">GitHub</a>
     <a id="videoLink" href="#" target="_blank" rel="noopener" hidden>Video</a>
   </nav>
 </header>
 
-<main>
+<section class="wrap hero">
+  <p class="eyebrow">Vibration, made visible</p>
+  <h1>See what machines are <em>humming.</em></h1>
+  <p class="lead">Turn an ordinary video into a grid of virtual vibration sensors. OpenCV measures sub-pixel motion, an agent separates a real fault from camera shake, and only the faulty region is magnified.</p>
+</section>
+
+<main class="wrap">
   <section class="grid2">
     <form id="form" class="card">
-      <h2>1 · Clip</h2>
+      <p class="eyebrow">1 &middot; Clip</p>
       <label>Demo clip
         <select id="demo"><option value="">— upload my own —</option></select>
       </label>
@@ -45,59 +53,73 @@
         </div>
       </details>
 
-      <h2>2 · Policy</h2>
-      <div class="seg" id="policy">
+      <p class="eyebrow">2 &middot; Policy</p>
+      <fieldset class="seg" id="policy">
         <label><input type="radio" name="policy" value="llm"><span>Agent (Gemini)</span></label>
         <label><input type="radio" name="policy" value="rules" checked><span>Agent (rules)</span></label>
         <label><input type="radio" name="policy" value="fixed"><span>Fixed pipeline</span></label>
-      </div>
+      </fieldset>
       <p class="hint">Compare: the fixed pipeline picks the strongest peak anywhere and magnifies it, camera shake included.</p>
       <button id="go" type="submit">Analyze</button>
       <p id="err" class="err" hidden></p>
     </form>
 
-    <section class="card">
-      <h2>Agent trace <span id="replayTag" class="badge muted" hidden>recorded trace</span></h2>
+    <section class="card elevated">
+      <p class="eyebrow">Agent trace <span id="replayTag" class="pill-tag" hidden>recorded trace</span></p>
       <ol id="trace" class="trace"><li class="empty">Run an analysis to see each tool call, the numbers it measured, and why the next call was chosen.</li></ol>
     </section>
   </section>
 
-  <section id="results" class="card" hidden>
-    <div class="verdictRow">
-      <span id="verdict" class="verdict">—</span>
-      <p id="summary"></p>
-    </div>
-    <div class="vids">
-      <figure><video id="vOrig" muted playsinline loop></video><figcaption>Original</figcaption></figure>
-      <figure><video id="vMag" muted playsinline loop></video><figcaption id="magCap">Magnified</figcaption></figure>
-    </div>
-    <div class="ctl">
-      <button type="button" id="play">Play</button>
-      <input type="range" id="seek" min="0" max="1000" value="0">
-      <select id="rate"><option>1</option><option>0.5</option><option>0.25</option></select>×
+  <section id="results" hidden>
+    <div class="section-head">
+      <p class="eyebrow">Result</p>
+      <div class="verdictRow">
+        <span id="verdict" class="verdict">—</span>
+        <p id="summary"></p>
+      </div>
     </div>
 
-    <div class="grid2 res">
-      <div>
-        <h3>Spectrum</h3>
-        <canvas id="chart" height="220"></canvas>
+    <div class="stage">
+      <div class="vids">
+        <figure><video id="vOrig" muted playsinline loop></video><figcaption>Original</figcaption></figure>
+        <figure><video id="vMag" muted playsinline loop></video><figcaption id="magCap">Magnified</figcaption></figure>
+      </div>
+      <div class="ctl">
+        <button type="button" id="play" class="btn-stone">Play</button>
+        <input type="range" id="seek" min="0" max="1000" value="0" aria-label="Seek">
+        <select id="rate" aria-label="Playback speed"><option>1</option><option>0.5</option><option>0.25</option></select><span class="x">×</span>
+      </div>
+    </div>
+
+    <div class="grid-res" style="margin-top: var(--s-xl)">
+      <div class="card">
+        <p class="eyebrow">Spectrum</p>
+        <canvas id="chart" height="240"></canvas>
         <p class="hint" id="chartHint"></p>
       </div>
-      <div>
-        <h3>Amplitude per patch</h3>
-        <img id="heat" alt="heatmap" class="heat">
+      <div class="card">
+        <p class="eyebrow">Amplitude per patch</p>
+        <img id="heat" alt="Heatmap of vibration amplitude per patch" class="heat">
       </div>
     </div>
 
     <h3>Findings</h3>
-    <table id="findings"><thead><tr><th>f (Hz)</th><th>amplitude (px)</th><th>SNR</th><th>ROI [x,y,w,h]</th></tr></thead><tbody></tbody></table>
-    <p id="sev" class="hint"></p>
-    <p id="warn" class="hint"></p>
-    <p class="dl">Work order: <a id="dlMd" target="_blank">Markdown</a> · <a id="dlJson" target="_blank">JSON</a></p>
+    <div class="card">
+      <table id="findings"><thead><tr><th>f (Hz)</th><th>amplitude (px)</th><th>SNR</th><th>ROI [x,y,w,h]</th></tr></thead><tbody></tbody></table>
+      <p id="sev" class="hint"></p>
+      <p id="warn" class="hint"></p>
+      <p class="dl">Work order: <a id="dlMd" target="_blank">Markdown</a> · <a id="dlJson" target="_blank">JSON</a></p>
+    </div>
   </section>
 </main>
 
-<footer>Indicative, camera-based measurement. Not a certified ISO assessment. Every number shown comes from OpenCV/NumPy code; the LLM only chooses tools and writes prose.</footer>
+<footer>
+  <div class="wrap">
+    <span class="mark">HumSight</span>
+    <p>Indicative, camera-based measurement. Not a certified ISO assessment.</p>
+    <p>Every number shown comes from OpenCV/NumPy code; the LLM only chooses tools and writes prose.</p>
+  </div>
+</footer>
 <script src="config.js"></script>
 <script src="app.js"></script>
 </body>

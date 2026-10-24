@@ -27,6 +27,8 @@ Pick a demo, leave the policy on *Agent (rules)* and press **Analyze**. The trac
 
 Gemini (optional): put `GEMINI_API_KEY=...` in a git-ignored `.env`. Without a key the *Agent (Gemini)* option is disabled and the rules policy runs the same tools. If a Gemini call fails mid-job, the rest of the job runs on the rules policy and the trace says so (`source: rules (fallback: ...)`).
 
+The UI follows the warm-paper design system in [design.md](design.md): cream canvas, Fraunces/Hanken Grotesk (open substitutes for the licensed faces), earth-tone accents for meaning, and a single action-blue button.
+
 Tests: `python -m pytest` (units, checkpoint-1 accuracy, agent behaviour, fake-Gemini wiring, Lambda handler against a fake S3, server round trip).
 
 ## Architecture
