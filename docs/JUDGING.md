@@ -52,6 +52,7 @@ python scripts/embed_results.py   # copy generated results into README and the r
 
 ## 4. Public endpoint and live session (status)
 
-- **Public endpoint:** _not deployed yet._ When it is, its URL is added here and in the README.
+- **Public page:** https://santiwari07.github.io/HumSight/ (static page on GitHub Pages; it calls the Lambda endpoint below).
+- **Public endpoint:** AWS Lambda Function URL `https://ce75ttmqcc5g3il7yefnupx6ee0qydmz.lambda-url.us-east-1.on.aws/` (arm64, OpenCV 5.0.0). Requests need the `X-Demo-Token` header; the page sends it. Clips are capped at 4 s; the demo clips are on S3. `GET /health` shows `cool: false` because this is the stock OpenCV wheel (COOL is the separate Graviton4 benchmark).
 - **Live COOL screen-share:** available on request once the Graviton4 instance has been run; the instance is started only for the session.
 - **Demo video:** pending, to be recorded after deployment.

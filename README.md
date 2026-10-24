@@ -26,10 +26,10 @@ Each row is something the competition asks for, where it lives, and its honest s
 | Code repository, pinned dependencies | this repo, `requirements.txt`, `requirements-lambda.txt` | done |
 | Build, deployment and test instructions | [docs/JUDGING.md](docs/JUDGING.md) (test), [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) (AWS) | test: done and verified; AWS steps written, **not executed** |
 | Architecture diagram (OpenCV 5, AWS, COOL, agent) | [docs/architecture.svg](docs/architecture.svg), [docs/agent_workflow.svg](docs/agent_workflow.svg) | done |
-| Working web endpoint or live screen-share | `lambda_fn/`, `server/`, `web/` | runs locally; **not deployed yet** |
-| Meaningful component on AWS | Lambda, S3, SSM (designed, handler tested against a fake S3); EC2 Graviton4 | **not deployed yet** |
+| Working web endpoint or live screen-share | `lambda_fn/`, `server/`, `web/` | **live**: page https://santiwari07.github.io/HumSight/ calling an AWS Lambda Function URL; also runs locally |
+| Meaningful component on AWS | Lambda (arm64) + S3 + SSM run the whole OpenCV 5 pipeline and the agent | **deployed and tested**; EC2 Graviton4 / COOL **not run yet** |
 | Evaluation evidence with failure cases | `eval/results/summary.md`, `eval/results/failure_cases.md` | done on synthetic ground truth; real clip (E8) **not run** |
-| Agentic Vision evidence: workflow diagram, trace where OpenCV output changes a later call, failure handling, human control | [docs/agent_workflow.svg](docs/agent_workflow.svg), [docs/example_trace.md](docs/example_trace.md) | done with the rules policy; Gemini provider tested with a fake client only, **not live** |
+| Agentic Vision evidence: workflow diagram, trace where OpenCV output changes a later call, failure handling, human control | [docs/agent_workflow.svg](docs/agent_workflow.svg), [docs/example_trace.md](docs/example_trace.md) | done; the Gemini policy was run live on Lambda once (8 model-chosen tool calls, FAULT); not yet evaluated systematically |
 | Best Use of COOL evidence: version, instance, method, results | [docs/COOL.md](docs/COOL.md), `bench/` | harness tested; **no COOL run yet** |
 | Video, 5 minutes or less | | **pending, after deployment** |
 | Devpost text | [docs/DEVPOST_SUBMISSION.md](docs/DEVPOST_SUBMISSION.md) | draft with TODOs |

@@ -1,6 +1,6 @@
 # Deployment guide
 
-> **Not executed from this repository.** These steps are written from the design in [planning/IMPLEMENTATION.md](planning/IMPLEMENTATION.md) §5 and §9 and from the code in `lambda_fn/`, `scripts/` and `deploy/`. The handler is tested against a fake S3; the AWS CLI commands below have not been run, so check each against your account (region, limits, names) as you go. Replace `BUCKET`, `ACCOUNT_ID` and the GitHub Pages origin in `deploy/*.json` first.
+> **Status.** Sections 0 to 5 were executed on 2026-10-24 from a Windows machine (Git Bash, AWS CLI v1) and verified: the Lambda endpoint and the GitHub Pages page work end to end. Section 6 (COOL on EC2) and the teardown have **not** been run. The commands below are the ones that worked, with the fixes listed in "What went wrong" at the end. Replace `BUCKET`, `ACCOUNT_ID` and the GitHub Pages origin (lowercase!) in `deploy/*.json` first.
 
 Everything uses **us-east-1** to avoid cross-region charges. Expected spend is a few cents to well under a dollar (Spot instance for a few hours; Lambda, S3 and SSM inside free tiers); the real cost is whatever your Billing console shows, so keep the guards below on.
 
@@ -106,3 +106,23 @@ See [COOL.md](COOL.md) for the evidence checklist. In short:
 ## 7. Teardown
 
 Follow `scripts/teardown_checklist.md`: terminate the instance, no leftover volumes, snapshots, Elastic IPs or Spot requests, delete the bucket and Lambda after judging, delete the SSM parameter, cancel the Marketplace subscription, and check Billing the next day.
+
+## What went wrong (and the fix), so you do not repeat it
+
+| Symptom | Cause | Fix |
+|---|---|---|
+| `pip` cannot find `numpy==2.5.4` for the aarch64 target | the build asked only for the old `manylinux2014` wheel tag | `build_layer.sh` now passes `manylinux_2_28`, `manylinux_2_17` and `manylinux2014` (Lambda's AL2023 supports all three) |
+| `Parameter name must be a fully qualified name` | Git Bash rewrites `/humsight/gemini_key` into a Windows path | `export MSYS_NO_PATHCONV=1` before AWS commands |
+| `file:///tmp/...` not found | native Windows `aws` cannot see the MSYS `/tmp` | use a relative path inside the project, delete it right after |
+| `PutFunctionConcurrency` refused | the default account quota (10) cannot go below its unreserved minimum | skip reserved concurrency; rely on the token, caps and budgets |
+| browser blocks S3 or Lambda responses | CORS origin must be lowercase: browsers send `https://santiwari07.github.io` and S3 matches case-sensitively | templates in `deploy/` use the lowercase origin |
+| outputs served as `binary/octet-stream` | `upload_file` without a content type | the handler now sets `ContentType` from the file extension |
+| videos empty on the page only when hosted | presigned URLs end in `?AWSAccessKeyId=...`, and a `.webm$` test failed | `web/app.js` tests the path part only |
+| page keeps running old JavaScript after a deploy | GitHub Pages caches assets for about 10 minutes | `index.html` versions the asset URLs (`?v=N`); bump N on each web change |
+
+## Resources created (for teardown)
+
+All in us-east-1, account of the deployer: S3 bucket `humsight-<random>` (name in `deploy/.bucket`), Lambda function `humsight`, Lambda layer `humsight-deps`, IAM role `humsight-lambda` (inline policy `humsight`), IAM user `humsight-deployer` (access key), SSM parameter `/humsight/gemini_key`, the Function URL, and the GitHub Pages site. Delete them with `scripts/teardown_checklist.md` after judging, and rotate or delete the access key and the Gemini key.
+
+Local-only files holding secrets or ids (git-ignored): `.env`, `deploy/.token`, `deploy/.bucket`, `deploy/.layer_arn`, `deploy/.function_url`, `deploy/_*`. The demo token is also in `web/config.js`; it is a speed bump, not a secret.
+

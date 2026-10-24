@@ -57,7 +57,7 @@ The agent runs a bounded perception → decision → action loop over eight type
 
 **Guardrails.** Schema-validated arguments; at most 10 tool calls and 3 magnifications, with the 10th call forced to a terminal tool; a `FAULT` verdict with no classified fault (or `NO_FAULT` with one, or with no textured patch) is downgraded to `REVIEW`; the **number guard** compares every number in the model's summary and rationale with the tool results (2% tolerance, small integers allowed as counts) and substitutes a template summary when one is unverified (tested with a scripted "lying" provider); the model never sees video, only compact numeric results (≤ 1.5 KB).
 
-**What is and is not verified.** The Gemini provider is tested against a fake client (conversation wiring, schema declarations, loop integration); it has **not** been run against the live API. All agent results below use the rules policy.
+**What is and is not verified.** The Gemini provider is tested against a fake client (conversation wiring, schema declarations, loop integration) and was run live on the Lambda deployment once, on the headline demo (FAULT after 8 model-chosen tool calls; the summary passed the number guard). It has not been evaluated systematically: all evaluation tables below use the rules policy.
 
 ## 5. AWS deployment
 
@@ -67,7 +67,7 @@ The agent runs a bounded perception → decision → action loop over eight type
 - Live session: an EC2 `c8g.large` Spot instance from the COOL Graviton4 AMI runs the FastAPI server for screen-share demos and the benchmark, then is terminated.
 - Controls: a zero-spend budget and a $1 budget before anything is launched; teardown checklist in `scripts/teardown_checklist.md`.
 
-**Status: not deployed.** The handler and build script exist and the handler is covered by tests against a fake S3 (`tests/test_lambda_and_server.py`), but no AWS resource has been created from this repository, so there is no live URL yet. The submission requires a working endpoint or an arranged live screen-share; this must be completed before submitting.
+**Status: deployed and tested** (us-east-1). Lambda `humsight` (arm64, python3.12, 3008 MB, 120 s) with the OpenCV 5 layer, a private S3 bucket, an SSM SecureString for the Gemini key and a public Function URL; the page at https://santiwari07.github.io/HumSight/ calls it. Measured on this deployment: the headline demo returns FAULT at 58.497 Hz in 18 s wall time with the rules policy and in 42 s with the Gemini policy (8 model-chosen calls); a healthy-machine demo returns NO_FAULT in 4 s. Not done: reserved concurrency (the default account quota of 10 does not allow it), a load test, and the EC2/COOL instance.
 
 ## 6. COOL on Graviton4
 
@@ -390,7 +390,7 @@ python scripts/export_trace.py             # regenerates docs/example_trace.md
 python scripts/embed_results.py            # copies generated results into README and this report
 ```
 
-Versions used for the results above: OpenCV 5.0.0 (`opencv-python-headless==5.0.0.93`), NumPy 2.5.4, Python 3.13 on Windows (Lambda targets Python 3.12 arm64; that wheel combination has not been built here).
+Versions used for the results above: OpenCV 5.0.0 (`opencv-python-headless==5.0.0.93`), NumPy 2.5.4, Python 3.13 on Windows. The Lambda deployment runs the same pinned versions on Python 3.12 arm64 (aarch64 wheels, checked at the ELF level).
 
 ## 11. Credits
 
