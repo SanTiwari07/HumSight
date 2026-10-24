@@ -13,7 +13,7 @@ python scripts/make_demo_clips.py                        # six deterministic syn
 uvicorn server.app:app --port 8000                       # open http://localhost:8000
 ```
 
-In the page choose a demo, keep **Agent (rules)** and press **Analyze**. The trace streams live.
+The page walks through four steps: **Recording** (pick a demo), **Setup** (keep **Agent · rules**), **Analysis** (the activity log streams live) and **Diagnosis**, which opens on its own when the job ends. The diagnosis shows FAULT as *Alarm*, NO_FAULT as *Normal* and REVIEW as *Inconclusive*.
 
 | Demo clip | Truth | Expected result |
 |---|---|---|
@@ -24,7 +24,7 @@ In the page choose a demo, keep **Agent (rules)** and press **Analyze**. The tra
 | `alias_130hz` | 130 Hz at 240 fps, expected Hz given | **REVIEW** (aliasing), two tool calls |
 | `codec_damaged` | the pump scene after an mp4v round trip | a **wrong** result (spurious low-frequency fault): a documented failure case |
 
-Switch the policy to **Fixed pipeline** on `pump_shake_fault`: it magnifies the 3.5 Hz camera shake and misses the fault. That contrast is evaluation E5.
+In Setup, switch the method to **Fixed pipeline** on `pump_shake_fault`: it magnifies the 3.5 Hz camera shake and misses the fault. The diagnosis then offers **Re-run with the agent** for a side-by-side check. That contrast is evaluation E5.
 
 Gemini is optional (`GEMINI_API_KEY` in a git-ignored `.env`); without it the rules policy runs the same tools. Uploading your own clip requires the **capture fps** (slow-motion files report the wrong container fps).
 

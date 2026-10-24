@@ -44,7 +44,7 @@ uvicorn server.app:app --port 8000                     # open http://localhost:8
 python -m pytest                                       # 31 tests
 ```
 
-Pick a demo, leave the policy on *Agent (rules)* and press **Analyze**; the trace streams live. Switch to **Fixed pipeline** on `pump_shake_fault` to see the naive approach magnify the camera shake instead of the fault. Expected result per demo: [docs/JUDGING.md](docs/JUDGING.md).
+The page is a four-step flow: pick a recording, check the setup (leave the method on *Agent · rules*), watch the activity log stream live, then read the diagnosis (status, key readings, video, spectrum, heatmap, findings, work order). Choose **Fixed pipeline** on `pump_shake_fault` to see the naive approach magnify the camera shake instead of the fault. Expected result per demo: [docs/JUDGING.md](docs/JUDGING.md).
 
 Gemini (optional): put `GEMINI_API_KEY=...` in a git-ignored `.env`. Without a key the *Agent (Gemini)* option is disabled and the rules policy runs the same tools; if a Gemini call fails mid-job the rest of the job runs on rules and the trace says so. The UI follows [docs/design.md](docs/design.md).
 

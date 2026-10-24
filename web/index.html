@@ -3,123 +3,278 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>HumSight</title>
+<title>HumSight · Vibration analysis</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..400;1,9..144,100..400&family=Hanken+Grotesk:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 </head>
 <body>
-<div class="announce">Indicative, camera-based measurement &middot; not a certified ISO assessment</div>
 
-<header class="wrap nav">
-  <span class="mark">HumSight</span>
-  <nav>
-    <span id="envBadge" class="pill-tag">connecting…</span>
+<header class="topbar">
+  <a class="brand" href="#/select" aria-label="HumSight home">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12h3l2-6 3 12 3-9 2 5 2-2h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span>HumSight</span>
+    <small>Camera-based vibration analysis</small>
+  </a>
+  <div class="topbar-right">
+    <span id="envBadge" class="chip chip-dark"><i class="dot"></i><span>Connecting…</span></span>
     <a id="repoLink" href="#" target="_blank" rel="noopener">GitHub</a>
     <a id="videoLink" href="#" target="_blank" rel="noopener" hidden>Video</a>
-  </nav>
+  </div>
 </header>
 
-<section class="wrap hero">
-  <p class="eyebrow">Vibration, made visible</p>
-  <h1>See what machines are <em>humming.</em></h1>
-  <p class="lead">Turn an ordinary video into a grid of virtual vibration sensors. OpenCV measures sub-pixel motion, an agent separates a real fault from camera shake, and only the faulty region is magnified.</p>
-</section>
+<div class="shell">
+  <!-- step navigation: sidebar on desktop, horizontal stepper on phones -->
+  <nav class="steps" aria-label="Analysis steps">
+    <ol>
+      <li><a href="#/select" data-step="select"><b>1</b><span><strong>Recording</strong><em data-sum="select">Choose a clip</em></span></a></li>
+      <li><a href="#/setup" data-step="setup"><b>2</b><span><strong>Setup</strong><em data-sum="setup">Machine &amp; method</em></span></a></li>
+      <li><a href="#/run" data-step="run"><b>3</b><span><strong>Analysis</strong><em data-sum="run">Not started</em></span></a></li>
+      <li><a href="#/report" data-step="report"><b>4</b><span><strong>Diagnosis</strong><em data-sum="report">No report yet</em></span></a></li>
+    </ol>
+    <p class="disclaimer">Indicative, camera-based measurement. Not a certified ISO assessment.</p>
+  </nav>
 
-<main class="wrap">
-  <section class="grid2">
-    <form id="form" class="card">
-      <p class="eyebrow">1 &middot; Clip</p>
-      <label>Demo clip
-        <select id="demo"><option value="">— upload my own —</option></select>
-      </label>
-      <label id="uploadRow">Upload video <small>(≤ 25 MB)</small>
-        <input type="file" id="file" accept="video/*,.npz">
-      </label>
-      <label>Capture fps <small>(required; slow-mo files often report 30)</small>
-        <input type="number" id="fps" min="1" step="any" placeholder="240" required>
-      </label>
+  <main id="main">
+    <!-- ============ 1. RECORDING ============ -->
+    <section class="view" id="view-select" data-view="select" hidden>
+      <header class="view-head">
+        <p class="kicker">Step 1 of 4</p>
+        <h1>Choose a recording</h1>
+        <p class="lede">Pick a reference recording to see how the analysis behaves, or upload a video of your own machine shot on a phone in slow motion.</p>
+      </header>
 
-      <details>
-        <summary>Optional inputs</summary>
-        <div class="two">
-          <label>Expected Hz <input type="number" id="expHz" min="0" step="any"></label>
-          <label>or RPM <input type="number" id="rpm" min="0" step="any"></label>
-          <label>Search from (Hz) <input type="number" id="fmin" min="0" step="any"></label>
-          <label>to (Hz) <input type="number" id="fmax" min="0" step="any"></label>
-          <label>mm per pixel <input type="number" id="mmpx" min="0" step="any"></label>
+      <h2 class="group-title">Reference recordings</h2>
+      <div id="demoList" class="clip-grid" role="radiogroup" aria-label="Reference recordings">
+        <p class="muted">Loading recordings…</p>
+      </div>
+
+      <h2 class="group-title">Your own recording</h2>
+      <div class="clip-card upload" id="uploadCard">
+        <div class="clip-body">
+          <span class="clip-title">Upload a video</span>
+          <span class="clip-desc">MP4, MOV, WebM, AVI or MKV, up to 25 MB. Use a tripod if you can; 240 fps slow motion works best.</span>
+          <label class="drop" id="drop" for="file">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m0 0-5 5m5-5 5 5M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span id="fileName">Drop a file here or <u>browse</u></span>
+          </label>
+          <input type="file" id="file" accept="video/*,.npz" class="sr-only">
+          <p class="field-err" id="fileErr" hidden></p>
         </div>
-      </details>
+      </div>
 
-      <p class="eyebrow">2 &middot; Policy</p>
-      <fieldset class="seg" id="policy">
-        <label><input type="radio" name="policy" value="llm"><span>Agent (Gemini)</span></label>
-        <label><input type="radio" name="policy" value="rules" checked><span>Agent (rules)</span></label>
-        <label><input type="radio" name="policy" value="fixed"><span>Fixed pipeline</span></label>
-      </fieldset>
-      <p class="hint">Compare: the fixed pipeline picks the strongest peak anywhere and magnifies it, camera shake included.</p>
-      <button id="go" type="submit">Analyze</button>
-      <p id="err" class="err" hidden></p>
-    </form>
-
-    <section class="card elevated">
-      <p class="eyebrow">Agent trace <span id="replayTag" class="pill-tag" hidden>recorded trace</span></p>
-      <ol id="trace" class="trace"><li class="empty">Run an analysis to see each tool call, the numbers it measured, and why the next call was chosen.</li></ol>
+      <footer class="view-foot">
+        <span></span>
+        <button type="button" class="btn btn-primary" id="toSetup" disabled>Next: Setup <span aria-hidden="true">→</span></button>
+      </footer>
     </section>
-  </section>
 
-  <section id="results" hidden>
-    <div class="section-head">
-      <p class="eyebrow">Result</p>
-      <div class="verdictRow">
-        <span id="verdict" class="verdict">—</span>
-        <p id="summary"></p>
-      </div>
-    </div>
+    <!-- ============ 2. SETUP ============ -->
+    <section class="view" id="view-setup" data-view="setup" hidden>
+      <header class="view-head">
+        <p class="kicker">Step 2 of 4</p>
+        <h1>Machine &amp; analysis setup</h1>
+        <p class="lede">Only the capture frame rate is required. Everything else sharpens the result.</p>
+      </header>
 
-    <div class="stage">
-      <div class="vids">
-        <figure><video id="vOrig" muted playsinline loop></video><figcaption>Original</figcaption></figure>
-        <figure><video id="vMag" muted playsinline loop></video><figcaption id="magCap">Magnified</figcaption></figure>
-      </div>
-      <div class="ctl">
-        <button type="button" id="play" class="btn-stone">Play</button>
-        <input type="range" id="seek" min="0" max="1000" value="0" aria-label="Seek">
-        <select id="rate" aria-label="Playback speed"><option>1</option><option>0.5</option><option>0.25</option></select><span class="x">×</span>
-      </div>
-    </div>
+      <form id="form" novalidate>
+        <div class="panel">
+          <div class="panel-head"><h2>Recording</h2><span class="tag tag-req">Required</span></div>
+          <div class="field">
+            <label for="fps">Capture frame rate</label>
+            <div class="input-unit"><input type="number" id="fps" min="1" step="any" placeholder="240" required><span>fps</span></div>
+            <p class="help">The real recording rate. Slow-motion files often report 30 fps in their metadata; enter what the camera actually captured. The highest frequency you can measure is half this value.</p>
+            <p class="field-err" id="fpsErr" hidden>Enter the capture frame rate.</p>
+          </div>
+        </div>
 
-    <div class="grid-res" style="margin-top: var(--s-xl)">
-      <div class="card">
-        <p class="eyebrow">Spectrum</p>
-        <canvas id="chart" height="240"></canvas>
-        <p class="hint" id="chartHint"></p>
-      </div>
-      <div class="card">
-        <p class="eyebrow">Amplitude per patch</p>
-        <img id="heat" alt="Heatmap of vibration amplitude per patch" class="heat">
-      </div>
-    </div>
+        <div class="panel">
+          <div class="panel-head"><h2>Machine details</h2><span class="tag">Optional</span></div>
+          <div class="field-grid">
+            <div class="field">
+              <label for="rpm">Running speed</label>
+              <div class="input-unit"><input type="number" id="rpm" min="0" step="any"><span>RPM</span></div>
+              <p class="help">Shaft speed from the nameplate or a tachometer.</p>
+            </div>
+            <div class="field">
+              <label for="expHz">or expected frequency</label>
+              <div class="input-unit"><input type="number" id="expHz" min="0" step="any"><span>Hz</span></div>
+              <p class="help">If you know the fault frequency (1× running speed, blade pass…).</p>
+            </div>
+            <div class="field">
+              <label for="fmin">Search band from</label>
+              <div class="input-unit"><input type="number" id="fmin" min="0" step="any"><span>Hz</span></div>
+            </div>
+            <div class="field">
+              <label for="fmax">to</label>
+              <div class="input-unit"><input type="number" id="fmax" min="0" step="any"><span>Hz</span></div>
+            </div>
+            <div class="field span2">
+              <label for="mmpx">Image scale</label>
+              <div class="input-unit"><input type="number" id="mmpx" min="0" step="any"><span>mm / px</span></div>
+              <p class="help">Measure a known length in the frame (e.g. a 100 mm bolt spacing that spans 400 px gives 0.25). Without it, displacement stays in pixels and velocity can't be computed.</p>
+            </div>
+          </div>
+          <p class="field-err" id="bandErr" hidden>The search band start must be lower than its end.</p>
+        </div>
 
-    <h3>Findings</h3>
-    <div class="card">
-      <table id="findings"><thead><tr><th>f (Hz)</th><th>amplitude (px)</th><th>SNR</th><th>ROI [x,y,w,h]</th></tr></thead><tbody></tbody></table>
-      <p id="sev" class="hint"></p>
-      <p id="warn" class="hint"></p>
-      <p class="dl">Work order: <a id="dlMd" target="_blank">Markdown</a> · <a id="dlJson" target="_blank">JSON</a></p>
-    </div>
-  </section>
-</main>
+        <div class="panel">
+          <div class="panel-head"><h2>Analysis method</h2></div>
+          <div class="method-grid" role="radiogroup" aria-label="Analysis method">
+            <label class="method">
+              <input type="radio" name="policy" value="rules" checked>
+              <span class="method-title">Agent · rules <span class="tag tag-ok">Recommended</span></span>
+              <span class="method-desc">Checks the frame rate, removes camera shake, then zooms in on the fault. Asks for a re-recording when the evidence is weak.</span>
+            </label>
+            <label class="method" id="llmMethod">
+              <input type="radio" name="policy" value="llm">
+              <span class="method-title">Agent · Gemini</span>
+              <span class="method-desc">Same measurement tools; Gemini chooses the next step and writes the summary. Every number still comes from OpenCV.</span>
+            </label>
+            <label class="method">
+              <input type="radio" name="policy" value="fixed">
+              <span class="method-title">Fixed pipeline <span class="tag">Baseline</span></span>
+              <span class="method-desc">Naive approach for comparison: magnifies the strongest peak anywhere, camera shake included.</span>
+            </label>
+          </div>
+        </div>
+      </form>
 
-<footer>
-  <div class="wrap">
-    <span class="mark">HumSight</span>
-    <p>Indicative, camera-based measurement. Not a certified ISO assessment.</p>
-    <p>Every number shown comes from OpenCV/NumPy code; the LLM only chooses tools and writes prose.</p>
-  </div>
-</footer>
+      <footer class="view-foot">
+        <a class="btn btn-ghost" href="#/select"><span aria-hidden="true">←</span> Back</a>
+        <button type="button" class="btn btn-primary" id="go">Run analysis <span aria-hidden="true">→</span></button>
+      </footer>
+    </section>
+
+    <!-- ============ 3. ANALYSIS ============ -->
+    <section class="view" id="view-run" data-view="run" hidden>
+      <header class="view-head">
+        <p class="kicker">Step 3 of 4</p>
+        <h1 id="runTitle">Analyzing recording</h1>
+        <p class="lede" id="runLede">Each step below is an OpenCV measurement. The agent reads the numbers and decides what to measure next.</p>
+      </header>
+
+      <div class="panel run-status">
+        <div class="run-top">
+          <span class="spinner" id="spinner" aria-hidden="true"></span>
+          <strong id="runState">Starting…</strong>
+          <span class="muted mono" id="elapsed">0.0 s</span>
+        </div>
+        <ol class="stages" id="stages" aria-label="Pipeline stages"></ol>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><h2>Activity log</h2><span id="replayTag" class="tag" hidden>Replayed after job</span></div>
+        <ol id="trace" class="trace"></ol>
+      </div>
+
+      <div class="alert alert-alarm" id="err" role="alert" hidden></div>
+
+      <footer class="view-foot">
+        <a class="btn btn-ghost" href="#/setup" id="runBack"><span aria-hidden="true">←</span> Setup</a>
+        <a class="btn btn-primary" href="#/report" id="toReport" hidden>View diagnosis <span aria-hidden="true">→</span></a>
+      </footer>
+    </section>
+
+    <!-- ============ 4. DIAGNOSIS ============ -->
+    <section class="view" id="view-report" data-view="report" hidden>
+      <header class="view-head">
+        <p class="kicker">Step 4 of 4</p>
+        <h1>Diagnosis</h1>
+        <p class="meta" id="repMeta"></p>
+      </header>
+
+      <div class="status-banner" id="banner">
+        <div class="status-icon" id="statusIcon" aria-hidden="true"></div>
+        <div>
+          <p class="status-label" id="statusLabel">—</p>
+          <p class="status-summary" id="summary"></p>
+          <p class="status-action"><b>Recommended action:</b> <span id="action"></span></p>
+        </div>
+      </div>
+      <div class="alert alert-warn" id="baselineNote" hidden>This result comes from the <b>fixed baseline</b>, which does not check for camera shake. Compare it with the agent on the same recording. <button type="button" class="link-btn" id="rerunAgent">Re-run with the agent →</button></div>
+
+      <div class="kpis" id="kpis"></div>
+
+      <div class="tabs" role="tablist" aria-label="Report sections">
+        <button role="tab" data-tab="video" aria-selected="true">Video evidence</button>
+        <button role="tab" data-tab="spectrum">Spectrum</button>
+        <button role="tab" data-tab="heat">Heatmap</button>
+        <button role="tab" data-tab="findings">Findings</button>
+        <button role="tab" data-tab="log">Activity log</button>
+        <button role="tab" data-tab="wo">Work order</button>
+      </div>
+
+      <div class="tabpanel panel" data-panel="video" role="tabpanel">
+        <div class="vids" id="vids">
+          <figure><video id="vOrig" muted playsinline loop></video><figcaption>Original</figcaption></figure>
+          <figure><video id="vMag" muted playsinline loop></video><figcaption id="magCap">Magnified fault region</figcaption></figure>
+        </div>
+        <div class="ctl" id="vidCtl">
+          <button type="button" id="play" class="btn btn-dark">Play</button>
+          <input type="range" id="seek" min="0" max="1000" value="0" aria-label="Seek">
+          <label class="rate">Speed
+            <select id="rate"><option value="1">1×</option><option value="0.5">0.5×</option><option value="0.25">0.25×</option></select>
+          </label>
+        </div>
+        <p class="empty" id="noVideo" hidden>No magnified video: no fault region was isolated, so there is nothing to amplify.</p>
+        <p class="help">The magnified clip is slowed and only the detected fault region is amplified, so a sub-pixel vibration becomes visible to the eye.</p>
+      </div>
+
+      <div class="tabpanel panel" data-panel="spectrum" role="tabpanel" hidden>
+        <div class="chart-tools" id="chartTools"><label class="check"><input type="checkbox" id="logY"> Log scale (shows small peaks next to large ones)</label></div>
+        <div class="chart-box"><canvas id="chart"></canvas></div>
+        <p class="help" id="chartHint"></p>
+        <p class="empty" id="noChart" hidden>No spectrum was produced for this run.</p>
+      </div>
+
+      <div class="tabpanel panel" data-panel="heat" role="tabpanel" hidden>
+        <img id="heat" alt="Heatmap of vibration amplitude per image patch" class="heat">
+        <p class="help" id="heatHint">Each cell is a virtual sensor. Brighter cells moved more at the dominant frequency.</p>
+        <p class="empty" id="noHeat" hidden>No heatmap was produced for this run.</p>
+      </div>
+
+      <div class="tabpanel panel" data-panel="findings" role="tabpanel" hidden>
+        <div class="table-wrap">
+          <table id="findings">
+            <thead><tr><th>#</th><th>Frequency</th><th>Speed equiv.</th><th>Displacement</th><th>SNR</th><th>Region (x, y, w × h px)</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <p class="help" id="sev"></p>
+        <div id="warn"></div>
+      </div>
+
+      <div class="tabpanel panel" data-panel="log" role="tabpanel" hidden>
+        <ol id="trace2" class="trace"></ol>
+      </div>
+
+      <div class="tabpanel panel" data-panel="wo" role="tabpanel" hidden>
+        <p>The work order holds the verdict, findings, capture settings and measurement limitations, ready to attach to a CMMS ticket.</p>
+        <div class="dl-row" id="dlRow">
+          <a class="btn btn-dark" id="dlMd" target="_blank" rel="noopener" download>Download Markdown</a>
+          <a class="btn btn-ghost" id="dlJson" target="_blank" rel="noopener" download>Download JSON</a>
+        </div>
+        <p class="empty" id="noWo" hidden>The fixed baseline does not produce a work order.</p>
+        <h3>Limitations</h3>
+        <ul class="limits">
+          <li>Indicative, camera-based measurement. Not a certified ISO assessment.</li>
+          <li>Frequency is valid only up to half the capture frame rate; record at 2.5× the fault frequency or more.</li>
+          <li>Amplitude is in image pixels unless an image scale was given.</li>
+          <li>Compression, low texture and lighting flicker can mask or fake sub-pixel motion.</li>
+        </ul>
+      </div>
+
+      <footer class="view-foot">
+        <a class="btn btn-ghost" href="#/setup"><span aria-hidden="true">←</span> <span class="long">Adjust setup &amp; re-run</span><span class="short">Setup</span></a>
+        <button type="button" class="btn btn-primary" id="newRun">New analysis</button>
+      </footer>
+    </section>
+  </main>
+</div>
+
 <script src="config.js"></script>
 <script src="app.js"></script>
 </body>
