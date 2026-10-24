@@ -1,0 +1,15 @@
+{
+  "fps": 120.0,
+  "n_frames": 480,
+  "width": 640,
+  "height": 360,
+  "real": true,
+  "expected_hz": 23.33,
+  "expected_source": "machine display reads 1400 RPM (set spin speed, not a measurement)",
+  "source": "https://commons.wikimedia.org/wiki/File:Washing_machine_120fps.webm",
+  "credit": "\"Washing machine 120fps\" by Golha, CC BY-SA 4.0, via Wikimedia Commons",
+  "segment_s": [
+    2.0,
+    6.0
+  ]
+}

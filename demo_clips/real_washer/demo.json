@@ -1,0 +1,10 @@
+{
+  "title": "Real washing machine at 1400 RPM, handheld phone (120 fps)",
+  "description": "Real footage. The display reads 1400 RPM = 23.33 Hz drum speed; the camera is handheld. Source: \"Washing machine 120fps\" by Golha, CC BY-SA 4.0, via Wikimedia Commons.",
+  "expect": "FAULT",
+  "params": {},
+  "fps": 120.0,
+  "duration": 4.0,
+  "credit": "\"Washing machine 120fps\" by Golha, CC BY-SA 4.0, via Wikimedia Commons",
+  "source": "https://commons.wikimedia.org/wiki/File:Washing_machine_120fps.webm"
+}
