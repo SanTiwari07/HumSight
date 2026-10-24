@@ -205,4 +205,4 @@ Fault injected into 1 of 4 textured parts (0.1 px); the other parts are static. 
 
 ## E8 Real clip (fan + coin)
 
-Not run: no real clip present at `demo_clips/real_fan/`. Record one with the protocol in IMPLEMENTATION.md §10 and run `python eval/e8_real.py <clip> --capture-fps 240 --expected-hz <phyphox Hz>`. Synthetic results above are labelled synthetic.
+Not run: no real clip present at `demo_clips/real_fan/`. Record one with the protocol in docs/planning/IMPLEMENTATION.md §10 and run `python eval/e8_real.py <clip> --capture-fps 240 --expected-hz <phyphox Hz>`. Synthetic results above are labelled synthetic.

@@ -1,6 +1,6 @@
 # HumSight work order: FAULT
 
-_2026-10-24T05:34:08+00:00_ · policy: rules
+_2026-10-24T05:49:57+00:00_ · policy: rules
 
 ## Summary
 Localized vibration at 96.001 Hz with amplitude 0.18284 px (SNR 521.89) in ROI [64, 32, 128, 96].

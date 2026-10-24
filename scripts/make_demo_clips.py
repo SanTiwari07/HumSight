@@ -47,8 +47,9 @@ DEMOS = {
     "codec_damaged": dict(
         title="Failure case: same fault as the pump clip, after lossy codec",
         description="Identical scene as pump_shake_fault but round-tripped through an mp4v encoder. "
-                    "The codec smooths the 0.05 px motion away, so the fault is missed (documented limitation).",
-        expect="FAULT (expected miss)", params={}, p=dict(parts=[part(58.5, 0.05)], shake=SHAKE, codec_roundtrip=True)),
+                    "The codec removes the real 0.05 px motion and leaves low-frequency artefacts, so the agent "
+                    "reports a spurious fault at the wrong frequency instead of 58.5 Hz (documented limitation).",
+        expect="wrong result (documented failure)", params={}, p=dict(parts=[part(58.5, 0.05)], shake=SHAKE, codec_roundtrip=True)),
 }
 
 

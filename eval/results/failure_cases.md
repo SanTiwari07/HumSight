@@ -38,7 +38,7 @@ Built to break the tool; results are reported as found.
 - texture coverage: 0.0; noise floor: None px; lighting_flicker: None
 - why: Phase correlation needs gradient energy. Patches below TEXTURE_MIN are dropped; with almost none left the agent must ask for review rather than report a negative (an earlier version filed NO_FAULT here: fixed).
 
-![Low texture: amplitude per patch](failure_cases/low_texture/heatmap.png)
+_No heatmap: the agent stopped before measuring any motion._
 
 ## Large motion
 

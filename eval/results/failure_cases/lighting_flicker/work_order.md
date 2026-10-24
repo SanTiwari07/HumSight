@@ -1,6 +1,6 @@
 # HumSight work order: REVIEW
 
-_2026-10-24T05:34:26+00:00_ · policy: rules
+_2026-10-24T05:50:14+00:00_ · policy: rules
 
 ## Summary
 lighting flicker coincides with the detected peak (mean frame brightness oscillates)

@@ -101,7 +101,10 @@ def main():
         L += [f"## {a}", "", f"- scene: {b}", f"- ideal: {c}", f"- actual: **{d['verdict']}** - {d['summary']}",
               f"- texture coverage: {p.get('texture_coverage')}; noise floor: {k.get('noise_floor_px')} px; "
               f"lighting_flicker: {k.get('lighting_flicker')}", f"- why: {why}", ""]
-        L += [f"![{a}: amplitude per patch](failure_cases/{DIRS[a]}/heatmap.png)", ""]
+        if os.path.exists(os.path.join(OUT, DIRS[a], "heatmap.png")):
+            L += [f"![{a}: amplitude per patch](failure_cases/{DIRS[a]}/heatmap.png)", ""]
+        else:
+            L += ["_No heatmap: the agent stopped before measuring any motion._", ""]
     open(os.path.join(C.RESULTS, "failure_cases.md"), "w", encoding="utf-8").write("\n".join(L) + "\n")
     print("\n".join(L))
 
