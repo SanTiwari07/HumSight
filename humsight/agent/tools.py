@@ -409,16 +409,18 @@ def request_review(state: JobState, reason: str, suggestion: str) -> dict:
 
 
 def file_report(state: JobState, verdict: str, summary: str) -> dict:
+    if state.cls is None:
+        # Never classified, or compensate_shake invalidated the classification. Not terminal: the model can fix it.
+        return {"error": "no current classification (compensate_shake resets it). "
+                         "Call classify_peaks first, then call file_report again."}
     note = None
-    cls = state.cls or {}
+    cls = state.cls
     if verdict == "FAULT" and not cls.get("faults"):
         verdict, note = "REVIEW", "verdict FAULT without a classified fault was downgraded to REVIEW"
     elif verdict == "NO_FAULT" and cls.get("faults"):
         verdict, note = "REVIEW", "verdict NO_FAULT contradicts a classified fault; downgraded to REVIEW"
-    elif verdict == "NO_FAULT" and cls and cls.get("n_valid_patches", 1) == 0:
+    elif verdict == "NO_FAULT" and cls.get("n_valid_patches", 1) == 0:
         verdict, note = "REVIEW", "NO_FAULT with no usable (textured) patches downgraded to REVIEW"
-    elif verdict == "NO_FAULT" and not cls:
-        verdict, note = "REVIEW", "NO_FAULT filed before classify_peaks; downgraded to REVIEW"
     if note:
         state.trace.note(note, source="guard")
     bad = guard.check(summary, known_numbers(state))

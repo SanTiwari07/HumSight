@@ -126,3 +126,40 @@ def test_low_texture_asks_for_review_instead_of_no_fault(tmp_path):
     flat = (flat + np.random.default_rng(1).normal(0, 1.0, flat.shape)).clip(0, 255).astype(np.uint8)
     _, r = _run((flat, {}), tmp_path)
     assert r["verdict"] == "REVIEW" and "low texture" in r["reason"]
+
+
+class _Sequence:
+    """A fake LLM that replays a fixed list of (tool, args) actions."""
+    name = "llm"
+
+    def __init__(self, actions):
+        self.actions, self.i = list(actions), 0
+
+    def next_action(self, system, history, tools):
+        if self.i >= len(self.actions):
+            return {"final": True}
+        tool, args = self.actions[self.i]
+        self.i += 1
+        return {"tool": tool, "args": args, "rationale": ""}
+
+
+def test_stale_classification_returns_an_error_and_the_model_can_recover(shake_only, tmp_path):
+    # compensate_shake invalidates the classification: filing right after it must be refused, not downgraded
+    report = ("file_report", {"verdict": "NO_FAULT", "summary": "Only camera shake was found."})
+    seq = [("probe_clip", {}), ("scan_motion", {"grid": "coarse"}), ("classify_peaks", {}),
+           ("compensate_shake", {"method": "subtract"}), report,
+           ("classify_peaks", {}), report]
+    st, r = _run(shake_only, tmp_path, provider=_Sequence(seq))
+    tools = [e for e in r["trace"] if e["kind"] == "tool"]
+    first_report = next(e for e in tools if e["tool"] == "file_report")
+    assert "error" in first_report["result"] and "classify_peaks" in first_report["result"]["error"]
+    assert r["verdict"] == "NO_FAULT"            # the model fixed its ordering and the verdict stood
+    assert [e["tool"] for e in tools].count("file_report") == 2
+    assert not [e for e in r["trace"] if e["kind"] == "note" and e["source"] == "guard"]
+
+
+def test_file_report_without_any_classification_is_refused(quiet, tmp_path):
+    seq = [("probe_clip", {}), ("file_report", {"verdict": "NO_FAULT", "summary": "Nothing."})]
+    st, r = _run(quiet, tmp_path, provider=_Sequence(seq))
+    assert "error" in next(e for e in r["trace"] if e["tool"] == "file_report")["result"]
+    assert r["verdict"] == "REVIEW"              # never ended with a report, so the loop forced a review
