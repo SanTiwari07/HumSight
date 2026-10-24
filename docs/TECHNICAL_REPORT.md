@@ -57,7 +57,7 @@ The agent runs a bounded perception → decision → action loop over eight type
 
 **Guardrails.** Schema-validated arguments; at most 10 tool calls and 3 magnifications, with the 10th call forced to a terminal tool; a `FAULT` verdict with no classified fault (or `NO_FAULT` with one, or with no textured patch) is downgraded to `REVIEW`; the **number guard** compares every number in the model's summary and rationale with the tool results (2% tolerance, small integers allowed as counts) and substitutes a template summary when one is unverified (tested with a scripted "lying" provider); the model never sees video, only compact numeric results (≤ 1.5 KB).
 
-**What is and is not verified.** The Gemini provider is tested against a fake client (conversation wiring, schema declarations, loop integration) and was run live against the real API on the Lambda deployment (headline demo) and on all 12 E5 clips (`eval/e5_gemini.py`, table below): 84 of 84 tool calls were chosen by the model, none fell back to the rules policy, the verdict was correct on 11 of 12 clips, and no camera-shake peak was magnified. The one miss (shake only #2, REVIEW instead of NO_FAULT) was a procedural error by the model: it called `compensate_shake` a third time and then `file_report` without re-running `classify_peaks`, and the consistency guard turned the unsupported NO_FAULT into REVIEW (a safe escalation, not a false alarm). One model, one run per clip, temperature 0.2, no repeats: not enough to estimate variance. The other evaluation tables (E1 to E4, E6) use the rules policy.
+**What is and is not verified.** The Gemini provider is tested against a fake client (conversation wiring, schema declarations, loop integration) and was run live against the real API on the Lambda deployment (headline demo) and twice on all 12 E5 clips (`eval/e5_gemini.py`, table below). **Before** a change to `file_report`: 84 of 84 tool calls were chosen by the model, none fell back to the rules policy, 11 of 12 verdicts were correct and no camera-shake peak was magnified; the one miss (shake only #2, REVIEW instead of NO_FAULT) was a procedural error by the model: it called `compensate_shake` a third time and then `file_report` without re-running `classify_peaks`, and a guard turned the unsupported NO_FAULT into REVIEW (a safe escalation, not a false alarm). `file_report` was then changed to refuse a stale classification and tell the model to run `classify_peaks`. **After** the change: 89 of 89 calls chosen by the model, no fallbacks, 12 of 12 correct. **But the new refusal fired 0 times in that run**, and the model's tool sequence differed between the two runs on 6 of 12 clips, so the improvement is best read as ordinary run-to-run variation of the model, not as an effect of the change; one run per clip each cannot separate the two. The change itself is covered by unit tests with a scripted model and has not been exercised against the live model. One model, temperature 0.2. The other evaluation tables (E1 to E4, E6) use the rules policy.
 
 ## 5. AWS deployment
 
@@ -353,31 +353,38 @@ Fault injected into 1 of 4 textured parts (0.1 px); the other parts are static. 
 
 12 clips (4 groups x 3): shake + hidden fault, shake only, fault only, nothing. ✓ = correct verdict (and for FAULT, the right frequency). 'shake magnified' = the reported fault frequency is the camera-shake frequency.
 
-| clip | truth | agent (rules) | agent (Gemini) | fixed pipeline |
-|---|---|---|---|---|
-| shake+fault #1 | FAULT | FAULT ✓ | FAULT ✓ | FAULT ✗ · shake magnified |
-| shake+fault #2 | FAULT | FAULT ✓ | FAULT ✓ | FAULT ✗ · shake magnified |
-| shake+fault #3 | FAULT | FAULT ✓ | FAULT ✓ | FAULT ✗ · shake magnified |
-| shake only #1 | NO_FAULT | NO_FAULT ✓ | NO_FAULT ✓ | FAULT ✗ · shake magnified |
-| shake only #2 | NO_FAULT | NO_FAULT ✓ | REVIEW ✗ | FAULT ✗ · shake magnified |
-| shake only #3 | NO_FAULT | NO_FAULT ✓ | NO_FAULT ✓ | FAULT ✗ · shake magnified |
-| fault only #1 | FAULT | FAULT ✓ | FAULT ✓ | NO_FAULT ✗ |
-| fault only #2 | FAULT | FAULT ✓ | FAULT ✓ | FAULT ✓ |
-| fault only #3 | FAULT | FAULT ✓ | FAULT ✓ | FAULT ✓ |
-| nothing #1 | NO_FAULT | NO_FAULT ✓ | NO_FAULT ✓ | NO_FAULT ✓ |
-| nothing #2 | NO_FAULT | NO_FAULT ✓ | NO_FAULT ✓ | NO_FAULT ✓ |
-| nothing #3 | NO_FAULT | NO_FAULT ✓ | NO_FAULT ✓ | NO_FAULT ✓ |
+| clip | truth | agent (rules) | agent (Gemini, before) | agent (Gemini, after) | fixed pipeline |
+|---|---|---|---|---|---|
+| shake+fault #1 | FAULT | FAULT ✓ | FAULT ✓ | FAULT ✓ | FAULT ✗ · shake magnified |
+| shake+fault #2 | FAULT | FAULT ✓ | FAULT ✓ | FAULT ✓ | FAULT ✗ · shake magnified |
+| shake+fault #3 | FAULT | FAULT ✓ | FAULT ✓ | FAULT ✓ | FAULT ✗ · shake magnified |
+| shake only #1 | NO_FAULT | NO_FAULT ✓ | NO_FAULT ✓ | NO_FAULT ✓ | FAULT ✗ · shake magnified |
+| shake only #2 | NO_FAULT | NO_FAULT ✓ | REVIEW ✗ | NO_FAULT ✓ | FAULT ✗ · shake magnified |
+| shake only #3 | NO_FAULT | NO_FAULT ✓ | NO_FAULT ✓ | NO_FAULT ✓ | FAULT ✗ · shake magnified |
+| fault only #1 | FAULT | FAULT ✓ | FAULT ✓ | FAULT ✓ | NO_FAULT ✗ |
+| fault only #2 | FAULT | FAULT ✓ | FAULT ✓ | FAULT ✓ | FAULT ✓ |
+| fault only #3 | FAULT | FAULT ✓ | FAULT ✓ | FAULT ✓ | FAULT ✓ |
+| nothing #1 | NO_FAULT | NO_FAULT ✓ | NO_FAULT ✓ | NO_FAULT ✓ | NO_FAULT ✓ |
+| nothing #2 | NO_FAULT | NO_FAULT ✓ | NO_FAULT ✓ | NO_FAULT ✓ | NO_FAULT ✓ |
+| nothing #3 | NO_FAULT | NO_FAULT ✓ | NO_FAULT ✓ | NO_FAULT ✓ | NO_FAULT ✓ |
 
 | policy | correct | shake wrongly magnified |
 |---|---|---|
 | agent (rules) | 12/12 | 0 |
-| agent (Gemini) | 11/12 | 0 |
-| fixed | 5/12 | 6 |
+| agent (Gemini, before) | 11/12 | 0 |
+| agent (Gemini, after) | 12/12 | 0 |
+| fixed pipeline | 5/12 | 6 |
 
-Gemini column: live API run on 2026-10-24 (model `gemini-flash-latest`, sequential, paced at 7 s between calls). 84 of 84 tool calls were chosen by the model; 12 of 12 clips ran entirely on Gemini and 0 fell back to the rules policy partway; the number guard fired 0 time(s).
-### Gemini run details
+**Gemini, before** live API run on 2026-10-24 (model `gemini-flash-latest`, code at commit `835bf9d`, sequential, paced at 7 s between calls): 84 of 84 tool calls were chosen by the model; 12 of 12 clips ran entirely on Gemini and 0 fell back to the rules policy partway; the number guard fired 0 time(s); `file_report` was refused for a stale classification 0 time(s).
 
-| clip | verdict | tool calls (model / total) | tool sequence | fallback / guard notes | seconds |
+**Gemini, after** live API run on 2026-10-24 (model `gemini-flash-latest`, code at commit `de57672`, sequential, paced at 7 s between calls): 89 of 89 tool calls were chosen by the model; 12 of 12 clips ran entirely on Gemini and 0 fell back to the rules policy partway; the number guard fired 0 time(s); `file_report` was refused for a stale classification 0 time(s).
+
+'before' = the first run, when `file_report` silently downgraded a verdict filed without a current classification; 'after' = the rerun in which `file_report` returns an error telling the model to run `classify_peaks`. Both runs used the same clips, model, prompt and settings, one run per clip each.
+
+**How to read the difference (11/12 before, 12/12 after).** In the 'after' run the new refusal fired 0 time(s), so the change was never exercised against the live model. The model's tool sequence nevertheless differed between the two runs on 6 of 12 clips. The change of outcome on the failing clip therefore cannot be credited to the change: it is consistent with ordinary run-to-run variation of the model, and one run each cannot separate the two. What the change is known to do is covered by unit tests with a scripted model (a stale `file_report` is refused, the model can classify again and then file).
+### Gemini run details (before)
+
+| clip | verdict | calls (model / total) | tool sequence | refusals / guard notes | seconds |
 |---|---|---|---|---|---|
 | shake+fault #1 | FAULT | 8/8 | probe clip > scan motion > compensate shake > classify peaks > scan motion > assess severity > magnify > file report | - | 61.5 |
 | shake+fault #2 | FAULT | 8/8 | probe clip > scan motion > compensate shake > classify peaks > scan motion > assess severity > magnify > file report | - | 59.2 |
@@ -392,7 +399,22 @@ Gemini column: live API run on 2026-10-24 (model `gemini-flash-latest`, sequenti
 | nothing #2 | NO_FAULT | 6/6 | probe clip > scan motion > classify peaks > scan motion > classify peaks > file report | - | 47.9 |
 | nothing #3 | NO_FAULT | 4/4 | probe clip > scan motion > classify peaks > file report | - | 45.7 |
 
-The model's tool sequence differed from the rules policy's on 11 of 12 clips.
+### Gemini run details (after)
+
+| clip | verdict | calls (model / total) | tool sequence | refusals / guard notes | seconds |
+|---|---|---|---|---|---|
+| shake+fault #1 | FAULT | 8/8 | probe clip > scan motion > compensate shake > classify peaks > scan motion > assess severity > magnify > file report | - | 61.8 |
+| shake+fault #2 | FAULT | 8/8 | probe clip > scan motion > compensate shake > classify peaks > scan motion > assess severity > magnify > file report | - | 59.0 |
+| shake+fault #3 | FAULT | 8/8 | probe clip > scan motion > compensate shake > classify peaks > scan motion > assess severity > magnify > file report | - | 60.1 |
+| shake only #1 | NO_FAULT | 7/7 | probe clip > scan motion > compensate shake > classify peaks > compensate shake > classify peaks > file report | - | 60.3 |
+| shake only #2 | NO_FAULT | 7/7 | probe clip > scan motion > compensate shake > classify peaks > compensate shake > classify peaks > file report | - | 61.7 |
+| shake only #3 | NO_FAULT | 7/7 | probe clip > scan motion > compensate shake > classify peaks > compensate shake > classify peaks > file report | - | 58.1 |
+| fault only #1 | FAULT | 7/7 | probe clip > scan motion > classify peaks > scan motion > magnify > assess severity > file report | - | 48.7 |
+| fault only #2 | FAULT | 7/7 | probe clip > scan motion > classify peaks > scan motion > assess severity > magnify > file report | - | 49.5 |
+| fault only #3 | FAULT | 7/7 | probe clip > scan motion > classify peaks > scan motion > assess severity > magnify > file report | - | 48.4 |
+| nothing #1 | NO_FAULT | 9/9 | probe clip > scan motion > classify peaks > scan motion > scan motion > scan motion > compensate shake > classify peaks > file report | - | 70.6 |
+| nothing #2 | NO_FAULT | 8/8 | probe clip > scan motion > classify peaks > scan motion > scan motion > compensate shake > classify peaks > file report | - | 58.2 |
+| nothing #3 | NO_FAULT | 6/6 | probe clip > scan motion > classify peaks > scan motion > classify peaks > file report | - | 61.5 |
 
 ## E6 Aliasing guard
 

@@ -26,7 +26,7 @@ Plain `cv2.phaseCorrelate` gave gross outliers on our test textures; the iterati
 
 ## Accomplishments
 
-Numbers to quote come from `eval/results/summary.md` (generated): frequency and amplitude accuracy, detection floor per noise level, 24/24 localisation hits, 12/12 correct verdicts for the rules agent and 11/12 for the live Gemini agent (84 of 84 tool calls chosen by the model, no fallbacks) against 5/12 for a fixed pipeline that magnifies shake, and 9/9 aliasing cases sent to review. All on synthetic ground truth; E8 (a real fan clip) is **TODO**.
+Numbers to quote come from `eval/results/summary.md` (generated): frequency and amplitude accuracy, detection floor per noise level, 24/24 localisation hits, 12/12 correct verdicts for the rules agent and, for the live Gemini agent, 11/12 in a first run and 12/12 in a rerun (all tool calls chosen by the model, no fallbacks; the two runs differed on 6/12 clips' tool sequences, so we treat the gap as run-to-run variation) against 5/12 for a fixed pipeline that magnifies shake, and 9/9 aliasing cases sent to review. All on synthetic ground truth; E8 (a real fan clip) is **TODO**.
 
 ## What we learned
 
