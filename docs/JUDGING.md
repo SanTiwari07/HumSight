@@ -8,7 +8,7 @@ Everything below works on a laptop with Python 3.12 or newer. The public endpoin
 git clone https://github.com/SanTiwari07/HumSight && cd HumSight
 python -m venv .venv && source .venv/bin/activate        # Windows: .venv\Scripts\activate
 pip install -r requirements.txt                          # pinned
-python -m pytest                                         # 31 tests, about 2 minutes
+python -m pytest                                         # 33 tests, about 2 minutes
 python scripts/make_demo_clips.py                        # six deterministic synthetic clips (~50 MB each)
 uvicorn server.app:app --port 8000                       # open http://localhost:8000
 ```
@@ -54,5 +54,5 @@ python scripts/embed_results.py   # copy generated results into README and the r
 
 - **Public page:** https://santiwari07.github.io/HumSight/ (static page on GitHub Pages; it calls the Lambda endpoint below).
 - **Public endpoint:** AWS Lambda Function URL `https://ce75ttmqcc5g3il7yefnupx6ee0qydmz.lambda-url.us-east-1.on.aws/` (arm64, OpenCV 5.0.0). Requests need the `X-Demo-Token` header; the page sends it. Clips are capped at 4 s; the demo clips are on S3. `GET /health` shows `cool: false` because this is the stock OpenCV wheel (COOL is the separate Graviton4 benchmark).
-- **Live COOL screen-share:** available on request once the Graviton4 instance has been run; the instance is started only for the session.
-- **Demo video:** pending, to be recorded after deployment.
+- **COOL on Graviton4:** the whole pipeline and the web app ran on an EC2 `c8g.large` Spot instance from the COOL AMI on 24 October 2026, with stock OpenCV on the same instance as the baseline. The evidence is in [COOL.md](COOL.md) and `bench/`. The instance has been terminated; a live screen-share is available on request if the organisers want one.
+- **Demo video (4:46):** https://youtu.be/VsnxVrgh-zU

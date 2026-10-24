@@ -1,6 +1,6 @@
 # Devpost submission text (draft)
 
-Copy into the Devpost form. Fields marked **TODO** depend on the deployment and the video, which are not finished; fill them in before submitting (deadline: 26 Oct 2026, 11:59 p.m. Pacific Time). Do not paste any number that is not in a generated file.
+Early draft; the submitted story is [DEVPOST_STORY.md](DEVPOST_STORY.md). The deployment and the video are finished. Fill in the team field before submitting (deadline: 26 Oct 2026, 11:59 p.m. Pacific Time). Do not paste any number that is not in a generated file.
 
 **Project name:** HumSight
 
@@ -26,7 +26,7 @@ Plain `cv2.phaseCorrelate` gave gross outliers on our test textures; the iterati
 
 ## Accomplishments
 
-Numbers to quote come from `eval/results/summary.md` (generated): frequency and amplitude accuracy, detection floor per noise level, 24/24 localisation hits, 12/12 correct verdicts for the rules agent and, for the live Gemini agent, 11/12 in a first run and 12/12 in a rerun (all tool calls chosen by the model, no fallbacks; the two runs differed on 6/12 clips' tool sequences, so we treat the gap as run-to-run variation) against 5/12 for a fixed pipeline that magnifies shake, and 9/9 aliasing cases sent to review. All on synthetic ground truth; E8 (a real fan clip) is **TODO**.
+Numbers to quote come from `eval/results/summary.md` (generated): frequency and amplitude accuracy, detection floor per noise level, 24/24 localisation hits, 12/12 correct verdicts for the rules agent and, for the live Gemini agent, 11/12 in a first run and 12/12 in a rerun (all tool calls chosen by the model, no fallbacks; the two runs differed on 6/12 clips' tool sequences, so we treat the gap as run-to-run variation) against 5/12 for a fixed pipeline that magnifies shake, and 9/9 aliasing cases sent to review. All on synthetic ground truth; E8 (a real fan clip) has not been run; one real washing-machine clip is shown as an indicative result only.
 
 ## What we learned
 
@@ -40,12 +40,12 @@ A real-footage evaluation, a live Gemini evaluation, ISO 20816 thresholds from a
 
 `opencv`, `python`, `numpy`, `fastapi`, `aws-lambda`, `amazon-s3`, `aws-systems-manager`, `amazon-ec2`, `aws-graviton`, `cool-opencv`, `gemini`, `javascript`, `chart.js`, `github-pages`  (list only what is deployed when you submit).
 
-## Links (TODO)
+## Links
 
 - Code repository: https://github.com/SanTiwari07/HumSight
-- Public endpoint or live screen-share arrangement: **TODO**
-- Video (≤ 5 minutes, public or unlisted): **TODO, to be recorded after deployment**
-- Technical report: `docs/TECHNICAL_REPORT.md`
+- Public endpoint: https://santiwari07.github.io/HumSight/ (static page calling an AWS Lambda Function URL)
+- Video (4:46, public): https://youtu.be/VsnxVrgh-zU
+- Technical report: https://github.com/SanTiwari07/HumSight/blob/main/docs/TECHNICAL_REPORT.md
 
 ## Team (TODO)
 

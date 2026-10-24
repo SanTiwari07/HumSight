@@ -67,7 +67,7 @@ The agent runs a bounded perception → decision → action loop over eight type
 - Live session: an EC2 `c8g.large` Spot instance from the COOL Graviton4 AMI runs the FastAPI server for screen-share demos and the benchmark, then is terminated.
 - Controls: a zero-spend budget and a $1 budget before anything is launched; teardown checklist in `scripts/teardown_checklist.md`.
 
-**Status: deployed and tested** (us-east-1). Lambda `humsight` (arm64, python3.12, 3008 MB, 120 s) with the OpenCV 5 layer, a private S3 bucket, an SSM SecureString for the Gemini key and a public Function URL; the page at https://santiwari07.github.io/HumSight/ calls it. Measured on this deployment: the headline demo returns FAULT at 58.497 Hz in 18 s wall time with the rules policy and in 42 s with the Gemini policy (8 model-chosen calls); a healthy-machine demo returns NO_FAULT in 4 s. Not done: reserved concurrency (the default account quota of 10 does not allow it), a load test, and the EC2/COOL instance.
+**Status: deployed and tested** (us-east-1). Lambda `humsight` (arm64, python3.12, 3008 MB, 120 s) with the OpenCV 5 layer, a private S3 bucket, an SSM SecureString for the Gemini key and a public Function URL; the page at https://santiwari07.github.io/HumSight/ calls it. Measured on this deployment: the headline demo returns FAULT at 58.497 Hz in 18 s wall time with the rules policy and in 42 s with the Gemini policy (8 model-chosen calls); a healthy-machine demo returns NO_FAULT in 4 s. Not done: reserved concurrency (the default account quota of 10 does not allow it) and a load test. The EC2/COOL benchmark was run separately (section 6).
 
 ## 6. COOL on Graviton4
 
@@ -510,7 +510,7 @@ Other limitations:
 - Sub-pixel amplitude has a measurable floor: below about 0.02 px (low noise) to 0.1 px (high noise) the fault is not detected; a 1 px motion reads about 8% low.
 - Frequency is only valid below Nyquist; the aliasing guard needs the expected Hz or RPM from the user.
 - A machine that fills the frame and vibrates as a whole is indistinguishable from camera shake by this method.
-- Results on real footage are not yet measured; synthetic textures and noise are simpler than real scenes.
+- Real footage is only lightly tested: the E8 fan-with-coin experiment has not been run, and the one real clip (`real_washer`, a handheld washing machine) has no measured ground truth, only a display reading of 1400 RPM, so it is indicative, not an accuracy figure. Synthetic textures and noise are simpler than real scenes.
 - Severity is indicative: ISO 20816 zones are not reported until thresholds from a cited part and machine class are configured.
 
 ## 9. Responsible use
@@ -525,7 +525,7 @@ Other limitations:
 
 ```bash
 pip install -r requirements.txt            # pinned
-python -m pytest                           # 31 tests
+python -m pytest                           # 33 tests
 python scripts/make_demo_clips.py          # deterministic demo clips
 python eval/run_all.py                     # regenerates every table and plot (about 18 min on 12 cores)
 python eval/failure_cases.py
@@ -537,4 +537,4 @@ Versions used for the results above: OpenCV 5.0.0 (`opencv-python-headless==5.0.
 
 ## 11. Credits
 
-Wu, Rubinstein, Shih, Guttag, Durand, Freeman, *Eulerian Video Magnification for Revealing Subtle Changes in the World*, SIGGRAPH 2012. Hrazdira et al., iterative phase correlation (as implemented in OpenCV). OpenCV and Cloud-Optimized OpenCV (COOL). Fraunces and Hanken Grotesk (open fonts) for the UI. All clips in this repository are synthetic.
+Wu, Rubinstein, Shih, Guttag, Durand, Freeman, *Eulerian Video Magnification for Revealing Subtle Changes in the World*, SIGGRAPH 2012. Hrazdira et al., iterative phase correlation (as implemented in OpenCV). OpenCV and Cloud-Optimized OpenCV (COOL). Fraunces and Hanken Grotesk (open fonts) for the UI. The demo clips in this repository are synthetic, except `real_washer`, a handheld 120 fps washing-machine video from Wikimedia Commons (CC BY-SA 4.0).
