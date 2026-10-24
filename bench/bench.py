@@ -36,10 +36,10 @@ STAGES = ["load+downscale", "stabilise(warp)", "patch_shifts(coarse)", "patch_sh
           "spectra", "magnify(ROI)", "encode"]
 
 
-def make_clips(quick: bool) -> dict[str, str]:
+def make_clips(quick: bool, size: tuple[int, int, float] | None = None) -> dict[str, str]:
     """Synthetic benchmark clips written once as mp4v (so 'load' includes real decode)."""
     os.makedirs(DATA, exist_ok=True)
-    W, H, dur = (320, 240, 1.0) if quick else (640, 360, 4.0)
+    W, H, dur = size or ((320, 240, 1.0) if quick else (640, 360, 4.0))
     specs = {
         "synth_clean": dict(parts=[synth.default_part(58.5, 0.05, bbox=(W // 2, H // 4, W // 3, H // 3))], shake=None),
         "synth_shake": dict(parts=[synth.default_part(58.5, 0.05, bbox=(W // 2, H // 4, W // 3, H // 3))],
@@ -118,12 +118,14 @@ def micro(shape=(360, 640), n=200) -> dict[str, float]:
     return out
 
 
-def bench(label: str, out: str, runs: int, quick: bool, extra_clips: list[str]) -> None:
-    clips = make_clips(quick)
+def bench(label: str, out: str, runs: int, quick: bool, extra_clips: list[str],
+          size: tuple[int, int, float] | None = None) -> None:
+    clips = make_clips(quick, size)
     for i, p in enumerate(extra_clips):
         clips[f"real_{i}"] = p
     meta = {"label": label, "date": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
             "uname": platform.platform(), "python": sys.version.split()[0], "runs": runs,
+            "workload": {"clips": list(clips), "size": list(size) if size else ("quick" if quick else [640, 360, 4.0])},
             "env": env.cv2_info(), "instance_type": os.environ.get("INSTANCE_TYPE", ""),
             "ami_id": os.environ.get("AMI_ID", "")}
     try:
@@ -204,6 +206,9 @@ def main():
     ap.add_argument("--out")
     ap.add_argument("--runs", type=int, default=7)
     ap.add_argument("--quick", action="store_true", help="small clips, for a smoke test")
+    ap.add_argument("--width", type=int, help="synthetic clip width (default 640)")
+    ap.add_argument("--height", type=int, help="synthetic clip height (default 360)")
+    ap.add_argument("--dur", type=float, help="synthetic clip seconds at 240 fps (default 4; 960 frames need > 4 GB RAM)")
     ap.add_argument("--clip", action="append", default=[], help="extra real clip (capture fps 240)")
     ap.add_argument("--compare", nargs=2)
     ap.add_argument("--md")
@@ -212,7 +217,8 @@ def main():
     if a.compare:
         compare(a.compare[0], a.compare[1], a.md or "bench/RESULTS.md", a.spot_price)
     else:
-        bench(a.label or "local", a.out or "bench/local.json", a.runs, a.quick, a.clip)
+        size = (a.width or 640, a.height or 360, a.dur or 4.0) if (a.width or a.height or a.dur) else None
+        bench(a.label or "local", a.out or "bench/local.json", a.runs, a.quick, a.clip, size)
 
 
 if __name__ == "__main__":
