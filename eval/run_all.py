@@ -266,7 +266,7 @@ def e8():
     clip = os.path.join(C.ROOT, "demo_clips", "real_fan", "clip.mp4")
     if not os.path.exists(clip):
         return ("## E8 Real clip (fan + coin)\n\nNot run: no real clip present at `demo_clips/real_fan/`. "
-                "Record one with the protocol in IMPLEMENTATION.md §10 and run `python eval/e8_real.py <clip> "
+                "Record one with the protocol in docs/planning/IMPLEMENTATION.md §10 and run `python eval/e8_real.py <clip> "
                 "--capture-fps 240 --expected-hz <phyphox Hz>`. Synthetic results above are labelled synthetic.")
     return "## E8 Real clip (fan + coin)\n\nSee `eval/results/e8.md` (written by `eval/e8_real.py`)."
 
