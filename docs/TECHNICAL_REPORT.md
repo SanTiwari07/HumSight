@@ -537,4 +537,6 @@ Versions used for the results above: OpenCV 5.0.0 (`opencv-python-headless==5.0.
 
 ## 11. Credits
 
+Built by Team HoloDuet: Sanskar Tiwari and Shambhavi Patil.
+
 Wu, Rubinstein, Shih, Guttag, Durand, Freeman, *Eulerian Video Magnification for Revealing Subtle Changes in the World*, SIGGRAPH 2012. Hrazdira et al., iterative phase correlation (as implemented in OpenCV). OpenCV and Cloud-Optimized OpenCV (COOL). Fraunces and Hanken Grotesk (open fonts) for the UI. The demo clips in this repository are synthetic, except `real_washer`, a handheld 120 fps washing-machine video from Wikimedia Commons (CC BY-SA 4.0).

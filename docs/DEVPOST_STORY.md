@@ -202,4 +202,6 @@ Today HumSight is **indicative, not certified.** Every report says *Indicative, 
 - Technical report: https://github.com/SanTiwari07/HumSight/blob/main/docs/TECHNICAL_REPORT.md
 - Evaluation results: https://github.com/SanTiwari07/HumSight/blob/main/eval/results/summary.md
 
+**Team HoloDuet:** Sanskar Tiwari and Shambhavi Patil.
+
 **HumSight. See what machines are humming.**

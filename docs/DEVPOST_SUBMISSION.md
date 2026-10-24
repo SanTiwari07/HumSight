@@ -1,6 +1,6 @@
 # Devpost submission text (draft)
 
-Early draft; the submitted story is [DEVPOST_STORY.md](DEVPOST_STORY.md). The deployment and the video are finished. Fill in the team field before submitting (deadline: 26 Oct 2026, 11:59 p.m. Pacific Time). Do not paste any number that is not in a generated file.
+Early draft; the submitted story is [DEVPOST_STORY.md](DEVPOST_STORY.md). The deployment and the video are finished. Check the team field before submitting (deadline: 26 Oct 2026, 11:59 p.m. Pacific Time). Do not paste any number that is not in a generated file.
 
 **Project name:** HumSight
 
@@ -47,6 +47,6 @@ A real-footage evaluation, a live Gemini evaluation, ISO 20816 thresholds from a
 - Video (4:46, public): https://youtu.be/VsnxVrgh-zU
 - Technical report: https://github.com/SanTiwari07/HumSight/blob/main/docs/TECHNICAL_REPORT.md
 
-## Team (TODO)
+## Team
 
-Names, roles and the team bio required by the form.
+Team HoloDuet: Sanskar Tiwari and Shambhavi Patil.
