@@ -80,7 +80,7 @@ function renderSteps(current) {
   const sum = (k, t) => (document.querySelector(`[data-sum="${k}"]`).textContent = t);
   sum("select", !S.clip ? "Choose a clip" : S.clip.kind === "demo" ? S.clip.title : S.clip.file.name);
   const fps = num("fps");
-  sum("setup", S.clip ? `${fps ? fps + " fps · " : ""}${POLICY[policy()].short}` : "Machine & method");
+  sum("setup", S.clip ? `${fps ? fps + " fps, " : ""}${POLICY[policy()].short.toLowerCase()}` : "Machine and method");
   const j = S.job;
   sum("run", j.status === "idle" ? "Not started" : j.status === "running" ? "Running…" : j.status === "error" ? "Failed" : `Done in ${((j.t1 - j.t0) / 1000).toFixed(1)} s`);
   sum("report", j.result ? (VERDICT[j.result.verdict] || VERDICT.REVIEW).short : "No report yet");
@@ -88,8 +88,6 @@ function renderSteps(current) {
 
 // ================================================================== init
 async function init() {
-  if (window.REPO_URL && !window.REPO_URL.includes("<you>")) $("repoLink").href = window.REPO_URL; else $("repoLink").hidden = true;
-  if (window.VIDEO_URL) { $("videoLink").href = window.VIDEO_URL; $("videoLink").hidden = false; }
   wireSelect(); wireSetup(); wireReport(); wireVideoControls();
   window.addEventListener("hashchange", route);
   route();
@@ -99,14 +97,11 @@ async function init() {
     try { PREFIX = p; h = await api("/health"); break; } catch (e) { h = null; }
   }
   if (!h) {
-    setBadge("API unreachable", "bad", "Start the server: uvicorn server.app:app --port 8000");
     $("demoList").innerHTML = `<p class="alert alert-alarm">Can't reach the analysis service. Start it with <code>uvicorn server.app:app --port 8000</code> and reload.</p>`;
     $("go").disabled = true;
     return;
   }
   MODE = h.mode || "server";
-  const tag = h.cool ? "COOL OpenCV" : "OpenCV " + h.cv2_version;
-  setBadge(`${tag} · ${h.machine || "?"} · ${h.llm === "gemini" ? "Gemini" : "rules agent"}`, "ok", h.cv2_path || "");
   if (MODE === "lambda") $("replayTag").hidden = false;
   if (h.llm !== "gemini") {
     const r = document.querySelector('input[value="llm"]');
@@ -120,21 +115,17 @@ async function init() {
   S.demos.sort((a, b) => rank(a) - rank(b));
   renderDemos();
 }
-function setBadge(text, cls, title) {
-  const b = $("envBadge");
-  b.querySelector("span").textContent = text; b.className = "chip chip-dark " + cls; b.title = title || "";
-}
 
 // ================================================================== step 1: recording
 const EXPECT = {
-  FAULT: ["tag-alarm", "Expect: fault"], NO_FAULT: ["tag-ok", "Expect: normal"], REVIEW: ["tag-warn", "Expect: review"],
+  FAULT: ["alarm", "Expected: alarm"], NO_FAULT: ["ok", "Expected: normal"], REVIEW: ["warn", "Expected: inconclusive"],
 };
 function renderDemos() {
   const box = $("demoList");
   if (!S.demos.length) { box.innerHTML = `<p class="muted">No reference recordings on this server. Generate them with <code>python scripts/make_demo_clips.py</code>, or upload your own below.</p>`; return; }
   box.innerHTML = "";
   for (const d of S.demos) {
-    const [cls, txt] = EXPECT[d.expect] || ["tag-warn", "Known failure case"];
+    const [cls, txt] = EXPECT[d.expect] || ["", "Known failure case"];
     const title = String(d.title || d.id).replace(/\s*\(should be [^)]*\)\s*$/i, "");
     const el = document.createElement("label");
     el.className = "clip-card";
@@ -142,7 +133,7 @@ function renderDemos() {
       <span class="clip-body">
         <span class="clip-title">${esc(title)}</span>
         <span class="clip-desc">${esc(d.description || "")}</span>
-        <span class="clip-meta"><span class="tag ${cls}">${esc(txt)}</span><span>${+Number(d.fps).toFixed(2)} fps</span><span>${+Number(d.duration).toFixed(2)} s</span></span>
+        <span class="clip-meta"><span class="expect ${cls}">${esc(txt)}</span><span>${+Number(d.fps).toFixed(2)} fps</span><span>${+Number(d.duration).toFixed(2)} s</span></span>
       </span>`;
     el.querySelector("input").onchange = () => pickDemo(d, title);
     box.appendChild(el);
@@ -175,7 +166,7 @@ function fileError(msg) { $("fileErr").textContent = msg; $("fileErr").hidden = 
 function showFile(file) {
   $("uploadCard").classList.toggle("selected", !!file);
   $("drop").classList.toggle("has-file", !!file);
-  $("fileName").innerHTML = file ? `<b>${esc(file.name)}</b> · ${(file.size / 1048576).toFixed(1)} MB · <u>change</u>` : "Drop a file here or <u>browse</u>";
+  $("fileName").innerHTML = file ? `<b>${esc(file.name)}</b>, ${(file.size / 1048576).toFixed(1)} MB. <u>Change file</u>` : "Drop a file here or <u>browse</u>";
 }
 function clipChanged() {
   $("toSetup").disabled = !S.clip;
@@ -192,9 +183,9 @@ function wireSelect() {
 
 // ================================================================== step 2: setup
 const POLICY = {
-  rules: { short: "Agent (rules)", long: "Agent · rules" },
-  llm: { short: "Agent (Gemini)", long: "Agent · Gemini" },
-  fixed: { short: "Fixed pipeline", long: "Fixed pipeline (baseline)" },
+  rules: { short: "Agent with rules" },
+  llm: { short: "Agent with Gemini" },
+  fixed: { short: "Fixed pipeline" },
 };
 const policy = () => (document.querySelector('input[name="policy"]:checked') || { value: "rules" }).value;
 function wireSetup() {
@@ -314,7 +305,7 @@ function finish(result, error) {
   } else {
     $("spinner").className = "spinner ok";
     $("runTitle").textContent = "Analysis complete";
-    $("runState").textContent = `${(VERDICT[result.verdict] || VERDICT.REVIEW).short} · ${S.job.trace.filter((e) => e.kind === "tool").length} measurements`;
+    $("runState").textContent = `${(VERDICT[result.verdict] || VERDICT.REVIEW).short} after ${S.job.trace.filter((e) => e.kind === "tool").length} measurements`;
     $("toReport").hidden = false;
     showResult(result);
     if (onRun) setTimeout(() => { if (!$("view-run").hidden && S.job.result === result) go("report"); }, 1200);
@@ -385,13 +376,13 @@ function keyNums(tool, r) {
   const out = pick.filter(([k]) => r[k] !== undefined && r[k] !== null).map(([k, l]) => [`${l} ${fmt(r[k])}`, false]);
   if (r.alias_risk) out.push(["aliasing risk", true]);
   if (r.lighting_flicker) out.push(["lighting flicker", true]);
-  if (r.top_peaks && r.top_peaks[0]) { const p = r.top_peaks[0]; out.push([`top peak ${fmt(p.f_hz)} Hz · ${fmt(p.amp_px)} px · SNR ${fmt(p.snr)}`, false]); }
-  if (r.background_peaks && r.background_peaks[0]) { const p = r.background_peaks[0]; out.push([`background ${fmt(p.f_hz)} Hz · ${fmt(p.amp_px)} px`, false]); }
-  if (r.faults && r.faults[0]) { const p = r.faults[0]; out.push([`fault ${fmt(p.f_hz)} Hz · ${fmt(p.amp_px)} px · SNR ${fmt(p.snr)}`, true]); }
+  if (r.top_peaks && r.top_peaks[0]) { const p = r.top_peaks[0]; out.push([`top peak ${fmt(p.f_hz)} Hz, ${fmt(p.amp_px)} px, SNR ${fmt(p.snr)}`, false]); }
+  if (r.background_peaks && r.background_peaks[0]) { const p = r.background_peaks[0]; out.push([`background ${fmt(p.f_hz)} Hz, ${fmt(p.amp_px)} px`, false]); }
+  if (r.faults && r.faults[0]) { const p = r.faults[0]; out.push([`fault ${fmt(p.f_hz)} Hz, ${fmt(p.amp_px)} px, SNR ${fmt(p.snr)}`, true]); }
   else if (tool === "classify_peaks") out.push(["no fault peak", false]);
   if (r.shake && r.shake[0]) out.push([`shake rejected ${fmt(r.shake[0].f_hz)} Hz`, false]);
-  if (r.refined) out.push([`refined ${fmt(r.refined.f_hz)} Hz · ${fmt(r.refined.amp_px)} px`, true]);
-  if (r.findings && r.findings[0] && tool === "fixed_pipeline") { const p = r.findings[0]; out.push([`strongest peak ${fmt(p.f_hz)} Hz · ${fmt(p.amp_px)} px`, true]); }
+  if (r.refined) out.push([`refined ${fmt(r.refined.f_hz)} Hz, ${fmt(r.refined.amp_px)} px`, true]);
+  if (r.findings && r.findings[0] && tool === "fixed_pipeline") { const p = r.findings[0]; out.push([`strongest peak ${fmt(p.f_hz)} Hz, ${fmt(p.amp_px)} px`, true]); }
   if (r.verdict) out.push([`verdict ${r.verdict.replace("_", " ")}`, true]);
   if (r.state) out.push([`${r.state}: ${r.reason}`, true]);
   if (r.error) out.push([`error: ${r.error}`, true]);
@@ -400,7 +391,7 @@ function keyNums(tool, r) {
 function traceItem(ev) {
   const li = document.createElement("li");
   if (ev.kind === "note") { li.className = "note"; li.textContent = ev.rationale || (ev.result && ev.result.message) || ""; return li; }
-  const src = (ev.source || "").startsWith("llm") ? ["LLM", "tag-req"] : (ev.source || "").startsWith("fixed") ? ["FIXED", "tag-warn"] : ["RULES", ""];
+  const src = (ev.source || "").startsWith("llm") ? ["Gemini", ""] : (ev.source || "").startsWith("fixed") ? ["Fixed", "tag-warn"] : ["Rules", ""];
   const chips = keyNums(ev.tool, ev.result).map(([t, hit]) => `<span class="${hit ? "hit" : ""}">${esc(t)}</span>`).join("");
   li.innerHTML = `<span class="n">${ev.step}</span>
     <div class="hd"><span class="tool">${esc(toolName(ev))}</span><span class="code">${esc(ev.tool)}</span><span class="tag ${src[1]}">${src[0]}</span><span class="ms">${fmt(ev.runtime_ms || 0)} ms</span></div>
@@ -412,15 +403,15 @@ function addTrace(ev) {
   S.job.trace.push(ev);
   const empty = $("trace").querySelector(".empty"); if (empty) empty.remove();
   $("trace").appendChild(traceItem(ev));
-  if (ev.kind === "tool" && S.job.status === "running") $("runState").textContent = `${toolName(ev)} done · measuring next…`;
+  if (ev.kind === "tool" && S.job.status === "running") $("runState").textContent = `${toolName(ev)} done, measuring next…`;
   renderStages();
 }
 
 // ================================================================== step 4: diagnosis
 const VERDICT = {
-  FAULT: { short: "Alarm", label: "Alarm · localized vibration detected", icon: "!" },
-  NO_FAULT: { short: "Normal", label: "Normal · no fault vibration detected", icon: "✓" },
-  REVIEW: { short: "Inconclusive", label: "Inconclusive · needs a human review", icon: "?" },
+  FAULT: { short: "Alarm", label: "Localized vibration detected" },
+  NO_FAULT: { short: "Normal", label: "No fault vibration detected" },
+  REVIEW: { short: "Inconclusive", label: "Needs a human review" },
 };
 function actionFor(r, fixed) {
   if (fixed) return "Don't act on this result alone: the baseline does not reject camera shake. Re-run the same recording with the agent.";
@@ -437,13 +428,15 @@ function showResult(r) {
   const v = VERDICT[r.verdict] ? r.verdict : "REVIEW";
   const V = VERDICT[v];
   $("banner").className = "status-banner " + v;
-  $("statusIcon").textContent = V.icon;
-  $("statusLabel").textContent = fixed ? V.label + " (baseline, unverified)" : V.label;
-  $("summary").textContent = r.summary || r.reason || "";
+  $("statusWord").textContent = V.short;
+  $("statusLabel").textContent = fixed ? V.label + ", from the baseline (unverified)" : V.label;
+  const sm = r.summary || r.reason || "";
+  $("summary").textContent = sm.charAt(0).toUpperCase() + sm.slice(1);
   $("action").textContent = actionFor(r, fixed);
   $("baselineNote").hidden = !fixed;
   const when = new Date().toLocaleString([], { dateStyle: "medium", timeStyle: "short" });
-  $("repMeta").textContent = `${S.job.label.clip} · ${POLICY[r.policy] ? POLICY[r.policy].short : r.policy} · ${when}`;
+  $("repMeta").innerHTML = [["Recording", S.job.label.clip], ["Method", POLICY[r.policy] ? POLICY[r.policy].short : r.policy], ["Run", when]]
+    .map(([k, v]) => `<li><span>${k}</span>${esc(v)}</li>`).join("");
 
   renderKpis(r, fixed);
 
@@ -472,7 +465,7 @@ function showResult(r) {
   // findings
   const tb = $("findings").querySelector("tbody"); tb.innerHTML = "";
   (r.findings || []).forEach((f, i) => {
-    const roi = Array.isArray(f.roi) ? `${f.roi[0]}, ${f.roi[1]} · ${f.roi[2]} × ${f.roi[3]}` : "—";
+    const roi = Array.isArray(f.roi) ? `x ${f.roi[0]}, y ${f.roi[1]}, ${f.roi[2]} × ${f.roi[3]}` : "—";
     tb.insertAdjacentHTML("beforeend", `<tr><td>${i + 1}</td><td>${fmt(f.f_hz)} Hz</td><td>${fmt(f.f_hz * 60)} CPM</td><td>${fmt(f.amp_px)} px</td><td>${fmt(f.snr)}</td><td>${esc(roi)}</td></tr>`);
   });
   if (!(r.findings || []).length) {
@@ -505,7 +498,7 @@ function renderKpis(r, fixed) {
   const tile = (label, value, unit, sub, na) => k.push(`<div class="kpi${na ? " na" : ""}"><p class="kpi-label">${label}</p><p class="kpi-value">${value}${unit ? `<small>${unit}</small>` : ""}</p>${sub ? `<p class="kpi-sub">${sub}</p>` : ""}</div>`);
   if (f) {
     tile("Dominant frequency", fmt(f.f_hz), "Hz", `${fmt(f.f_hz * 60)} CPM`);
-    tile("Displacement", s.amp_mm != null ? fmt(s.amp_mm) : fmt(f.amp_px), s.amp_mm != null ? "mm" : "px", s.amp_mm != null ? `${fmt(f.amp_px)} px · zero-to-peak` : "zero-to-peak, image pixels");
+    tile("Displacement", s.amp_mm != null ? fmt(s.amp_mm) : fmt(f.amp_px), s.amp_mm != null ? "mm" : "px", s.amp_mm != null ? `${fmt(f.amp_px)} px, zero-to-peak` : "zero-to-peak, image pixels");
     tile("Velocity RMS", s.v_rms_mm_s != null ? fmt(s.v_rms_mm_s) : "n/a", s.v_rms_mm_s != null ? "mm/s" : "", s.v_rms_mm_s != null ? (s.zone ? `zone ${esc(s.zone)}` : "indicative") : "needs an image scale", s.v_rms_mm_s == null);
     tile("Signal / noise", fmt(f.snr), "×", f.snr >= 6 ? "clear peak" : "weak peak");
   } else if (!cls) {
@@ -516,11 +509,11 @@ function renderKpis(r, fixed) {
     if (cls && cls.noise_floor_px != null) tile("Noise floor", fmt(cls.noise_floor_px), "px");
   }
   if (fixed) tile("Camera shake", "Not checked", "", "baseline has no shake step", true);
-  else if (shake && shake.bg_peak_hz != null) tile("Camera shake", "Removed", "", `${fmt(shake.bg_peak_hz)} Hz · ${fmt(shake.bg_amp_px)} px`);
+  else if (shake && shake.bg_peak_hz != null) tile("Camera shake", "Removed", "", `${fmt(shake.bg_peak_hz)} Hz, ${fmt(shake.bg_amp_px)} px`);
   else if (cls) tile("Camera shake", "None", "", "steady camera");
   else tile("Camera shake", "Not measured", "", "the analysis stopped early", true);
   const cap = r.capture || {};
-  if (cap.fps) tile("Recording", fmt(cap.fps), "fps", `${cap.duration_s ? fmt(cap.duration_s) + " s · " : ""}${cap.width ? cap.width + "×" + cap.height : ""}`);
+  if (cap.fps) tile("Recording", fmt(cap.fps), "fps", `${cap.duration_s ? fmt(cap.duration_s) + " s" : ""}${cap.width ? `, ${cap.width} × ${cap.height}` : ""}`);
   $("kpis").innerHTML = k.join("");
 }
 

@@ -13,7 +13,7 @@ python scripts/make_demo_clips.py                        # six deterministic syn
 uvicorn server.app:app --port 8000                       # open http://localhost:8000
 ```
 
-The page walks through four steps: **Recording** (pick a demo), **Setup** (keep **Agent · rules**), **Analysis** (the activity log streams live) and **Diagnosis**, which opens on its own when the job ends. The diagnosis shows FAULT as *Alarm*, NO_FAULT as *Normal* and REVIEW as *Inconclusive*.
+The page walks through four steps: **Recording** (pick a demo), **Setup** (keep **Agent with rules**), **Analysis** (the activity log streams live) and **Diagnosis**, which opens on its own when the job ends. The diagnosis shows FAULT as *Alarm*, NO_FAULT as *Normal* and REVIEW as *Inconclusive*.
 
 | Demo clip | Truth | Expected result |
 |---|---|---|

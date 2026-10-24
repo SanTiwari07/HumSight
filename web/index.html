@@ -3,50 +3,44 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>HumSight · Vibration analysis</title>
+<title>HumSight vibration analysis</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=3">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;1,400&family=Barlow+Semi+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=4">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 </head>
 <body>
 
-<header class="topbar">
-  <a class="brand" href="#/select" aria-label="HumSight home">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12h3l2-6 3 12 3-9 2 5 2-2h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <span>HumSight</span>
-    <small>Camera-based vibration analysis</small>
-  </a>
-  <div class="topbar-right">
-    <span id="envBadge" class="chip chip-dark"><i class="dot"></i><span>Connecting…</span></span>
-    <a id="repoLink" href="#" target="_blank" rel="noopener">GitHub</a>
-    <a id="videoLink" href="#" target="_blank" rel="noopener" hidden>Video</a>
-  </div>
-</header>
-
 <div class="shell">
-  <!-- step navigation: sidebar on desktop, horizontal stepper on phones -->
-  <nav class="steps" aria-label="Analysis steps">
-    <ol>
-      <li><a href="#/select" data-step="select"><b>1</b><span><strong>Recording</strong><em data-sum="select">Choose a clip</em></span></a></li>
-      <li><a href="#/setup" data-step="setup"><b>2</b><span><strong>Setup</strong><em data-sum="setup">Machine &amp; method</em></span></a></li>
-      <li><a href="#/run" data-step="run"><b>3</b><span><strong>Analysis</strong><em data-sum="run">Not started</em></span></a></li>
-      <li><a href="#/report" data-step="report"><b>4</b><span><strong>Diagnosis</strong><em data-sum="report">No report yet</em></span></a></li>
-    </ol>
+  <!-- the housing: brand + step route. Left rail on desktop, top band on phones -->
+  <aside class="rail">
+    <a class="brand" href="#/select" aria-label="HumSight, start a new analysis">
+      <svg viewBox="0 0 28 16" aria-hidden="true"><path d="M1 8h5l2.5-6 4 12 3.5-9 2.5 5 1.5-2H27" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+      <span>HumSight</span>
+    </a>
+    <p class="brand-sub">Vibration analysis from video</p>
+    <nav class="steps" aria-label="Analysis steps">
+      <ol>
+        <li><a href="#/select" data-step="select"><b>1</b><span><strong>Recording</strong><em data-sum="select">Choose a clip</em></span></a></li>
+        <li><a href="#/setup" data-step="setup"><b>2</b><span><strong>Setup</strong><em data-sum="setup">Machine and method</em></span></a></li>
+        <li><a href="#/run" data-step="run"><b>3</b><span><strong>Analysis</strong><em data-sum="run">Not started</em></span></a></li>
+        <li><a href="#/report" data-step="report"><b>4</b><span><strong>Diagnosis</strong><em data-sum="report">No report yet</em></span></a></li>
+      </ol>
+    </nav>
     <p class="disclaimer">Indicative, camera-based measurement. Not a certified ISO assessment.</p>
-  </nav>
+  </aside>
 
   <main id="main">
     <!-- ============ 1. RECORDING ============ -->
     <section class="view" id="view-select" data-view="select" hidden>
       <header class="view-head">
-        <p class="kicker">Step 1 of 4</p>
         <h1>Choose a recording</h1>
         <p class="lede">Pick a reference recording to see how the analysis behaves, or upload a video of your own machine shot on a phone in slow motion.</p>
       </header>
 
       <h2 class="group-title">Reference recordings</h2>
+      <p class="group-note">Synthetic clips with known ground truth. Each shows a different situation the analysis has to handle.</p>
       <div id="demoList" class="clip-grid" role="radiogroup" aria-label="Reference recordings">
         <p class="muted">Loading recordings…</p>
       </div>
@@ -67,21 +61,20 @@
 
       <footer class="view-foot">
         <span></span>
-        <button type="button" class="btn btn-primary" id="toSetup" disabled>Next: Setup <span aria-hidden="true">→</span></button>
+        <button type="button" class="btn btn-primary" id="toSetup" disabled>Continue to setup</button>
       </footer>
     </section>
 
     <!-- ============ 2. SETUP ============ -->
     <section class="view" id="view-setup" data-view="setup" hidden>
       <header class="view-head">
-        <p class="kicker">Step 2 of 4</p>
         <h1>Machine &amp; analysis setup</h1>
         <p class="lede">Only the capture frame rate is required. Everything else sharpens the result.</p>
       </header>
 
       <form id="form" novalidate>
         <div class="panel">
-          <div class="panel-head"><h2>Recording</h2><span class="tag tag-req">Required</span></div>
+          <div class="panel-head"><h2>Recording</h2><span class="tag">Required</span></div>
           <div class="field">
             <label for="fps">Capture frame rate</label>
             <div class="input-unit"><input type="number" id="fps" min="1" step="any" placeholder="240" required><span>fps</span></div>
@@ -125,12 +118,12 @@
           <div class="method-grid" role="radiogroup" aria-label="Analysis method">
             <label class="method">
               <input type="radio" name="policy" value="rules" checked>
-              <span class="method-title">Agent · rules <span class="tag tag-ok">Recommended</span></span>
+              <span class="method-title">Agent with rules <span class="tag tag-ok">Recommended</span></span>
               <span class="method-desc">Checks the frame rate, removes camera shake, then zooms in on the fault. Asks for a re-recording when the evidence is weak.</span>
             </label>
             <label class="method" id="llmMethod">
               <input type="radio" name="policy" value="llm">
-              <span class="method-title">Agent · Gemini</span>
+              <span class="method-title">Agent with Gemini</span>
               <span class="method-desc">Same measurement tools; Gemini chooses the next step and writes the summary. Every number still comes from OpenCV.</span>
             </label>
             <label class="method">
@@ -143,15 +136,14 @@
       </form>
 
       <footer class="view-foot">
-        <a class="btn btn-ghost" href="#/select"><span aria-hidden="true">←</span> Back</a>
-        <button type="button" class="btn btn-primary" id="go">Run analysis <span aria-hidden="true">→</span></button>
+        <a class="btn btn-ghost" href="#/select">Back</a>
+        <button type="button" class="btn btn-primary" id="go">Run analysis</button>
       </footer>
     </section>
 
     <!-- ============ 3. ANALYSIS ============ -->
     <section class="view" id="view-run" data-view="run" hidden>
       <header class="view-head">
-        <p class="kicker">Step 3 of 4</p>
         <h1 id="runTitle">Analyzing recording</h1>
         <p class="lede" id="runLede">Each step below is an OpenCV measurement. The agent reads the numbers and decides what to measure next.</p>
       </header>
@@ -173,28 +165,29 @@
       <div class="alert alert-alarm" id="err" role="alert" hidden></div>
 
       <footer class="view-foot">
-        <a class="btn btn-ghost" href="#/setup" id="runBack"><span aria-hidden="true">←</span> Setup</a>
-        <a class="btn btn-primary" href="#/report" id="toReport" hidden>View diagnosis <span aria-hidden="true">→</span></a>
+        <a class="btn btn-ghost" href="#/setup" id="runBack">Setup</a>
+        <a class="btn btn-primary" href="#/report" id="toReport" hidden>View diagnosis</a>
       </footer>
     </section>
 
     <!-- ============ 4. DIAGNOSIS ============ -->
     <section class="view" id="view-report" data-view="report" hidden>
       <header class="view-head">
-        <p class="kicker">Step 4 of 4</p>
         <h1>Diagnosis</h1>
-        <p class="meta" id="repMeta"></p>
+        <ul class="meta" id="repMeta"></ul>
       </header>
 
       <div class="status-banner" id="banner">
-        <div class="status-icon" id="statusIcon" aria-hidden="true"></div>
-        <div>
-          <p class="status-label" id="statusLabel">—</p>
+        <div class="annunciator">
+          <p class="status-word" id="statusWord">—</p>
+          <p class="status-label" id="statusLabel"></p>
+        </div>
+        <div class="status-body">
           <p class="status-summary" id="summary"></p>
-          <p class="status-action"><b>Recommended action:</b> <span id="action"></span></p>
+          <p class="status-action"><b>Recommended action</b><span id="action"></span></p>
         </div>
       </div>
-      <div class="alert alert-warn" id="baselineNote" hidden>This result comes from the <b>fixed baseline</b>, which does not check for camera shake. Compare it with the agent on the same recording. <button type="button" class="link-btn" id="rerunAgent">Re-run with the agent →</button></div>
+      <div class="alert alert-warn" id="baselineNote" hidden>This result comes from the <b>fixed baseline</b>, which does not check for camera shake. Compare it with the agent on the same recording. <button type="button" class="link-btn" id="rerunAgent">Re-run with the agent</button></div>
 
       <div class="kpis" id="kpis"></div>
 
@@ -239,7 +232,7 @@
       <div class="tabpanel panel" data-panel="findings" role="tabpanel" hidden>
         <div class="table-wrap">
           <table id="findings">
-            <thead><tr><th>#</th><th>Frequency</th><th>Speed equiv.</th><th>Displacement</th><th>SNR</th><th>Region (x, y, w × h px)</th></tr></thead>
+            <thead><tr><th>#</th><th>Frequency</th><th>Speed equivalent</th><th>Displacement</th><th>SNR</th><th>Region (px)</th></tr></thead>
             <tbody></tbody>
           </table>
         </div>
@@ -268,14 +261,14 @@
       </div>
 
       <footer class="view-foot">
-        <a class="btn btn-ghost" href="#/setup"><span aria-hidden="true">←</span> <span class="long">Adjust setup &amp; re-run</span><span class="short">Setup</span></a>
+        <a class="btn btn-ghost" href="#/setup"><span class="long">Adjust setup &amp; re-run</span><span class="short">Setup</span></a>
         <button type="button" class="btn btn-primary" id="newRun">New analysis</button>
       </footer>
     </section>
   </main>
 </div>
 
-<script src="config.js?v=3"></script>
-<script src="app.js?v=3"></script>
+<script src="config.js?v=4"></script>
+<script src="app.js?v=4"></script>
 </body>
 </html>
