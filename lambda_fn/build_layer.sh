@@ -5,7 +5,8 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 rm -rf build && mkdir -p build/python
 pip install \
-  --platform manylinux2014_aarch64 --implementation cp --python-version 3.12 \
+  --platform manylinux_2_28_aarch64 --platform manylinux_2_17_aarch64 --platform manylinux2014_aarch64 \
+  --implementation cp --python-version 3.12 \
   --only-binary=:all: --target build/python \
   -r requirements-lambda.txt
 # trim (keep *.dist-info: google-genai reads its own metadata)

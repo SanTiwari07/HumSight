@@ -23,3 +23,5 @@ eval/results/_*.log
 *.csv
 .aws/
 deploy/.bucket
+deploy/_*
+deploy/.*

@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import base64
 import json
+import mimetypes
 import os
 import re
 import sys
@@ -169,7 +170,8 @@ def route_job(body: dict) -> dict:
     urls = {}
     for name in sorted(os.listdir(out_dir)):
         k = f"outputs/{job_id}/{name}"
-        _s3().upload_file(os.path.join(out_dir, name), BUCKET, k)
+        ctype = mimetypes.guess_type(name)[0] or "application/octet-stream"
+        _s3().upload_file(os.path.join(out_dir, name), BUCKET, k, ExtraArgs={"ContentType": ctype})
     for logical, fname in result.get("outputs", {}).items():
         if isinstance(fname, str):
             urls[logical] = _presign_get(f"outputs/{job_id}/{fname}")

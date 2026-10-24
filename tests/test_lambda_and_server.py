@@ -33,7 +33,7 @@ class FakeS3:
     def download_file(self, bucket, key, local):
         shutil.copy(self._p(key), local)
 
-    def upload_file(self, local, bucket, key):
+    def upload_file(self, local, bucket, key, ExtraArgs=None):
         os.makedirs(os.path.dirname(self._p(key)), exist_ok=True)
         shutil.copy(local, self._p(key))
 
