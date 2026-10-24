@@ -1,0 +1,16 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+*.pem
+outputs/
+build/
+layer.zip
+function.zip
+.pytest_cache/
+eval/data/
+demo_clips/*/clip.npz
+bench/data/
+bench/_*
+eval/results/_*.log
+.claude/

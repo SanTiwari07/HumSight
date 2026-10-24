@@ -1,0 +1,12 @@
+[project]
+name = "humsight"
+version = "0.1.0"
+description = "Camera-based vibration measurement, shake rejection and motion magnification"
+requires-python = ">=3.12"
+dependencies = ["opencv-python-headless==5.0.0.93", "numpy"]
+
+[tool.setuptools]
+packages = ["humsight", "humsight.agent"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
