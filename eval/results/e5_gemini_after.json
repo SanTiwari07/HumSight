@@ -1,0 +1,513 @@
+{
+ "results": [
+  {
+   "verdict": "FAULT",
+   "findings": [
+    {
+     "f_hz": 58.498,
+     "amp_px": 0.04728,
+     "snr": 31.51,
+     "roi": [
+      64,
+      64,
+      160,
+      96
+     ],
+     "axis": [
+      0.998,
+      0.026
+     ]
+    }
+   ],
+   "n_calls": 8,
+   "source": "llm",
+   "tools": [
+    "probe_clip",
+    "scan_motion",
+    "compensate_shake",
+    "classify_peaks",
+    "scan_motion",
+    "assess_severity",
+    "magnify",
+    "file_report"
+   ],
+   "tool_sources": [
+    "llm",
+    "llm",
+    "llm",
+    "llm",
+    "llm",
+    "llm",
+    "llm",
+    "llm"
+   ],
+   "llm_calls": 8,
+   "notes": [],
+   "tool_errors": 0,
+   "stale_report_errors": 0,
+   "summary": "Probe of the 240 fps video (Nyquist limit 120 Hz) revealed dominant camera shake at 3.5 Hz (amplitude 0.56139 px). After shake compensation via displacement subtraction, spectral classification identified a localized mechanical fault at 58.498 Hz (amplitude 0.04728 px, SNR 31.51) in ROI [64, 64, 160, 96], above the noise floor of 0.005264 px. A fine scan refined the peak to 58.493 Hz with an amplitude of 0.05041 px. Motion magnification with alpha 15 in band [57.5, 59.5] Hz confirmed the localized motion with an artifact ratio of 0.119. Indicative severity assessment notes no scale reference was provided, so velocity and ISO zone are unavailable.",
+   "reason": null,
+   "runtime_s": 61.8,
+   "error": null,
+   "name": "shake+fault #1"
+  },
+  {
+   "verdict": "FAULT",
+   "findings": [
+    {
+     "f_hz": 24.511,
+     "amp_px": 0.09019,
+     "snr": 68.9,
+     "roi": [
+      96,
+      32,
+      96,
+      96
+     ],
+     "axis": [
+      0.97,
+      0.113
+     ]
+    }
+   ],
+   "n_calls": 8,
+   "source": "llm",
+   "tools": [
+    "probe_clip",
+    "scan_motion",
+    "compensate_shake",
+    "classify_peaks",
+    "scan_motion",
+    "assess_severity",
+    "magnify",
+    "file_report"
+   ],
+   "tool_sources": [
+    "llm",
+    "llm",
+    "llm",
+    "llm",
+    "llm",
+    "llm",
+    "llm",
+    "llm"
+   ],
+   "llm_calls": 8,
+   "notes": [],
+   "tool_errors": 0,
+   "stale_report_errors": 0,
+   "summary": "Initial probing verified 240 fps footage with Nyquist limit at 120 Hz. Coarse scan detected dominant background camera shake at 5 Hz with 0.74181 px amplitude (SNR 594.42). Background subtraction compensation attenuated residual shake at 5 Hz to 0.01395 px. Classification revealed a localized mechanical fault at 24.51 Hz, refined via fine scanning to 24.511 Hz with an amplitude of 0.09019 px and SNR of 68.9 within ROI [96, 32, 96, 96]. Motion magnification in the band [24.011, 25.011] Hz with effective alpha of 9.98 produced a low artifact ratio of 0.038.",
+   "reason": null,
+   "runtime_s": 59.0,
+   "error": null,
+   "name": "shake+fault #2"
+  },
+  {
+   "verdict": "FAULT",
+   "findings": [
+    {
+     "f_hz": 40.005,
+     "amp_px": 0.07146,
+     "snr": 52.4,
+     "roi": [
+      64,
+      32,
+      128,
+      96
+     ],
+     "axis": [
+      0.934,
+      0.137
+     ]
+    }
+   ],
+   "n_calls": 8,
+   "source": "llm",
+   "tools": [
+    "probe_clip",
+    "scan_motion",
+    "compensate_shake",
+    "classify_peaks",
+    "scan_motion",
+    "assess_severity",
+    "magnify",
+    "file_report"
+   ],
+   "tool_sources": [
+    "llm",
+    "llm",
+    "llm",
+    "llm",
+    "llm",
+    "llm",
+    "llm",
+    "llm"
+   ],
+   "llm_calls": 8,
+   "notes": [],
+   "tool_errors": 0,
+   "stale_report_errors": 0,
+   "summary": "The video clip (240 fps, 4 s, 256x192) exhibited significant global camera shake at 2.495 Hz with an amplitude of 0.35584 px. Following background subtraction shake compensation, the residual at the shake frequency was reduced to 0.00954 px. Motion analysis and fine scanning identified a localized mechanical vibration fault at 40.005 Hz with an amplitude of 0.07146 px (SNR 37.21) localized within ROI [64, 32, 128, 96]. Motion magnification was applied in the passband [39, 41] Hz with alpha 10, yielding a low artifact ratio of 0.059. Indicative severity evaluation noted that without a scale reference, velocity and zone classifications are unavailable (not a certified ISO assessment).",
+   "reason": null,
+   "runtime_s": 60.1,
+   "error": null,
+   "name": "shake+fault #3"
+  },
+  {
+   "verdict": "NO_FAULT",
+   "findings": [],
+   "n_calls": 7,
+   "source": "llm",
+   "tools": [
+    "probe_clip",
+    "scan_motion",
+    "compensate_shake",
+    "classify_peaks",
+    "compensate_shake",
+    "classify_peaks",
+    "file_report"
+   ],
+   "tool_sources": [
+    "llm",
+    "llm",
+    "llm",
+    "llm",
+    "llm",
+    "llm",
+    "llm"
+   ],
+   "llm_calls": 7,
+   "notes": [],
+   "tool_errors": 0,
+   "stale_report_errors": 0,
+   "summary": "Probe analysis confirmed 240 fps, 4 s duration, and full texture coverage (1). Coarse motion scanning detected dominant global motion at 3.5 Hz with amplitude 0.55829 px and SNR 452.07, as well as a secondary peak at 2.037 Hz with amplitude 0.15025 px and SNR 103.27, against a noise floor of 0.00513 px. Both peaks were identified as camera shake present across the entire background. Background subtraction reduced the residual at the shake frequency to 0.00988 px with residual RMS of 0.10789 px. Spectral peak classification confirmed zero localized fault clusters (faults: []), leaving no vibration above the minimum detectable motion of 0.032192 px.",
+   "reason": null,
+   "runtime_s": 60.3,
+   "error": null,
+   "name": "shake only #1"
+  },
+  {
+   "verdict": "NO_FAULT",
+   "findings": [],
+   "n_calls": 7,
+   "source": "llm",
+   "tools": [
+    "probe_clip",
+    "scan_motion",
+    "compensate_shake",
+    "classify_peaks",
+    "compensate_shake",
+    "classify_peaks",
+    "file_report"
+   ],
+   "tool_sources": [
+    "llm",
+    "llm",
+    "llm",
+    "llm",
+    "llm",
+    "llm",
+    "llm"
+   ],
+   "llm_calls": 7,
+   "notes": [],
+   "tool_errors": 0,
+   "stale_report_errors": 0,
+   "summary": "Analysis of the 240 fps, 4 s video identified global camera shake at 5 Hz with an amplitude of 0.74182 px. Following homography-based shake compensation (inlier ratio 1, residual at shake frequency 0.01707 px), peak classification identified zero faults, with a residual noise floor of 0.005848 px and a minimum detectable amplitude of 0.035088 px. No localized mechanical vibration fault was detected.",
+   "reason": null,
+   "runtime_s": 61.7,
+   "error": null,
+   "name": "shake only #2"
+  },
+  {
+   "verdict": "NO_FAULT",
+   "findings": [],
+   "n_calls": 7,
+   "source": "llm",
+   "tools": [
+    "probe_clip",
+    "scan_motion",
+    "compensate_shake",
+    "classify_peaks",
+    "compensate_shake",
+    "classify_peaks",
+    "file_report"
+   ],
+   "tool_sources": [
+    "llm",
+    "llm",
+    "llm",
+    "llm",
+    "llm",
+    "llm",
+    "llm"
+   ],
+   "llm_calls": 7,
+   "notes": [],
+   "tool_errors": 0,
+   "stale_report_errors": 0,
+   "summary": "Probe of the 256x192 clip at 240 fps (duration 4 s) identified a dominant global motion peak at 2.502 Hz with an amplitude of 0.37341 px. This peak was present uniformly across background and foreground patches, confirming camera shake. After camera shake compensation (reducing shake residual to 0.0077 px), peak classification detected no localized vibration faults (noise floor 0.006489 px, minimum detectable amplitude 0.038934 px). The verdict is NO_FAULT.",
+   "reason": null,
+   "runtime_s": 58.1,
+   "error": null,
+   "name": "shake only #3"
+  },
+  {
+   "verdict": "FAULT",
+   "findings": [
+    {
+     "f_hz": 58.494,
+     "amp_px": 0.04573,
+     "snr": 75.78,
+     "roi": [
+      96,
+      64,
+      96,
+      64
+     ],
+     "axis": [
+      1.0,
+      -0.011
+     ]
+    }
+   ],
+   "n_calls": 7,
+   "source": "llm",
+   "tools": [
+    "probe_clip",
+    "scan_motion",
+    "classify_peaks",
+    "scan_motion",
+    "magnify",
+    "assess_severity",
+    "file_report"
+   ],
+   "tool_sources": [
+    "llm",
+    "llm",
+    "llm",
+    "llm",
+    "llm",
+    "llm",
+    "llm"
+   ],
+   "llm_calls": 7,
+   "notes": [],
+   "tool_errors": 0,
+   "stale_report_errors": 0,
+   "summary": "A localized vibration fault was detected at 58.494 Hz with an amplitude of 0.04573 px and an SNR of 71.63, well above the noise floor of 0.006119 px. The fault is located in the ROI [96, 64, 96, 64]. Motion magnification was successfully performed around 58.494 Hz with alpha = 15 across the band [57.494, 59.494] Hz, yielding an artifact ratio of 0.093. No scale reference was provided for physical velocity calculation.",
+   "reason": null,
+   "runtime_s": 48.7,
+   "error": null,
+   "name": "fault only #1"
+  },
+  {
+   "verdict": "FAULT",
+   "findings": [
+    {
+     "f_hz": 15.001,
+     "amp_px": 0.09065,
+     "snr": 138.03,
+     "roi": [
+      64,
+      32,
+      128,
+      96
+     ],
+     "axis": [
+      0.989,
+      0.054
+     ]
+    }
+   ],
+   "n_calls": 7,
+   "source": "llm",
+   "tools": [
+    "probe_clip",
+    "scan_motion",
+    "classify_peaks",
+    "scan_motion",
+    "assess_severity",
+    "magnify",
+    "file_report"
+   ],
+   "tool_sources": [
+    "llm",
+    "llm",
+    "llm",
+    "llm",
+    "llm",
+    "llm",
+    "llm"
+   ],
+   "llm_calls": 7,
+   "notes": [],
+   "tool_errors": 0,
+   "stale_report_errors": 0,
+   "summary": "Localized mechanical vibration fault identified at 15.001 Hz with an amplitude of 0.09065 px and SNR of 138.03 within ROI [64, 32, 128, 96]. Eulerian magnification applied at center frequency 15.001 Hz with bandwidth 2 Hz (band 14.001-16.001 Hz) and alpha 10 yielded an artifact ratio of 0.044.",
+   "reason": null,
+   "runtime_s": 49.5,
+   "error": null,
+   "name": "fault only #2"
+  },
+  {
+   "verdict": "FAULT",
+   "findings": [
+    {
+     "f_hz": 40.0,
+     "amp_px": 0.18017,
+     "snr": 291.04,
+     "roi": [
+      96,
+      32,
+      96,
+      96
+     ],
+     "axis": [
+      0.961,
+      0.078
+     ]
+    }
+   ],
+   "n_calls": 7,
+   "source": "llm",
+   "tools": [
+    "probe_clip",
+    "scan_motion",
+    "classify_peaks",
+    "scan_motion",
+    "assess_severity",
+    "magnify",
+    "file_report"
+   ],
+   "tool_sources": [
+    "llm",
+    "llm",
+    "llm",
+    "llm",
+    "llm",
+    "llm",
+    "llm"
+   ],
+   "llm_calls": 7,
+   "notes": [],
+   "tool_errors": 0,
+   "stale_report_errors": 0,
+   "summary": "A localized mechanical vibration fault was detected at 40.0 Hz with an amplitude of 0.18017 px and SNR of 236.04 in ROI [96, 32, 96, 96]. Motion magnification in band [39, 41] Hz confirmed localized vibration with an artifact ratio of 0.02 and effective alpha of 4.67. No camera shake was detected.",
+   "reason": null,
+   "runtime_s": 48.4,
+   "error": null,
+   "name": "fault only #3"
+  },
+  {
+   "verdict": "NO_FAULT",
+   "findings": [],
+   "n_calls": 9,
+   "source": "llm",
+   "tools": [
+    "probe_clip",
+    "scan_motion",
+    "classify_peaks",
+    "scan_motion",
+    "scan_motion",
+    "scan_motion",
+    "compensate_shake",
+    "classify_peaks",
+    "file_report"
+   ],
+   "tool_sources": [
+    "llm",
+    "llm",
+    "llm",
+    "llm",
+    "llm",
+    "llm",
+    "llm",
+    "llm",
+    "llm"
+   ],
+   "llm_calls": 9,
+   "notes": [],
+   "tool_errors": 1,
+   "stale_report_errors": 0,
+   "summary": "The clip was recorded at 240 fps with duration 4 s and resolution 256x192. A coarse motion scan detected candidate spectral peaks at 10.084 Hz (patch 37, amplitude 0.05506 px, SNR 2.86) and 98.606 Hz (patch 34, amplitude 0.05309 px, SNR 3.36). Fine grid scans across these candidate regions revealed only sub-threshold noise: maximum amplitude 0.00623 px (SNR 1.88 at 101.25 Hz) in patch 34 and 0.00712 px (SNR 2.08 at 9.802 Hz) in patch 37, both well below the minimum detectable threshold of 0.021765 px. Background shake amplitude was 0.00155 px at 78.345 Hz with a noise floor of 0.003627 px. Classification confirmed zero mechanical fault peaks (faults: []).",
+   "reason": null,
+   "runtime_s": 70.6,
+   "error": null,
+   "name": "nothing #1"
+  },
+  {
+   "verdict": "NO_FAULT",
+   "findings": [],
+   "n_calls": 8,
+   "source": "llm",
+   "tools": [
+    "probe_clip",
+    "scan_motion",
+    "classify_peaks",
+    "scan_motion",
+    "scan_motion",
+    "compensate_shake",
+    "classify_peaks",
+    "file_report"
+   ],
+   "tool_sources": [
+    "llm",
+    "llm",
+    "llm",
+    "llm",
+    "llm",
+    "llm",
+    "llm",
+    "llm"
+   ],
+   "llm_calls": 8,
+   "notes": [],
+   "tool_errors": 1,
+   "stale_report_errors": 0,
+   "summary": "Probe confirmed fps=240, duration=4 s, and Nyquist frequency=120 Hz with no aliasing or lighting flicker warnings. Spectral analysis across 48 patches established a noise floor of 0.006658 px and a minimum detectable amplitude of 0.039945 px. Peak classification identified no localized vibration faults and no significant camera shake. Consequently, no fault was detected.",
+   "reason": null,
+   "runtime_s": 58.2,
+   "error": null,
+   "name": "nothing #2"
+  },
+  {
+   "verdict": "NO_FAULT",
+   "findings": [],
+   "n_calls": 6,
+   "source": "llm",
+   "tools": [
+    "probe_clip",
+    "scan_motion",
+    "classify_peaks",
+    "scan_motion",
+    "classify_peaks",
+    "file_report"
+   ],
+   "tool_sources": [
+    "llm",
+    "llm",
+    "llm",
+    "llm",
+    "llm",
+    "llm"
+   ],
+   "llm_calls": 6,
+   "notes": [],
+   "tool_errors": 0,
+   "stale_report_errors": 0,
+   "summary": "Probe confirmed 240 fps, 4 s duration, and texture coverage of 1. Coarse scan showed a noise floor of 0.011799 px with peak amplitude of 0.03815 px at 87.053 Hz (SNR 3.23). Fine scan around patch 34 showed a peak amplitude of 0.03855 px at 84.927 Hz (SNR 2.1). Peak classification identified 0 faults and 0 shake peaks, as all amplitudes remain below the minimum detectable threshold of 0.070797 px with no lighting flicker or aliasing risk detected.",
+   "reason": null,
+   "runtime_s": 61.5,
+   "error": null,
+   "name": "nothing #3"
+  }
+ ],
+ "model": "gemini-flash-latest",
+ "commit": "de57672",
+ "tag": "after",
+ "started_utc": "2026-10-24T09:32:13+00:00",
+ "interval_s": "7",
+ "finished_utc": "2026-10-24T09:45:51+00:00",
+ "note": "live API run on 2026-10-24 (model `gemini-flash-latest`, code at commit `de57672`, sequential, paced at 7 s between calls): 89 of 89 tool calls were chosen by the model; 12 of 12 clips ran entirely on Gemini and 0 fell back to the rules policy partway; the number guard fired 0 time(s); `file_report` was refused for a stale classification 0 time(s)."
+}

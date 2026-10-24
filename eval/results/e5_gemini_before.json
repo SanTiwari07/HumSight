@@ -472,7 +472,6 @@
   }
  ],
  "model": "gemini-flash-latest",
- "note": "Gemini column: live API run on 2026-10-24 (model `gemini-flash-latest`, sequential, paced at 7 s between calls). 84 of 84 tool calls were chosen by the model; 12 of 12 clips ran entirely on Gemini and 0 fell back to the rules policy partway; the number guard fired 0 time(s).",
  "finished_utc": "2026-10-24T09:24:05+00:00",
  "tag": "before",
  "commit": "835bf9d",

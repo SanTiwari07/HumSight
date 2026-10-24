@@ -133,11 +133,20 @@ def main():
     e5 = json.load(open(os.path.join(C.RESULTS, "e5.json"), encoding="utf-8"))
     text = e5_table(clips, e5["rules"], e5["fixed"], runs, "\n\n".join(notes))
     if len(runs) == 2:
+        (_, rb), (_, ra) = runs
+        n_diff = sum(1 for x, y in zip(rb, ra) if x["tools"] != y["tools"])
+        refused = sum(y.get("stale_report_errors", 0) for y in ra)
+        ok_b = sum(e5_judge(sp, ex, x)[0] for (_, sp, ex), x in zip(clips, rb))
+        ok_a = sum(e5_judge(sp, ex, y)[0] for (_, sp, ex), y in zip(clips, ra))
         text += ("\n\n'before' = the first run, when `file_report` silently downgraded a verdict filed without a current "
                  "classification; 'after' = the rerun in which `file_report` returns an error telling the model to run "
-                 "`classify_peaks`. Both runs used the same clips, model, prompt and settings; each clip was run once per run, "
-                 "so differences between the runs can come from the change **or** from the model's run-to-run variation, "
-                 "and one run each cannot separate the two.")
+                 "`classify_peaks`. Both runs used the same clips, model, prompt and settings, one run per clip each.\n\n"
+                 f"**How to read the difference ({ok_b}/{len(clips)} before, {ok_a}/{len(clips)} after).** In the 'after' run the new refusal "
+                 f"fired {refused} time(s), so the change was never exercised against the live model. The model's tool sequence "
+                 f"nevertheless differed between the two runs on {n_diff} of {len(clips)} clips. The change of outcome on the "
+                 "failing clip therefore cannot be credited to the change: it is consistent with ordinary run-to-run variation "
+                 "of the model, and one run each cannot separate the two. What the change is known to do is covered by unit tests "
+                 "with a scripted model (a stale `file_report` is refused, the model can classify again and then file).")
     text += "\n".join(det)
     open(os.path.join(C.RESULTS, "E5.md"), "w", encoding="utf-8", newline="\n").write(text + "\n")
     sp_ = os.path.join(C.RESULTS, "summary.md")
