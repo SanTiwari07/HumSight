@@ -7,11 +7,12 @@
 # No `set -u`: the COOL venv's activate script reads an unset PYTHONPATH.
 set -eo pipefail
 REPO_DIR="${1:-$HOME/humsight}"
-COOL_PY=/opt/cool/venvs/python_3.12/bin/python
+# run a command inside the activated COOL venv (activation sets PYTHONPATH and LD_LIBRARY_PATH for cv2 + COOL ffmpeg)
+cool() { ( set +u; source /opt/cool/venvs/python_3.12/bin/activate; "$@" ); }
 
 ls /opt/cool/venvs/                                       # expect python_3.10 python_3.11 python_3.12
-"$COOL_PY" "$REPO_DIR/scripts/verify_cool.py"             # proof: COOL path + KleidiCV lines
-NUMPY_PIN="${NUMPY_PIN:-$("$COOL_PY" -c 'import numpy; print(numpy.__version__)')}"
+cool python "$REPO_DIR/scripts/verify_cool.py"            # proof: COOL path + KleidiCV lines
+NUMPY_PIN="${NUMPY_PIN:-$(cool python -c 'import numpy; print(numpy.__version__)')}"
 echo "numpy pin (from the COOL venv): $NUMPY_PIN"
 
 # server extras for live sessions (not needed for the benchmark)

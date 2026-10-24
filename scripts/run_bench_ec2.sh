@@ -4,8 +4,8 @@
 set -eo pipefail
 cd "$(dirname "$0")/.."
 uname -a | tee bench/uname.txt
-COOL_PY=/opt/cool/venvs/python_3.12/bin/python
 STOCK_PY=$HOME/stock/bin/python
-"$COOL_PY"  bench/bench.py --label cool  --out bench/cool.json  "$@"
+# COOL env: activation sets PYTHONPATH and LD_LIBRARY_PATH (cv2 and COOL ffmpeg)
+( set +u; source /opt/cool/venvs/python_3.12/bin/activate; python bench/bench.py --label cool --out bench/cool.json "$@" )
 "$STOCK_PY" bench/bench.py --label stock --out bench/stock.json "$@"
 "$STOCK_PY" bench/bench.py --compare bench/cool.json bench/stock.json --md bench/RESULTS.md ${SPOT_PRICE:+--spot-price $SPOT_PRICE}
