@@ -14,3 +14,11 @@ bench/data/
 bench/_*
 eval/results/_*.log
 .claude/
+
+# AWS credentials and key exports: never commit
+*accessKeys*
+*accesskeys*
+*credentials*.csv
+*credentials*.CSV
+*.csv
+.aws/
