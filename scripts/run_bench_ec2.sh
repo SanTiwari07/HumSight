@@ -2,6 +2,8 @@
 # COOL vs stock benchmark on the same instance. Push bench/*.json and RESULTS.md to git immediately after.
 # Usage: INSTANCE_TYPE=c8g.large AMI_ID=ami-... bash scripts/run_bench_ec2.sh [extra bench.py args, e.g. --runs 7]
 set -eo pipefail
+# Force one video codec so the "encode" stage compares the same work in both builds.
+export HUMSIGHT_FORCE_CODEC="${HUMSIGHT_FORCE_CODEC:-mp4v}"
 cd "$(dirname "$0")/.."
 uname -a | tee bench/uname.txt
 STOCK_PY=$HOME/stock/bin/python

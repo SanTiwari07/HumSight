@@ -166,7 +166,11 @@ class VideoSink:
         self.codec = None
         self.frames: list[np.ndarray] | None = None
         # remember the first codec that works so the probe errors are printed once per process
-        order = ([_WORKING[0]] if _WORKING else []) + [c for c in _CODECS if not _WORKING or c != _WORKING[0]]
+        forced = os.environ.get("HUMSIGHT_FORCE_CODEC")   # benchmarks force one codec so builds are comparable
+        if forced:
+            order = [c for c in _CODECS if c[0] == forced]
+        else:
+            order = ([_WORKING[0]] if _WORKING else []) + [c for c in _CODECS if not _WORKING or c != _WORKING[0]]
         for fourcc, ext in order:
             p = stem + ext
             if os.path.exists(p):

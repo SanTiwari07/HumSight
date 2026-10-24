@@ -36,6 +36,12 @@ STAGES = ["load+downscale", "stabilise(warp)", "patch_shifts(coarse)", "patch_sh
           "spectra", "magnify(ROI)", "encode"]
 
 
+def io_probe() -> dict:
+    from humsight.io import probe_codecs
+    with tempfile.TemporaryDirectory() as d:
+        return probe_codecs(d)
+
+
 def make_clips(quick: bool, size: tuple[int, int, float] | None = None) -> dict[str, str]:
     """Synthetic benchmark clips written once as mp4v (so 'load' includes real decode)."""
     os.makedirs(DATA, exist_ok=True)
@@ -126,6 +132,7 @@ def bench(label: str, out: str, runs: int, quick: bool, extra_clips: list[str],
     meta = {"label": label, "date": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
             "uname": platform.platform(), "python": sys.version.split()[0], "runs": runs,
             "workload": {"clips": list(clips), "size": list(size) if size else ("quick" if quick else [640, 360, 4.0])},
+            "codecs_available": io_probe(), "forced_codec": os.environ.get("HUMSIGHT_FORCE_CODEC"),
             "env": env.cv2_info(), "instance_type": os.environ.get("INSTANCE_TYPE", ""),
             "ami_id": os.environ.get("AMI_ID", "")}
     try:
