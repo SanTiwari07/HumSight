@@ -209,29 +209,34 @@ def e5_judge(sp, expect, r):
     return ok, magnified_shake
 
 
-def e5_table(clips, rules, fixed, llm, llm_note=""):
-    """Markdown for E5. llm is None (not run) or a list of per-clip results like rules/fixed."""
-    rows, tot = [], {"rules": [0, 0], "fixed": [0, 0], "llm": [0, 0]}
+def e5_table(clips, rules, fixed, llm_runs, llm_note=""):
+    """Markdown for E5. llm_runs: list of (label, per-clip results) for live Gemini runs (may be empty)."""
+    cols = [("agent (rules)", rules)]
+    if llm_runs:
+        cols += [(f"agent (Gemini, {lab})" if len(llm_runs) > 1 else "agent (Gemini)", res) for lab, res in llm_runs]
+    else:
+        cols += [("agent (Gemini)", None)]
+    cols += [("fixed pipeline", fixed)]
+    rows, tot = [], [[0, 0] for _ in cols]
     for i, (name, sp, expect) in enumerate(clips):
         row = [name, expect]
-        for key, arr in (("rules", rules), ("llm", llm), ("fixed", fixed)):
+        for k, (_, arr) in enumerate(cols):
             if arr is None:
                 row.append("not run")
                 continue
             ok, ms = e5_judge(sp, expect, arr[i])
-            tot[key][0] += ok
-            tot[key][1] += ms
+            tot[k][0] += ok
+            tot[k][1] += ms
             row.append(f"{arr[i]['verdict']} {'✓' if ok else '✗'}{' · shake magnified' if ms else ''}")
         rows.append(row)
     n = len(clips)
+    summ = [[label, f"{tot[k][0]}/{n}" if arr is not None else "not run", tot[k][1] if arr is not None else "-"]
+            for k, (label, arr) in enumerate(cols)]
     L = ["## E5 Agent vs fixed pipeline", "",
          f"{n} clips (4 groups x 3): shake + hidden fault, shake only, fault only, nothing. ✓ = correct verdict "
          "(and for FAULT, the right frequency). 'shake magnified' = the reported fault frequency is the camera-shake frequency.", "",
-         C.md_table(["clip", "truth", "agent (rules)", "agent (Gemini)", "fixed pipeline"], rows), "",
-         C.md_table(["policy", "correct", "shake wrongly magnified"],
-                    [["agent (rules)", f"{tot['rules'][0]}/{n}", tot["rules"][1]],
-                     ["agent (Gemini)", f"{tot['llm'][0]}/{n}" if llm else "not run", tot["llm"][1] if llm else "-"],
-                     ["fixed", f"{tot['fixed'][0]}/{n}", tot["fixed"][1]]])]
+         C.md_table(["clip", "truth"] + [c[0] for c in cols], rows), "",
+         C.md_table(["policy", "correct", "shake wrongly magnified"], summ)]
     if llm_note:
         L += ["", llm_note]
     return "\n".join(L)
@@ -241,15 +246,20 @@ def e5(ex, quick):
     clips = e5_clips(quick)
     rules = pmap(ex, C.task_agent, [(s, "rules", None) for _, s, _ in clips], "E5 agent(rules)")
     fixed = pmap(ex, C.task_fixed, [s for _, s, _ in clips], "E5 fixed")
-    llm, note = None, ""
-    gj = os.path.join(C.RESULTS, "e5_gemini.json")      # written by eval/e5_gemini.py (live API, sequential)
-    if os.path.exists(gj) and not quick:
-        g = json.load(open(gj, encoding="utf-8"))
-        if len(g["results"]) == len(clips):
-            llm = g["results"]
-            note = g.get("note", "")
+    llm_runs, note = [], ""
+    if not quick:
+        notes = []
+        for lab in ("before", "after"):                 # written by eval/e5_gemini.py (live API, sequential)
+            gj = os.path.join(C.RESULTS, f"e5_gemini_{lab}.json")
+            if os.path.exists(gj):
+                g = json.load(open(gj, encoding="utf-8"))
+                if len(g["results"]) == len(clips):
+                    llm_runs.append((lab, g["results"]))
+                    notes.append(f"**{lab}**: " + g.get("note", ""))
+        note = "\n\n".join(notes)
+    llm = llm_runs[-1][1] if llm_runs else None
     json.dump({"rules": rules, "fixed": fixed, "llm": llm}, open(os.path.join(C.RESULTS, "e5.json"), "w"))
-    return e5_table(clips, rules, fixed, llm, note)
+    return e5_table(clips, rules, fixed, llm_runs, note)
 
 
 def e6(ex, quick):
