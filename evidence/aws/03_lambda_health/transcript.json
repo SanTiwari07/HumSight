@@ -1,0 +1,13 @@
+{
+ "shown_command": "curl -s -H \"x-demo-token: DP2BlLdVThQZUWaP\" https://ce75ttmqcc5g3il7yefnupx6ee0qydmz.lambda-url.us-east-1.on.aws/health | python -m json.tool",
+ "title": "curl: Lambda Function URL",
+ "caption": "the public AWS Lambda endpoint answering: OpenCV 5.0.0 on aarch64 (Graviton)",
+ "started_utc": "2026-10-24T09:48:16+00:00",
+ "exit_code": 0,
+ "events": [
+  {
+   "t": 0.804,
+   "text": "{\r\n    \"ok\": true,\r\n    \"mode\": \"lambda\",\r\n    \"cv2_version\": \"5.0.0\",\r\n    \"cv2_path\": \"/opt/python/cv2/__init__.py\",\r\n    \"cool\": false,\r\n    \"kleidicv\": true,\r\n    \"machine\": \"aarch64\",\r\n    \"threads\": 2,\r\n    \"has_iterative_phase_correlation\": true,\r\n    \"llm\": \"gemini\",\r\n    \"max_duration_s\": 4.0\r\n}\r\n"
+  }
+ ]
+}

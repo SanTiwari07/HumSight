@@ -1,0 +1,79 @@
+{
+ "page": "https://santiwari07.github.io/HumSight/",
+ "demo": "pump_shake_fault",
+ "seconds_click_to_diagnosis": 27.3,
+ "aws_requests": [
+  {
+   "t": "2026-10-24T09:50:02.582395+00:00",
+   "method": "GET",
+   "url": "https://ce75ttmqcc5g3il7yefnupx6ee0qydmz.lambda-url.us-east-1.on.aws/api/health",
+   "status": 404
+  },
+  {
+   "t": "2026-10-24T09:50:03.029758+00:00",
+   "method": "GET",
+   "url": "https://ce75ttmqcc5g3il7yefnupx6ee0qydmz.lambda-url.us-east-1.on.aws/health",
+   "status": 200
+  },
+  {
+   "t": "2026-10-24T09:50:03.715107+00:00",
+   "method": "GET",
+   "url": "https://ce75ttmqcc5g3il7yefnupx6ee0qydmz.lambda-url.us-east-1.on.aws/demo-clips",
+   "status": 200
+  },
+  {
+   "t": "2026-10-24T09:50:27.573846+00:00",
+   "method": "POST",
+   "url": "https://ce75ttmqcc5g3il7yefnupx6ee0qydmz.lambda-url.us-east-1.on.aws/jobs",
+   "status": 200
+  },
+  {
+   "t": "2026-10-24T09:50:30.970723+00:00",
+   "method": "GET",
+   "url": "https://humsight-f308f2bbf0.s3.amazonaws.com/outputs/6e0eb525ddb2/magnified_1.webm",
+   "status": 206
+  },
+  {
+   "t": "2026-10-24T09:50:30.972458+00:00",
+   "method": "GET",
+   "url": "https://humsight-f308f2bbf0.s3.amazonaws.com/outputs/6e0eb525ddb2/heatmap.png",
+   "status": 200
+  },
+  {
+   "t": "2026-10-24T09:50:31.008007+00:00",
+   "method": "GET",
+   "url": "https://humsight-f308f2bbf0.s3.amazonaws.com/demo/pump_shake_fault/original.webm",
+   "status": 206
+  },
+  {
+   "t": "2026-10-24T09:50:31.761089+00:00",
+   "method": "GET",
+   "url": "https://humsight-f308f2bbf0.s3.amazonaws.com/outputs/6e0eb525ddb2/magnified_1.webm",
+   "status": 206
+  },
+  {
+   "t": "2026-10-24T09:50:31.796117+00:00",
+   "method": "GET",
+   "url": "https://humsight-f308f2bbf0.s3.amazonaws.com/outputs/6e0eb525ddb2/magnified_1.webm",
+   "status": 206
+  },
+  {
+   "t": "2026-10-24T09:50:34.927028+00:00",
+   "method": "GET",
+   "url": "https://humsight-f308f2bbf0.s3.amazonaws.com/demo/pump_shake_fault/original.webm",
+   "status": 206
+  },
+  {
+   "t": "2026-10-24T09:50:34.927456+00:00",
+   "method": "GET",
+   "url": "https://humsight-f308f2bbf0.s3.amazonaws.com/demo/pump_shake_fault/original.webm",
+   "status": 206
+  },
+  {
+   "t": "2026-10-24T09:50:38.265924+00:00",
+   "method": "GET",
+   "url": "https://humsight-f308f2bbf0.s3.amazonaws.com/outputs/6e0eb525ddb2/spectrum.json",
+   "status": 200
+  }
+ ]
+}

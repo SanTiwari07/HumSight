@@ -1,0 +1,14 @@
+$ curl -s -H "x-demo-token: DP2BlLdVThQZUWaP" https://ce75ttmqcc5g3il7yefnupx6ee0qydmz.lambda-url.us-east-1.on.aws/health | python -m json.tool
+{
+    "ok": true,
+    "mode": "lambda",
+    "cv2_version": "5.0.0",
+    "cv2_path": "/opt/python/cv2/__init__.py",
+    "cool": false,
+    "kleidicv": true,
+    "machine": "aarch64",
+    "threads": 2,
+    "has_iterative_phase_correlation": true,
+    "llm": "gemini",
+    "max_duration_s": 4.0
+}

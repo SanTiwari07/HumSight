@@ -1,0 +1,125 @@
+{
+ "shown_command": "aws s3 ls s3://humsight-f308f2bbf0/demo/ --recursive --human-readable --region us-east-1; aws s3 ls s3://humsight-f308f2bbf0/ --recursive --summarize --region us-east-1 | tail -2",
+ "title": "aws cli: s3://humsight-f308f2bbf0",
+ "caption": "demo clips and job outputs stored in Amazon S3",
+ "started_utc": "2026-10-24T09:48:08+00:00",
+ "exit_code": 0,
+ "events": [
+  {
+   "t": 3.238,
+   "text": "2026-10-24 11:55:33   47.5 MiB demo/alias_130hz/clip.npz\r\n"
+  },
+  {
+   "t": 3.238,
+   "text": "2026-10-24 11:55:45  282 Bytes demo/alias_130hz/demo.json\r\n"
+  },
+  {
+   "t": 3.239,
+   "text": "2026-10-24 11:55:45  490 Bytes demo/alias_130hz/gt.json\r\n"
+  },
+  {
+   "t": 3.239,
+   "text": "2026-10-24 11:55:45    6.4 MiB demo/alias_130hz/original.webm\r\n"
+  },
+  {
+   "t": 3.239,
+   "text": "2026-10-24 11:56:02   45.8 MiB demo/codec_damaged/clip.npz\r\n"
+  },
+  {
+   "t": 3.239,
+   "text": "2026-10-24 11:56:11  466 Bytes demo/codec_damaged/demo.json\r\n"
+  },
+  {
+   "t": 3.239,
+   "text": "2026-10-24 11:56:12  599 Bytes demo/codec_damaged/gt.json\r\n"
+  },
+  {
+   "t": 3.239,
+   "text": "2026-10-24 11:56:13    4.2 MiB demo/codec_damaged/original.webm\r\n"
+  },
+  {
+   "t": 3.239,
+   "text": "2026-10-24 11:56:26   47.4 MiB demo/fan_fault_only/clip.npz\r\n"
+  },
+  {
+   "t": 3.239,
+   "text": "2026-10-24 11:56:40  193 Bytes demo/fan_fault_only/demo.json\r\n"
+  },
+  {
+   "t": 3.239,
+   "text": "2026-10-24 11:56:40  489 Bytes demo/fan_fault_only/gt.json\r\n"
+  },
+  {
+   "t": 3.239,
+   "text": "2026-10-24 11:56:41    6.1 MiB demo/fan_fault_only/original.webm\r\n"
+  },
+  {
+   "t": 3.24,
+   "text": "2026-10-24 11:57:03   47.6 MiB demo/pump_shake_fault/clip.npz\r\n"
+  },
+  {
+   "t": 3.24,
+   "text": "2026-10-24 11:57:17  259 Bytes demo/pump_shake_fault/demo.json\r\n"
+  },
+  {
+   "t": 3.24,
+   "text": "2026-10-24 11:57:17  600 Bytes demo/pump_shake_fault/gt.json\r\n"
+  },
+  {
+   "t": 3.24,
+   "text": "2026-10-24 11:57:18    6.7 MiB demo/pump_shake_fault/original.webm\r\n"
+  },
+  {
+   "t": 3.24,
+   "text": "2026-10-24 11:57:32   47.1 MiB demo/quiet/clip.npz\r\n"
+  },
+  {
+   "t": 3.24,
+   "text": "2026-10-24 11:57:51  207 Bytes demo/quiet/demo.json\r\n"
+  },
+  {
+   "t": 3.24,
+   "text": "2026-10-24 11:57:52  219 Bytes demo/quiet/gt.json\r\n"
+  },
+  {
+   "t": 3.24,
+   "text": "2026-10-24 11:57:52    5.8 MiB demo/quiet/original.webm\r\n"
+  },
+  {
+   "t": 3.24,
+   "text": "2026-10-24 13:50:14   71.1 MiB demo/real_washer/clip.npz\r\n"
+  },
+  {
+   "t": 3.24,
+   "text": "2026-10-24 13:50:31  517 Bytes demo/real_washer/demo.json\r\n"
+  },
+  {
+   "t": 3.241,
+   "text": "2026-10-24 13:50:32  425 Bytes demo/real_washer/gt.json\r\n"
+  },
+  {
+   "t": 3.241,
+   "text": "2026-10-24 13:50:32   10.1 MiB demo/real_washer/original.webm\r\n"
+  },
+  {
+   "t": 3.241,
+   "text": "2026-10-24 11:58:11   46.7 MiB demo/shake_only/clip.npz\r\n"
+  },
+  {
+   "t": 3.241,
+   "text": "2026-10-24 11:58:24  248 Bytes demo/shake_only/demo.json\r\n"
+  },
+  {
+   "t": 3.241,
+   "text": "2026-10-24 11:58:24  329 Bytes demo/shake_only/gt.json\r\n"
+  },
+  {
+   "t": 3.241,
+   "text": "2026-10-24 11:58:25    6.3 MiB demo/shake_only/original.webm\r\n"
+  },
+  {
+   "t": 6.617,
+   "text": "Total Objects: 63\r\n   Total Size: 533650839\r\n"
+  }
+ ]
+}

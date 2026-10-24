@@ -1,0 +1,29 @@
+{
+ "shown_command": "aws sts get-caller-identity --query Arn --output text | sed -E \"s/[0-9]{12}/<account-id>/\"; aws lambda get-function-configuration --function-name humsight --region us-east-1 --query \"{Function:FunctionName,Runtime:Runtime,Architecture:Architectures[0],MemoryMB:MemorySize,TimeoutS:Timeout,State:State,LastModified:LastModified}\" --output table; aws lambda get-function-url-config --function-name humsight --region us-east-1 --query \"{FunctionUrl:FunctionUrl,CorsOrigin:Cors.AllowOrigins[0]}\" --output table; aws lambda list-layer-versions --layer-name humsight-deps --region us-east-1 --query \"LayerVersions[].{Layer:LayerVersionArn,Arch:CompatibleArchitectures[0]}\" --output table | sed -E \"s/[0-9]{12}/<account-id>/\"; aws ssm describe-parameters --region us-east-1 --query \"Parameters[].{Name:Name,Type:Type}\" --output table",
+ "title": "aws cli: us-east-1",
+ "caption": "AWS CLI read of the deployed Lambda, Function URL, arm64 layer and SSM parameter; account id masked",
+ "started_utc": "2026-10-24T09:47:49+00:00",
+ "exit_code": 0,
+ "events": [
+  {
+   "t": 3.909,
+   "text": "arn:aws:iam::<account-id>:user/humsight-deployer\n"
+  },
+  {
+   "t": 7.31,
+   "text": "--------------------------------------------------\r\n|            GetFunctionConfiguration            |\r\n+---------------+--------------------------------+\r\n|  Architecture |  arm64                         |\r\n|  Function     |  humsight                      |\r\n|  LastModified |  2026-10-24T06:31:49.000+0000  |\r\n|  MemoryMB     |  3008                          |\r\n|  Runtime      |  python3.12                    |\r\n|  State        |  Active                        |\r\n|  TimeoutS     |  120                           |\r\n+---------------+--------------------------------+\r\n"
+  },
+  {
+   "t": 10.628,
+   "text": "------------------------------------------------------------------------------------------\r\n|                                  GetFunctionUrlConfig                                  |\r\n+-------------+--------------------------------------------------------------------------+\r\n|  CorsOrigin |  https://santiwari07.github.io                                           |\r\n|  FunctionUrl|  https://ce75ttmqcc5g3il7yefnupx6ee0qydmz.lambda-url.us-east-1.on.aws/   |\r\n+-------------+--------------------------------------------------------------------------+\r\n"
+  },
+  {
+   "t": 13.977,
+   "text": "--------------------------------------------------------------------------\n|                            ListLayerVersions                           |\n+-------+----------------------------------------------------------------+\n| Arch  |                             Layer                              |\n+-------+----------------------------------------------------------------+\n|  arm64|  arn:aws:lambda:us-east-1:<account-id>:layer:humsight-deps:1   |\n+-------+----------------------------------------------------------------+\n"
+  },
+  {
+   "t": 17.352,
+   "text": "------------------------------------------\r\n|           DescribeParameters           |\r\n+-----------------------+----------------+\r\n|         Name          |     Type       |\r\n+-----------------------+----------------+\r\n|  /humsight/gemini_key |  SecureString  |\r\n+-----------------------+----------------+\r\n"
+  }
+ ]
+}

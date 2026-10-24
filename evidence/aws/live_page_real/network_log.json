@@ -1,0 +1,79 @@
+{
+ "page": "https://santiwari07.github.io/HumSight/",
+ "demo": "real_washer",
+ "seconds_click_to_diagnosis": 46.2,
+ "aws_requests": [
+  {
+   "t": "2026-10-24T09:51:02.727850+00:00",
+   "method": "GET",
+   "url": "https://ce75ttmqcc5g3il7yefnupx6ee0qydmz.lambda-url.us-east-1.on.aws/api/health",
+   "status": 404
+  },
+  {
+   "t": "2026-10-24T09:51:03.182889+00:00",
+   "method": "GET",
+   "url": "https://ce75ttmqcc5g3il7yefnupx6ee0qydmz.lambda-url.us-east-1.on.aws/health",
+   "status": 200
+  },
+  {
+   "t": "2026-10-24T09:51:03.892080+00:00",
+   "method": "GET",
+   "url": "https://ce75ttmqcc5g3il7yefnupx6ee0qydmz.lambda-url.us-east-1.on.aws/demo-clips",
+   "status": 200
+  },
+  {
+   "t": "2026-10-24T09:51:46.554468+00:00",
+   "method": "POST",
+   "url": "https://ce75ttmqcc5g3il7yefnupx6ee0qydmz.lambda-url.us-east-1.on.aws/jobs",
+   "status": 200
+  },
+  {
+   "t": "2026-10-24T09:51:50.300237+00:00",
+   "method": "GET",
+   "url": "https://humsight-f308f2bbf0.s3.amazonaws.com/outputs/14af3e2b9b13/magnified_1.webm",
+   "status": 206
+  },
+  {
+   "t": "2026-10-24T09:51:50.354669+00:00",
+   "method": "GET",
+   "url": "https://humsight-f308f2bbf0.s3.amazonaws.com/outputs/14af3e2b9b13/heatmap.png",
+   "status": 200
+  },
+  {
+   "t": "2026-10-24T09:51:50.374707+00:00",
+   "method": "GET",
+   "url": "https://humsight-f308f2bbf0.s3.amazonaws.com/demo/real_washer/original.webm",
+   "status": 206
+  },
+  {
+   "t": "2026-10-24T09:51:53.935405+00:00",
+   "method": "GET",
+   "url": "https://humsight-f308f2bbf0.s3.amazonaws.com/outputs/14af3e2b9b13/magnified_1.webm",
+   "status": 206
+  },
+  {
+   "t": "2026-10-24T09:51:53.935809+00:00",
+   "method": "GET",
+   "url": "https://humsight-f308f2bbf0.s3.amazonaws.com/demo/real_washer/original.webm",
+   "status": 206
+  },
+  {
+   "t": "2026-10-24T09:51:53.938264+00:00",
+   "method": "GET",
+   "url": "https://humsight-f308f2bbf0.s3.amazonaws.com/demo/real_washer/original.webm",
+   "status": 206
+  },
+  {
+   "t": "2026-10-24T09:51:53.939202+00:00",
+   "method": "GET",
+   "url": "https://humsight-f308f2bbf0.s3.amazonaws.com/outputs/14af3e2b9b13/magnified_1.webm",
+   "status": 206
+  },
+  {
+   "t": "2026-10-24T09:51:57.148130+00:00",
+   "method": "GET",
+   "url": "https://humsight-f308f2bbf0.s3.amazonaws.com/outputs/14af3e2b9b13/spectrum.json",
+   "status": 200
+  }
+ ]
+}

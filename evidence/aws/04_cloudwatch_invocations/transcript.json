@@ -1,0 +1,13 @@
+{
+ "shown_command": "aws logs filter-log-events --log-group-name /aws/lambda/humsight --region us-east-1 --start-time 1792832867000 --filter-pattern REPORT --query 'events[].message' --output text | tr '\\t' '\\n' | awk '/^REPORT/{id=$3} /^Duration:/{d=$2} /^Max Memory Used/{printf \"%s  %-9s %9.1f s   max memory %5s MB\\n\", id, (d>1000?\"/jobs\":\"light\"), d/1000, $4}'",
+ "title": "aws cli: CloudWatch Logs /aws/lambda/humsight",
+ "caption": "Lambda REPORT lines for the page runs above: each long invocation is one full OpenCV 5 analysis on arm64",
+ "started_utc": "2026-10-24T09:52:48+00:00",
+ "exit_code": 0,
+ "events": [
+  {
+   "t": 4.42,
+   "text": "bfec1476-d996-4034-ba45-ede72753dd28  light           0.0 s   max memory    89 MB\n229b0cc4-97cb-47da-860b-ce8a3dd43656  light           0.0 s   max memory    91 MB\ncd60e075-fbef-42d9-bf9f-0acb6181dc97  light           0.0 s   max memory    91 MB\n1d6bbad2-998a-44ea-806f-4e2097b82d22  light           0.8 s   max memory   144 MB\nef2e182d-e79b-46b1-aeb9-49d50ca90edb  light           0.0 s   max memory   147 MB\n800d8d73-b2d4-4b45-873f-4d54d79f36aa  light           0.0 s   max memory   147 MB\nb170ee8e-34c1-47a9-9eb7-7383de8e39c2  light           0.0 s   max memory   147 MB\n586a52ab-6979-45eb-87ee-8e642dbad4ab  light           0.0 s   max memory   147 MB\nb634519f-47e7-4979-b8ec-39490f0064f3  light           0.3 s   max memory   147 MB\n850fc8b5-e623-4556-a5f7-8e30a30a875d  /jobs          22.9 s   max memory   895 MB\n0a95c2f3-d1e0-4540-9add-10e152040805  light           0.0 s   max memory   895 MB\n874664ed-193f-413e-87c4-2f5e0467c605  light           0.0 s   max memory   895 MB\n9f92285e-6e87-47de-82ee-3be796707592  light           0.3 s   max memory   895 MB\n677da91b-28e4-47aa-90a1-b755c19af21f  /jobs          22.5 s   max memory   999 MB\n9ae0a82f-e9b4-43d8-826e-2309dda63914  light           0.0 s   max memory   999 MB\n6c19a45a-628e-4cbe-8d27-bcd7ba89366c  light           0.0 s   max memory   999 MB\n262529fc-3f2c-4cfb-8361-c69fadc18e6e  light           0.2 s   max memory   999 MB\ne3a2b9a5-9adb-4ac9-ba8f-3cb9a765c8b1  /jobs          41.3 s   max memory  1527 MB\n"
+  }
+ ]
+}

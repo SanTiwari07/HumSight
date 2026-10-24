@@ -1,0 +1,33 @@
+$ aws sts get-caller-identity --query Arn --output text | sed -E "s/[0-9]{12}/<account-id>/"; aws lambda get-function-configuration --function-name humsight --region us-east-1 --query "{Function:FunctionName,Runtime:Runtime,Architecture:Architectures[0],MemoryMB:MemorySize,TimeoutS:Timeout,State:State,LastModified:LastModified}" --output table; aws lambda get-function-url-config --function-name humsight --region us-east-1 --query "{FunctionUrl:FunctionUrl,CorsOrigin:Cors.AllowOrigins[0]}" --output table; aws lambda list-layer-versions --layer-name humsight-deps --region us-east-1 --query "LayerVersions[].{Layer:LayerVersionArn,Arch:CompatibleArchitectures[0]}" --output table | sed -E "s/[0-9]{12}/<account-id>/"; aws ssm describe-parameters --region us-east-1 --query "Parameters[].{Name:Name,Type:Type}" --output table
+arn:aws:iam::<account-id>:user/humsight-deployer
+--------------------------------------------------
+|            GetFunctionConfiguration            |
++---------------+--------------------------------+
+|  Architecture |  arm64                         |
+|  Function     |  humsight                      |
+|  LastModified |  2026-10-24T06:31:49.000+0000  |
+|  MemoryMB     |  3008                          |
+|  Runtime      |  python3.12                    |
+|  State        |  Active                        |
+|  TimeoutS     |  120                           |
++---------------+--------------------------------+
+------------------------------------------------------------------------------------------
+|                                  GetFunctionUrlConfig                                  |
++-------------+--------------------------------------------------------------------------+
+|  CorsOrigin |  https://santiwari07.github.io                                           |
+|  FunctionUrl|  https://ce75ttmqcc5g3il7yefnupx6ee0qydmz.lambda-url.us-east-1.on.aws/   |
++-------------+--------------------------------------------------------------------------+
+--------------------------------------------------------------------------
+|                            ListLayerVersions                           |
++-------+----------------------------------------------------------------+
+| Arch  |                             Layer                              |
++-------+----------------------------------------------------------------+
+|  arm64|  arn:aws:lambda:us-east-1:<account-id>:layer:humsight-deps:1   |
++-------+----------------------------------------------------------------+
+------------------------------------------
+|           DescribeParameters           |
++-----------------------+----------------+
+|         Name          |     Type       |
++-----------------------+----------------+
+|  /humsight/gemini_key |  SecureString  |
++-----------------------+----------------+
