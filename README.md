@@ -13,6 +13,7 @@
 
 <p align="center">
   <a href="https://santiwari07.github.io/HumSight/"><b>Live demo</b></a> ·
+  <a href="https://youtu.be/VsnxVrgh-zU"><b>Video</b></a> ·
   <a href="#night-shift-pump-hall-3">The problem</a> ·
   <a href="#what-humsight-does">What it does</a> ·
   <a href="#a-walk-through-the-app">Screens</a> ·
@@ -260,7 +261,7 @@ HumSight was built for the [OpenCV AI Competition 2026, powered by AWS](https://
 | Architecture diagram | [docs/architecture.svg](docs/architecture.svg), [docs/agent_workflow.svg](docs/agent_workflow.svg) |
 | Working web endpoint | [santiwari07.github.io/HumSight](https://santiwari07.github.io/HumSight/), calling the Lambda Function URL |
 | Evaluation with failure cases | [eval/results/summary.md](eval/results/summary.md), [eval/results/failure_cases.md](eval/results/failure_cases.md) |
-| Video of five minutes or less | Still to be recorded |
+| Video of five minutes or less | [youtu.be/VsnxVrgh-zU](https://youtu.be/VsnxVrgh-zU) |
 
 **Agentic Vision with OpenCV 5**
 

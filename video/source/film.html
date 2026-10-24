@@ -1,0 +1,634 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>HumSight Demo Film</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root{
+  --bg:#0b1020; --bg2:#121a33; --panel:#18213f; --line:#2a3560; --ink:#eef2ff; --ink2:#a9b3d6; --ink3:#7381b3;
+  --amber:#f5b400; --blue:#4c8dff; --red:#ff5a5f; --green:#3ccf8e; --violet:#9b7bff; --aws:#ff9900;
+  --sans:"Segoe UI Variable Display","Segoe UI",Inter,Arial,sans-serif; --mono:"Cascadia Mono",Consolas,"Courier New",monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#000;color:var(--ink);font-family:var(--sans);overflow:hidden}
+#viewport{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#000}
+#stage{position:relative;width:1920px;height:1080px;overflow:hidden;background:var(--bg);transform-origin:center center;flex:none}
+.scene{position:absolute;inset:0;display:none;background:radial-gradient(1200px 700px at 70% 20%,#1a2550 0%,var(--bg) 60%)}
+.scene.rec{background:#f3f4f7}
+.abs{position:absolute}
+.fill{position:absolute;inset:0}
+.h1{font-size:76px;font-weight:700;letter-spacing:-1.5px;line-height:1.05}
+.h2{font-size:54px;font-weight:700;letter-spacing:-1px;line-height:1.1}
+.h3{font-size:34px;font-weight:600}
+.muted{color:var(--ink2)}
+.mono{font-family:var(--mono)}
+.chip{display:inline-flex;align-items:center;gap:10px;padding:10px 18px;border-radius:999px;background:var(--panel);border:1px solid var(--line);font-size:26px;font-family:var(--mono);color:var(--ink);white-space:nowrap}
+.chip.amber{border-color:#7a5c00;background:#2d2408;color:#ffd659}
+.chip.red{border-color:#7a2427;background:#2e1012;color:#ff8f92}
+.chip.green{border-color:#1d6b4b;background:#0d2a20;color:#7ff0bd}
+.chip.blue{border-color:#264d99;background:#0f1d3d;color:#9cc0ff}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:22px}
+.tag{font-family:var(--mono);font-size:20px;color:var(--ink3);letter-spacing:.5px}
+
+/* overlay chrome */
+#chapter{position:absolute;left:48px;top:40px;transition:none;z-index:50;padding:10px 20px;border-radius:999px;background:rgba(8,12,28,.82);border:1px solid rgba(255,255,255,.14);font-size:24px;font-weight:600;letter-spacing:.3px;color:#fff;opacity:0}
+#chapter b{color:var(--amber);font-weight:700}
+#brand{position:absolute;right:48px;top:40px;z-index:50;font-size:24px;font-weight:700;color:#fff;padding:10px 18px;border-radius:999px;background:rgba(8,12,28,.82);border:1px solid rgba(255,255,255,.14);opacity:0}
+#brand span{color:var(--amber)}
+#cap{display:none;position:absolute;left:50%;bottom:58px;transform:translateX(-50%);z-index:60;max-width:1560px;text-align:center;font-size:36px;line-height:1.3;font-weight:600;color:#fff;padding:12px 26px;border-radius:14px;background:rgba(5,8,18,.84);opacity:0}
+#prog{position:absolute;left:0;bottom:0;height:6px;background:var(--amber);z-index:60}
+#progbg{position:absolute;left:0;right:0;bottom:0;height:6px;background:rgba(255,255,255,.1);z-index:59}
+#fade{position:absolute;inset:0;background:#000;z-index:80;pointer-events:none;opacity:0}
+
+/* recording scenes */
+.recimg{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0}
+.callout{position:absolute;z-index:20;padding:18px 26px;border-radius:18px;background:rgba(8,12,28,.92);color:#fff;font-size:32px;font-weight:600;box-shadow:0 18px 50px rgba(0,0,0,.35);border:2px solid rgba(255,255,255,.12);opacity:0}
+.callout.red{border-color:var(--red)}
+.callout.amber{border-color:var(--amber)}
+.callout small{display:block;font-size:22px;font-weight:500;color:var(--ink2);margin-top:4px}
+.ff{position:absolute;right:48px;top:110px;z-index:21;padding:14px 22px;border-radius:14px;background:rgba(8,12,28,.92);color:#fff;font-size:28px;font-weight:700;opacity:0}
+.ff .clock{font-family:var(--mono);color:var(--amber)}
+.ring{position:absolute;z-index:19;border:5px solid var(--amber);border-radius:16px;box-shadow:0 0 0 9999px rgba(0,0,0,.0);opacity:0}
+
+/* cold open */
+.vidpair{position:absolute;left:80px;right:80px;top:170px;display:flex;gap:40px}
+.vid{flex:1;position:relative}
+.vid img{width:860px;height:484px;display:block;border-radius:18px;border:2px solid #2a3560;image-rendering:auto}
+.vid .lbl{margin-top:18px;font-size:30px;font-weight:700;letter-spacing:1px}
+.vid .lbl span{font-weight:500;color:var(--ink2);letter-spacing:0}
+
+/* title */
+.wave{position:absolute;left:50%;top:250px;transform:translateX(-50%)}
+.logo{position:absolute;left:0;right:0;top:420px;text-align:center;font-size:150px;font-weight:800;letter-spacing:-4px}
+.logo span{color:var(--amber)}
+.tagline{position:absolute;left:0;right:0;top:600px;text-align:center;font-size:44px;color:var(--ink2)}
+.strip{position:absolute;left:0;right:0;top:700px;display:flex;justify-content:center;align-items:center;gap:28px}
+.step{display:flex;align-items:center;gap:16px;padding:18px 26px;border-radius:18px;background:var(--panel);border:1px solid var(--line);font-size:30px;font-weight:600;opacity:0}
+.arrow{font-size:40px;color:var(--ink3);opacity:0}
+.foot{position:absolute;left:0;right:0;bottom:120px;text-align:center;font-size:24px;color:var(--ink3);letter-spacing:.4px}
+
+/* grids of cards */
+.row{position:absolute;display:flex;gap:28px}
+.ucard{width:400px;padding:34px 30px;opacity:0}
+.ucard svg{width:72px;height:72px;margin-bottom:20px}
+.ucard h4{font-size:32px;margin-bottom:12px}
+.ucard p{font-size:24px;color:var(--ink2);line-height:1.35}
+
+/* agent */
+.steps{position:absolute;left:90px;top:200px;width:620px}
+.st{display:flex;align-items:center;gap:18px;padding:13px 18px;margin-bottom:12px;border-radius:16px;border:1px solid transparent;opacity:.25}
+.st .n{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--panel);border:1px solid var(--line);font-weight:700;font-size:22px;flex:none}
+.st .t{font-size:30px;font-weight:600}
+.st .tool{font-family:var(--mono);font-size:20px;color:var(--ink3)}
+.st.on{opacity:1}
+.st.cur{background:var(--panel);border-color:var(--line)}
+.st.cur .n{background:var(--amber);color:#111;border-color:var(--amber)}
+.detail{position:absolute;left:780px;top:200px;width:1050px;height:600px;padding:56px 60px}
+.detail .kicker{font-family:var(--mono);font-size:26px;color:var(--amber);letter-spacing:1px;margin-bottom:12px}
+.detail .ttl{font-size:68px;font-weight:700;margin-bottom:30px;letter-spacing:-1px}
+.detail .why{font-size:38px;color:var(--ink2);line-height:1.38;margin-bottom:44px}
+.detail .why b{color:var(--ink)}
+.detail .chips{display:flex;flex-wrap:wrap;gap:16px}.detail .chip{font-size:32px;padding:14px 24px}
+.svgwrap{position:absolute;background:#fbf9f5;border-radius:22px;padding:18px;box-shadow:0 30px 80px rgba(0,0,0,.45)}
+.svgwrap img{display:block;width:100%;height:auto}
+.svgwrap .src{position:absolute;right:20px;bottom:-44px;font-family:var(--mono);font-size:20px;color:var(--ink3)}
+
+/* aws */
+#awsSvg{position:absolute;left:0;top:0}
+.node rect{fill:var(--panel);stroke:var(--line);stroke-width:2}
+.node text{fill:var(--ink);font-family:var(--sans)}
+.node .sub{fill:var(--ink2);font-size:21px}
+.node .ttl{font-size:30px;font-weight:700}
+.node{transition:none}
+.pkt rect{fill:var(--amber)}
+.pkt text{fill:#111;font-family:var(--mono);font-size:21px;font-weight:700}
+.edge{stroke:#34406e;stroke-width:3;fill:none}
+
+/* results */
+.bar{position:absolute;left:0;height:64px;border-radius:12px}
+.tile{width:520px;padding:30px 34px;opacity:0}
+.tile .big{font-size:64px;font-weight:800;letter-spacing:-1px}
+.tile .lab{font-size:26px;color:var(--ink2);margin-top:6px}
+
+/* controls (interactive mode only) */
+#ctl{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:100;display:flex;gap:12px;align-items:center;padding:10px 16px;border-radius:14px;background:rgba(20,24,40,.92);color:#fff;font:14px system-ui}
+#ctl button{background:#f5b400;color:#111;border:0;border-radius:8px;padding:8px 14px;font-weight:700;cursor:pointer}
+#ctl input{width:420px}
+#ctl select{background:#222a44;color:#fff;border:1px solid #39456f;border-radius:8px;padding:6px}
+body.render #ctl{display:none}
+</style>
+</head>
+<body>
+<div id="viewport"><div id="stage">
+  <div id="chapter"></div>
+  <div id="brand"><span>〰</span> HumSight</div>
+  <div id="cap"></div>
+  <div id="progbg"></div><div id="prog"></div>
+  <div id="fade"></div>
+</div></div>
+<div id="ctl">
+  <button id="pp">Play</button>
+  <input id="scrub" type="range" min="0" max="1000" value="0" aria-label="Seek">
+  <span id="clock" style="font-family:monospace">0:00</span>
+  <select id="jump" aria-label="Jump to scene"></select>
+</div>
+<audio id="aud" src="narration.wav" preload="auto"></audio>
+
+<script src="timing.js"></script>
+<script src="recindex.js"></script>
+<script>
+"use strict";
+const T = window.TIMING, REC = window.REC;
+const $ = (s, r = document) => r.querySelector(s);
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const ease = (x) => (x < .5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2);
+const prog = (lt, a, b) => ease(clamp((lt - a) / Math.max(1e-6, b - a)));
+const lerp = (a, b, k) => a + (b - a) * k;
+const stage = $("#stage");
+function el(html) { const d = document.createElement("div"); d.innerHTML = html.trim(); return d.firstElementChild; }
+function sayAt(sc, phrase) {
+  const i = sc.text.indexOf(phrase);
+  if (i < 0) console.warn("phrase not found", sc.id, phrase);
+  return sc.voStart + sc.voDur * (Math.max(0, i) / sc.text.length);
+}
+// piecewise-linear map from scene time to recording time
+function pw(keys, lt) {
+  if (lt <= keys[0][0]) return keys[0][1];
+  for (let i = 1; i < keys.length; i++) if (lt <= keys[i][0]) {
+    const [a, x] = keys[i - 1], [b, y] = keys[i]; return lerp(x, y, (lt - a) / Math.max(1e-6, b - a));
+  }
+  return keys[keys.length - 1][1];
+}
+function recFrame(seg, rt) {
+  const R = REC[seg], ts = R.t; let lo = 0, hi = ts.length - 1;
+  while (lo < hi) { const m = (lo + hi + 1) >> 1; if (ts[m] <= rt) lo = m; else hi = m - 1; }
+  return `rec/${seg}/${R.f[lo]}`;
+}
+function setSrc(img, src, waits) { if (img.getAttribute("src") !== src) { img.setAttribute("src", src); waits.push(img.decode().catch(() => {})); } }
+function show(node, k, dy = 24) { node.style.opacity = k; node.style.transform = `translateY(${(1 - k) * dy}px)`; }
+// camera: zoom s toward focus (fx, fy) in 1920x1080 space, clamped to the frame
+function cam(img, s, fx, fy) {
+  let tx = 960 - fx * s, ty = 540 - fy * s;
+  tx = clamp(tx, 1920 - 1920 * s, 0); ty = clamp(ty, 1080 - 1080 * s, 0);
+  img.style.transform = `translate(${tx}px,${ty}px) scale(${s})`;
+}
+function camKeys(keys, lt) { // keys: [t, s, fx, fy]
+  let a = keys[0], b = keys[keys.length - 1];
+  for (let i = 1; i < keys.length; i++) if (lt <= keys[i][0]) { a = keys[i - 1]; b = keys[i]; break; }
+  if (lt >= keys[keys.length - 1][0]) a = b;
+  const k = a === b ? 1 : ease(clamp((lt - a[0]) / (b[0] - a[0])));
+  return [lerp(a[1], b[1], k), lerp(a[2], b[2], k), lerp(a[3], b[3], k)];
+}
+const icon = {
+  wrench: '<svg viewBox="0 0 24 24" fill="none" stroke="#f5b400" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.2L3 17.8V21h3.2l6.3-6.3a4 4 0 0 0 5.2-5.4l-2.6 2.6-2.4-.6-.6-2.4z"/></svg>',
+  plant: '<svg viewBox="0 0 24 24" fill="none" stroke="#4c8dff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V10l5 3V10l5 3V6h4v15z"/><path d="M3 21h18M7 17h1M12 17h1M17 17h1"/></svg>',
+  case: '<svg viewBox="0 0 24 24" fill="none" stroke="#3ccf8e" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 13h18"/></svg>',
+  cap: '<svg viewBox="0 0 24 24" fill="none" stroke="#9b7bff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5M22 9v6"/></svg>',
+  phone: '<svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="#f5b400" stroke-width="1.7"><rect x="7" y="2" width="10" height="20" rx="2"/><circle cx="12" cy="18" r="1"/></svg>',
+  grid: '<svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="#4c8dff" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/></svg>',
+  q: '<svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="#3ccf8e" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6V14M12 17h.01"/></svg>',
+};
+function machine(on) {
+  const c = on ? "#3ccf8e" : "#3a466f";
+  return `<svg width="130" height="120" viewBox="0 0 130 120"><rect x="10" y="40" width="80" height="54" rx="10" fill="#18213f" stroke="${on ? "#3ccf8e" : "#3a466f"}" stroke-width="3" ${on ? "" : 'stroke-dasharray="7 6"'}/>
+    <circle cx="50" cy="67" r="17" fill="none" stroke="#5d6ba0" stroke-width="3"/><path d="M50 52v30M35 67h30" stroke="#5d6ba0" stroke-width="3"/>
+    <rect x="90" y="56" width="26" height="22" rx="4" fill="#18213f" stroke="#5d6ba0" stroke-width="3"/><path d="M10 100h106" stroke="#3a466f" stroke-width="3"/>
+    ${on ? '<circle cx="80" cy="34" r="11" fill="#3ccf8e"/><path d="M80 23v-10" stroke="#3ccf8e" stroke-width="3"/>' : ""}</svg>`;
+}
+
+// ------------------------------------------------------------------ scenes
+const S = {};
+
+S.cold = {
+  build(r) {
+    r.innerHTML = `
+      <div class="abs h2" style="left:80px;top:70px" id="cTitle">This pump looks perfectly still.</div>
+      <div class="vidpair">
+        <div class="vid"><img id="cO"><div class="lbl">ORIGINAL <span>· what the camera saw</span></div></div>
+        <div class="vid"><img id="cM"><div class="lbl" style="color:var(--amber)">HUMSIGHT <span>· motion magnified, slowed 8×</span></div>
+          <div class="abs chip amber" id="cF" style="right:24px;top:24px;font-size:34px">58.5 Hz</div>
+          <div class="abs chip amber" id="cA" style="right:24px;top:94px;font-size:34px">0.047 px</div></div>
+      </div>
+      <div class="abs tag" style="left:80px;top:745px;font-size:22px">Synthetic test clip with exact ground truth · output of the live AWS deployment</div>`;
+  },
+  update(r, lt, sc, w) {
+    const i = (Math.floor(lt * 30) % 720) + 1, n = String(i).padStart(4, "0");
+    setSrc($("#cO", r), `media/pump/original/${n}.jpg`, w);
+    setSrc($("#cM", r), `media/pump/magnified_1/${n}.jpg`, w);
+    $("#cTitle", r).textContent = lt < sayAt(sc, "It isn't") ? "This pump looks perfectly still." : "It isn't.";
+    show($("#cF", r), prog(lt, sayAt(sc, "fifty-eight"), sayAt(sc, "fifty-eight") + .4));
+    show($("#cA", r), prog(lt, sayAt(sc, "less than"), sayAt(sc, "less than") + .4));
+  },
+};
+
+S.title = {
+  build(r) {
+    r.innerHTML = `
+      <svg class="wave" width="900" height="140" viewBox="0 0 900 140"><path id="tW" fill="none" stroke="#f5b400" stroke-width="6" stroke-linecap="round"/></svg>
+      <div class="logo">HumSight</div>
+      <div class="tagline">See what machines are humming.</div>
+      <div class="strip">
+        <div class="step" id="s1">${icon.phone}Slow-motion phone video</div><div class="arrow" id="a1">→</div>
+        <div class="step" id="s2">${icon.grid}Grid of virtual vibration sensors</div><div class="arrow" id="a2">→</div>
+        <div class="step" id="s3">${icon.q}Real fault, or a shaky hand?</div>
+      </div>
+      <div class="foot">OpenCV AI Competition 2026 · Agentic Vision with OpenCV 5 · Best Use of COOL</div>`;
+  },
+  update(r, lt, sc) {
+    let d = "";
+    for (let x = 0; x <= 900; x += 6) {
+      const env = Math.exp(-Math.pow((x - 450) / 230, 2));
+      const y = 70 + Math.sin(x / 18 - lt * 6) * 52 * env + Math.sin(x / 7 + lt * 9) * 6 * env;
+      d += (x ? "L" : "M") + x + " " + y.toFixed(1);
+    }
+    $("#tW", r).setAttribute("d", d);
+    show($("#s1", r), prog(lt, sayAt(sc, "slow-motion"), sayAt(sc, "slow-motion") + .5));
+    $("#a1", r).style.opacity = prog(lt, sayAt(sc, "grid of"), sayAt(sc, "grid of") + .4);
+    show($("#s2", r), prog(lt, sayAt(sc, "grid of"), sayAt(sc, "grid of") + .5));
+    $("#a2", r).style.opacity = prog(lt, sayAt(sc, "tells you"), sayAt(sc, "tells you") + .4);
+    show($("#s3", r), prog(lt, sayAt(sc, "tells you"), sayAt(sc, "tells you") + .5));
+  },
+};
+
+S.problem = {
+  build(r) {
+    let m = ""; for (let i = 0; i < 8; i++) m += `<div class="mc" style="text-align:center;opacity:0;zoom:1.45">${machine(i === 1 || i === 5)}<div class="tag" style="margin-top:4px">${i === 1 || i === 5 ? '<span style="color:#3ccf8e">sensor</span>' : "no sensor"}</div></div>`;
+    r.innerHTML = `
+      <div class="abs h1" id="pA" style="left:120px;top:150px;width:1700px">Machines vibrate before they fail.</div>
+      <div class="abs h3 muted" id="pA2" style="left:120px;top:260px;opacity:0">Contact sensors are fitted one machine at a time, so many are never monitored.</div>
+      <div class="row" id="pRow" style="left:120px;top:400px;gap:40px">${m}</div>
+      <div class="fill" id="pB" style="opacity:0">
+        <div class="abs h1" style="left:120px;top:150px">“Magnify all motion”…</div>
+        <div class="abs h3 muted" style="left:120px;top:260px">…also magnifies the hand holding the camera.</div>
+        <div class="abs card" style="left:120px;top:380px;width:760px;height:420px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:22px">
+          <div id="pPhone" style="width:150px;height:260px;border-radius:26px;border:6px solid #f5b400;display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--ink2)">REC ●</div>
+          <div class="h3">Handheld phone · tiny sway</div></div>
+        <div class="abs h1" style="left:930px;top:540px;color:var(--ink3)">→</div>
+        <div class="abs card" style="left:1060px;top:380px;width:740px;height:420px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px;border-color:#7a2427">
+          <div id="pBoom" class="h1" style="color:var(--red)">FALSE ALARM</div>
+          <div class="h3" style="text-align:center;width:600px">A healthy machine looks broken</div></div>
+      </div>`;
+  },
+  update(r, lt, sc) {
+    const b = sayAt(sc, "Video should help");
+    const ka = 1 - prog(lt, b - .3, b + .2);
+    $("#pA", r).style.opacity = ka; $("#pRow", r).style.opacity = ka; $("#pA2", r).style.opacity = Math.min(ka, prog(lt, sayAt(sc, "Contact sensors"), sayAt(sc, "Contact sensors") + .5));
+    [...r.querySelectorAll(".mc")].forEach((n, i) => show(n, prog(lt, .4 + i * .12, .9 + i * .12)));
+    $("#pB", r).style.opacity = prog(lt, b - .1, b + .4);
+    const sh = Math.sin(lt * 2 * Math.PI * 3.5);
+    $("#pPhone", r).style.transform = `translate(${sh * 12}px,${Math.cos(lt * 13) * 6}px) rotate(${sh * 3}deg)`;
+    const kb = prog(lt, sayAt(sc, "Film handheld"), sayAt(sc, "Film handheld") + .5);
+    $("#pBoom", r).style.opacity = .15 + .85 * kb; $("#pBoom", r).style.transform = `scale(${.85 + .15 * kb})`;
+  },
+};
+
+S.users = {
+  build(r) {
+    const u = [["wrench", "Maintenance technicians", "A quick non-contact check of an unmonitored machine, with the phone they already carry.", "maintenance"],
+      ["plant", "Plant managers", "A first screen of which machines need a real sensor or a specialist visit.", "Plant managers"],
+      ["case", "Field-service engineers", "Visual evidence (video, spectrum, heatmap) to show a customer what is moving.", "Field engineers"],
+      ["cap", "Students and labs", "A hands-on way to see frequency, amplitude, Nyquist and aliasing on real video.", "students"]];
+    r.innerHTML = `<div class="abs h1" style="left:120px;top:150px">Who it's for</div>
+      <div class="row" style="left:120px;top:330px">${u.map((x) => `<div class="card ucard" data-p="${x[3]}">${icon[x[0]]}<h4>${x[1]}</h4><p>${x[2]}</p></div>`).join("")}</div>`;
+  },
+  update(r, lt, sc) { r.querySelectorAll(".ucard").forEach((n) => { const a = sayAt(sc, n.dataset.p) - .2; show(n, prog(lt, a, a + .5), 40); }); },
+};
+
+S.idea = {
+  build(r) {
+    let g = ""; for (let i = 1; i < 8; i++) g += `<line x1="${i * 132}" y1="0" x2="${i * 132}" y2="594" class="gl"/>`;
+    for (let j = 1; j < 6; j++) g += `<line x1="0" y1="${j * 99}" x2="1056" y2="${j * 99}" class="gl"/>`;
+    let c = ""; for (let j = 0; j < 6; j++) for (let i = 0; i < 8; i++) c += `<rect class="cell" x="${i * 132 + 3}" y="${j * 99 + 3}" width="126" height="93" rx="6" fill="#f5b400" opacity="0"/>`;
+    r.innerHTML = `
+      <div class="abs h2" style="left:90px;top:120px">Every patch becomes a sensor.</div>
+      <div class="abs" style="left:90px;top:230px;width:1056px;height:594px;border-radius:16px;overflow:hidden;border:2px solid #2a3560">
+        <img src="media/pump/original/0001.jpg" style="width:1056px;height:594px;display:block">
+        <img id="iH" src="assets/heatmap.png" style="position:absolute;inset:0;width:1056px;height:594px;opacity:0">
+        <svg class="abs" style="left:0;top:0" width="1056" height="594"><g id="iG" stroke="#f5b400" stroke-width="2.5" opacity="0">${g}</g><g id="iC">${c}</g>
+          <rect id="iSel" x="${3 * 132}" y="${2 * 99}" width="132" height="99" fill="none" stroke="#4c8dff" stroke-width="6" opacity="0"/></svg>
+      </div>
+      <div class="abs card" id="iP" style="left:1200px;top:230px;width:640px;height:594px;padding:34px;opacity:0">
+        <div class="tag">ONE PATCH · cv2.phaseCorrelateIterative</div>
+        <div class="h3" style="margin:10px 0 14px">Sub-pixel motion, frame by frame</div>
+        <svg width="570" height="150"><path id="iWave" fill="none" stroke="#4c8dff" stroke-width="3"/><line x1="0" y1="75" x2="570" y2="75" stroke="#2a3560"/></svg>
+        <div class="tag" style="margin:16px 0 8px">FFT → SPECTRUM</div>
+        <svg width="570" height="120" id="iSpec"></svg>
+        <div style="display:flex;gap:10px;margin-top:18px;flex-wrap:wrap"><span class="chip blue">frequency</span><span class="chip blue">amplitude</span><span class="chip blue">SNR</span></div>
+      </div>
+      <div class="abs" id="iCount" style="left:1200px;top:850px;opacity:0"><span class="h2" style="color:var(--amber)">48</span> <span class="h3">virtual sensors · 0 wires</span></div>`;
+    let sp = ""; for (let i = 0; i < 48; i++) { const h = i === 30 ? 100 : 8 + ((i * 37) % 17); sp += `<rect x="${i * 11.8}" y="${120 - h}" width="8" height="${h}" fill="${i === 30 ? "#f5b400" : "#3a466f"}"/>`; }
+    $("#iSpec", r).innerHTML = sp;
+  },
+  update(r, lt, sc) {
+    $("#iG", r).style.opacity = prog(lt, sayAt(sc, "We split"), sayAt(sc, "We split") + .8);
+    const cs = r.querySelectorAll(".cell"), c0 = sayAt(sc, "every patch");
+    cs.forEach((n, i) => { const a = c0 + i * .035; const k = clamp((lt - a) / .25); n.setAttribute("opacity", (k > 0 && k < 1 ? .55 * (1 - Math.abs(k * 2 - 1)) : 0).toFixed(3)); });
+    const p0 = sayAt(sc, "For each one");
+    $("#iSel", r).setAttribute("opacity", prog(lt, p0, p0 + .3));
+    show($("#iP", r), prog(lt, p0, p0 + .5));
+    let d = ""; for (let x = 0; x <= 570; x += 4) d += (x ? "L" : "M") + x + " " + (75 + Math.sin(x / 9 - lt * 8) * 42 * clamp((lt - p0) * 1.5)).toFixed(1);
+    $("#iWave", r).setAttribute("d", d);
+    const o0 = sayAt(sc, "One video");
+    $("#iH", r).style.opacity = .85 * prog(lt, o0, o0 + .7);
+    show($("#iCount", r), prog(lt, o0, o0 + .5));
+  },
+};
+
+S.agent = {
+  steps: [
+    ["Check recording", "probe_clip", "start", "Measure the frame rate and the highest frequency it can see.", ["240 fps", "max 120 Hz"]],
+    ["Coarse motion scan", "scan_motion", "the whole frame moves", "Where, and at what frequency, does anything move?", ["background 3.509 Hz · 0.545 px", "strongest patch 0.562 px"]],
+    ["Remove camera shake", "compensate_shake", "so it removes", "<b>Background 0.545 px vs strongest patch 0.562 px:</b> the whole frame moves, so remove camera shake first.", ["shake 3.509 Hz removed", "residual 0.0078 px"]],
+    ["Classify peaks", "classify_peaks", "Underneath", "Sort every peak into shake, fault or noise.", ["fault 58.5 Hz · 0.047 px · SNR 25.3", "shake rejected"]],
+    ["Fine scan of the fault", "scan_motion (fine)", "It zooms in", "A fault candidate: refine with 32 px patches inside its region only.", ["refined 58.497 Hz", "0.04657 px · SNR 45.8"]],
+    ["Magnify that band only", "magnify", "magnifies just", "Amplify 57.5–59.5 Hz inside the fault region; nothing else moves.", ["α 20", "slowed ×8", "artifact ratio 0.086"]],
+    ["File the work order", "file_report", "files a work order", "Evidence is sufficient: file the work order.", ["verdict FAULT"]],
+  ],
+  build(r) {
+    r.innerHTML = `
+      <div class="abs h2" style="left:90px;top:105px">An agent decides what to measure next.</div>
+      <div class="steps">${this.steps.map((s, i) => `<div class="st"><div class="n">${i + 1}</div><div><div class="t">${s[0]}</div><div class="tool">${s[1]}</div></div></div>`).join("")}</div>
+      <div class="card detail" id="aD"><div class="kicker" id="aK"></div><div class="ttl" id="aT"></div><div class="why" id="aW"></div><div class="chips" id="aC"></div></div>
+      <div class="svgwrap" id="aSvg" style="left:780px;top:200px;width:1050px;opacity:0"><img src="assets/agent_workflow.svg"><div class="src">docs/agent_workflow.svg</div></div>
+      <div class="abs" id="aG" style="left:90px;top:930px;display:flex;gap:16px;opacity:0"><span class="chip green">✓ every number from OpenCV / NumPy</span><span class="chip green">✓ number guard</span><span class="chip green">✓ ≤ 10 tool calls</span></div>
+      <div class="abs tag" style="left:780px;top:840px">Real trace from the pump clip · docs/example_trace.md</div>`;
+  },
+  update(r, lt, sc) {
+    const ts = this.steps.map((s) => (s[2] === "start" ? sc.voStart + .2 : sayAt(sc, s[2])));
+    let cur = -1; ts.forEach((t, i) => { if (lt >= t - .15) cur = i; });
+    r.querySelectorAll(".st").forEach((n, i) => { n.classList.toggle("on", i <= cur); n.classList.toggle("cur", i === cur); });
+    const s = this.steps[Math.max(0, cur)];
+    if ($("#aT", r).dataset.i !== String(cur)) {
+      $("#aT", r).dataset.i = String(cur);
+      $("#aK", r).textContent = `STEP ${Math.max(0, cur) + 1} · ${s[1]}`;
+      $("#aT", r).textContent = s[0]; $("#aW", r).innerHTML = s[3];
+      $("#aC", r).innerHTML = s[4].map((c) => `<span class="chip ${/fault|FAULT|refined/.test(c) ? "amber" : /removed|rejected|residual/.test(c) ? "green" : "blue"}">${c}</span>`).join("");
+    }
+    const k = cur < 0 ? 0 : prog(lt, ts[cur] - .15, ts[cur] + .25);
+    $("#aD", r).style.opacity = cur < 0 ? 0 : 1; $("#aC", r).style.opacity = k; $("#aW", r).style.opacity = .3 + .7 * k;
+    const g0 = sayAt(sc, "Every number");
+    $("#aSvg", r).style.opacity = prog(lt, g0, g0 + .6); $("#aD", r).style.visibility = lt > g0 + .6 ? "hidden" : "visible";
+    show($("#aG", r), prog(lt, sayAt(sc, "a guard"), sayAt(sc, "a guard") + .5));
+  },
+};
+
+S.aws = {
+  N: { // x, y, w, h
+    br: [110, 420, 360, 170, "Browser", "static page on GitHub Pages"],
+    fu: [600, 445, 260, 120, "Function URL", "POST /jobs"],
+    la: [960, 360, 560, 290, "AWS Lambda", "arm64 · Graviton · Python 3.12"],
+    s3: [1010, 770, 460, 150, "Amazon S3", "demo/ · uploads/ · outputs/"],
+    ssm: [1620, 250, 260, 120, "SSM", "Gemini key (SecureString)"],
+    cw: [1620, 445, 260, 120, "CloudWatch", "a log line per run"],
+    bu: [1620, 640, 260, 120, "Budgets", "caps the cost"],
+    ge: [1020, 120, 440, 120, "Gemini API", "outside AWS · numbers only"],
+  },
+  build(r) {
+    const N = this.N;
+    const box = (k, extra = "") => { const [x, y, w, h, t, s] = N[k]; return `<g class="node" id="n_${k}" opacity=".3"><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="20" ${extra}/><text class="ttl" x="${x + 28}" y="${y + 50}">${t}</text><text class="sub" x="${x + 28}" y="${y + 86}">${s}</text></g>`; };
+    const c = (k) => [N[k][0] + N[k][2] / 2, N[k][1] + N[k][3] / 2];
+    r.innerHTML = `
+      <div class="abs h2" style="left:90px;top:105px">How it runs on AWS</div>
+      <svg id="awsSvg" width="1920" height="1080">
+        <rect x="560" y="210" width="1340" height="770" rx="28" fill="none" stroke="#ff9900" stroke-width="2" stroke-dasharray="10 8" opacity=".55"/>
+        <text x="590" y="250" fill="#ff9900" font-size="24" font-weight="700" font-family="Segoe UI">AWS · us-east-1</text>
+        <path class="edge" d="M470 505 H600"/><path class="edge" d="M860 505 H960"/>
+        <path class="edge" d="M1240 650 V770"/><path class="edge" d="M290 590 V845 H1010"/>
+        <path class="edge" d="M1520 430 L1620 310"/><path class="edge" d="M1520 505 H1620"/><path class="edge" d="M1240 360 V240" stroke-dasharray="8 7"/>
+        ${box("br")}${box("fu")}${box("la")}${box("s3")}${box("ssm")}${box("cw")}${box("bu")}${box("ge", 'stroke-dasharray="9 7"')}
+        <g id="laIn" opacity="0"><rect x="990" y="470" width="240" height="70" rx="12" fill="#0f1d3d" stroke="#4c8dff"/><text x="1010" y="515" fill="#9cc0ff" font-size="24" font-family="Segoe UI" font-weight="600">OpenCV 5 pipeline</text>
+          <rect x="1250" y="470" width="240" height="70" rx="12" fill="#2d2408" stroke="#f5b400"/><text x="1270" y="515" fill="#ffd659" font-size="24" font-family="Segoe UI" font-weight="600">Agent ≤ 10 calls</text>
+          <text x="990" y="600" fill="#a9b3d6" font-size="21" font-family="Segoe UI">magnified video · heatmap · spectrum · work order</text></g>
+        <g id="noFrames" opacity="0"><rect x="1490" y="140" width="300" height="70" rx="14" fill="#2e1012" stroke="#ff5a5f" stroke-width="2"/><text x="1512" y="185" fill="#ff8f92" font-size="24" font-family="Consolas" font-weight="700">✕ never video frames</text></g>
+        <g id="pkts"></g>
+      </svg>
+      <div class="svgwrap" id="wArch" style="left:200px;top:170px;width:1520px;opacity:0"><img src="assets/architecture.svg"><div class="src">docs/architecture.svg · includes COOL on EC2 Graviton4</div></div>`;
+    this.C = c;
+  },
+  update(r, lt, sc) {
+    const c = this.C, A = (p) => sayAt(sc, p);
+    const lit = { br: A("The web page"), fu: A("When you press"), la: A("Lambda, on arm64"), s3: A("pulls the clip"), ssm: A("The Gemini key"), cw: A("CloudWatch logs"), bu: A("a budget"), ge: A("Only compact") };
+    for (const k in lit) {
+      const n = $("#n_" + k, r), on = lt >= lit[k] - .1;
+      n.setAttribute("opacity", on ? 1 : .3);
+      n.querySelector("rect").style.stroke = on ? (k === "ge" ? "#f5b400" : "#ff9900") : "";
+    }
+    $("#laIn", r).setAttribute("opacity", prog(lt, A("runs the OpenCV"), A("runs the OpenCV") + .5));
+    const P = [ // label, from, to, startPhrase, color
+      ["POST /jobs", c("br"), c("la"), "When you press", "#f5b400"],
+      ["clip", c("s3"), c("la"), "pulls the clip", "#ff9900"],
+      ["outputs/", c("la"), c("s3"), "writes the magnified", "#ff9900"],
+      ["presigned links", c("la"), c("br"), "returns short-lived", "#f5b400"],
+      ["results", [1010, 845], [290, 590], "The browser loads", "#3ccf8e"],
+      ["PUT upload", [290, 590], [1010, 845], "uploads go straight", "#3ccf8e"],
+      ["key", c("ssm"), c("la"), "The Gemini key", "#9b7bff"],
+      ["logs", c("la"), c("cw"), "CloudWatch logs", "#4c8dff"],
+      ["≤ 1.5 KB numbers", c("la"), c("ge"), "Only compact", "#f5b400"],
+    ];
+    let html = "";
+    for (const [lab, a, b, ph, col] of P) {
+      const t0 = A(ph), k = clamp((lt - t0) / 1.6);
+      if (k <= 0 || k >= 1) continue;
+      const e = ease(k), x = lerp(a[0], b[0], e), y = lerp(a[1], b[1], e), w = lab.length * 13 + 30, op = k > .85 ? (1 - k) / .15 : 1;
+      html += `<g opacity="${op.toFixed(2)}"><rect x="${x - w / 2}" y="${y - 22}" width="${w}" height="44" rx="22" fill="${col}"/><text x="${x}" y="${y + 8}" text-anchor="middle" fill="#111" font-size="22" font-family="Consolas" font-weight="700">${lab}</text></g>`;
+    }
+    $("#pkts", r).innerHTML = html;
+    $("#noFrames", r).setAttribute("opacity", prog(lt, A("Never video"), A("Never video") + .4));
+    const e0 = sc.voStart + sc.voDur + .4;
+    $("#wArch", r).style.opacity = prog(lt, e0, e0 + .7);
+    $("#awsSvg", r).style.opacity = 1 - .85 * prog(lt, e0, e0 + .7);
+  },
+};
+
+S.proof = {
+  build(r) {
+    r.innerHTML = `
+      <div class="abs h2" style="left:90px;top:105px" id="prT">The live endpoint answering</div>
+      <div class="abs" id="prA" style="left:160px;top:250px;width:1600px"><img src="assets/health.png" style="width:1600px;border-radius:16px;display:block">
+        <div class="ring" id="rg1" style="left:20px;top:200px;width:430px;height:46px"></div>
+        <div class="ring" id="rg2" style="left:20px;top:316px;width:430px;height:46px"></div></div>
+      <div class="abs" id="prB" style="left:200px;top:220px;width:1520px;opacity:0"><img src="assets/cloudwatch.png" style="width:1520px;border-radius:16px;display:block">
+        <div class="ring" id="rg3" style="left:10px;top:378px;width:860px;height:34px"></div>
+        <div class="ring" id="rg4" style="left:10px;top:487px;width:860px;height:34px"></div>
+        <div class="ring" id="rg5" style="left:10px;top:596px;width:860px;height:34px"></div></div>
+      <div class="abs tag" id="prN" style="left:160px;bottom:150px">Real command output, rendered from the session transcript · evidence/aws/</div>`;
+  },
+  update(r, lt, sc) {
+    const b = sayAt(sc, "These are real");
+    $("#prA", r).style.opacity = 1 - prog(lt, b - .2, b + .3); $("#prB", r).style.opacity = prog(lt, b - .2, b + .3);
+    $("#prT", r).textContent = lt < b ? "The live endpoint answering" : "Real Lambda invocations in CloudWatch";
+    $("#rg1", r).style.opacity = prog(lt, 1.2, 1.6); $("#rg2", r).style.opacity = prog(lt, 1.8, 2.2);
+    ["#rg3", "#rg4", "#rg5"].forEach((id, i) => ($(id, r).style.opacity = prog(lt, b + .8 + i * .5, b + 1.2 + i * .5)));
+  },
+};
+
+// recording scenes share one builder
+function recScene(seg, cfg) {
+  return {
+    rec: true,
+    build(r) { r.innerHTML = `<img class="recimg" id="rI">` + (cfg.html || ""); },
+    update(r, lt, sc, w) {
+      const rt = pw(cfg.keys(sc), lt);
+      setSrc($("#rI", r), recFrame(seg, rt), w);
+      const [s, fx, fy] = camKeys(cfg.cam ? cfg.cam(sc) : [[0, 1, 960, 540]], lt);
+      cam($("#rI", r), s, fx, fy);
+      if (cfg.over) cfg.over(r, lt, sc, rt);
+    },
+  };
+}
+const fmt = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
+
+S.demo1 = recScene("pump_agent", {
+  keys: (sc) => [[0, 0], [sayAt(sc, "We pick") - .2, 1.3], [sayAt(sc, "Two hundred forty"), 5.6], [sc.dur - .2, 9.4]],
+  html: `<div class="callout amber" id="o1" style="left:470px;top:110px">Ground truth of this test clip
+           <small>58.5 Hz fault · 0.05 px, under 3.5 Hz · 0.6 px handheld shake</small></div>`,
+  over(r, lt, sc) { show($("#o1", r), prog(lt, sayAt(sc, "It's synthetic"), sayAt(sc, "It's synthetic") + .4) * (1 - prog(lt, sayAt(sc, "Two hundred forty"), sayAt(sc, "Two hundred forty") + .3))); },
+});
+S.demo2 = recScene("pump_agent", {
+  keys: (sc) => [[0, 9.4], [sc.dur, 36.8]],
+  cam: () => [[0, 1.0, 960, 540], [1.2, 1.18, 1150, 420]],
+  html: `<div class="ff" id="o2">▶▶ sped up · real run <span class="clock">26.7 s</span> on AWS Lambda</div>`,
+  over(r, lt) { $("#o2", r).style.opacity = prog(lt, 0, .3); },
+});
+S.demo3 = recScene("pump_agent", {
+  keys: (sc) => [[0, 36.8], [sayAt(sc, "In the magnified") - .2, 40.6], [sayAt(sc, "The spectrum"), 49.3], [sayAt(sc, "the heatmap"), 56.2],
+    [sayAt(sc, "the activity log"), 59.6], [sayAt(sc, "The work order") - .4, 67.6], [sc.dur, 72.2]],
+  cam: (sc) => [[0, 1.0, 960, 540], [.8, 1.32, 1160, 470], [sayAt(sc, "In the magnified") - .5, 1.32, 1160, 470], [sayAt(sc, "In the magnified") + .1, 1, 960, 540]],
+  html: `<div class="callout amber" id="o3" style="right:60px;top:110px">58.497 Hz · 0.04657 px<small>camera shake 3.509 Hz · removed · run took 26.7 s on Lambda</small></div>`,
+  over(r, lt, sc) { show($("#o3", r), prog(lt, 1.4, 1.8) * (1 - prog(lt, sayAt(sc, "In the magnified") - .5, sayAt(sc, "In the magnified")))); },
+});
+S.fixed = recScene("pump_fixed", {
+  keys: (sc) => [[0, .3], [sayAt(sc, "It reports") - .6, 5.2], [sayAt(sc, "It reports"), 22.3], [sc.dur - 1.5, 26], [sc.dur, 30]],
+  cam: (sc) => [[0, 1, 960, 540], [sayAt(sc, "It reports"), 1, 960, 540], [sayAt(sc, "It reports") + .8, 1.45, 760, 600], [sc.dur - 1.6, 1.45, 760, 600], [sc.dur - .8, 1, 960, 540]],
+  html: `<div class="callout red" id="o4" style="right:70px;bottom:150px">3.5 Hz = the camera shake<small>the fixed pipeline magnified the hand, not the machine</small></div>`,
+  over(r, lt, sc) { show($("#o4", r), prog(lt, sayAt(sc, "That's the camera"), sayAt(sc, "That's the camera") + .4)); },
+});
+S.alias = recScene("alias", {
+  keys: (sc) => [[0, .4], [sayAt(sc, "The camera is too slow") - .3, 9.3], [sayAt(sc, "The camera is too slow") + .3, 12.8], [sc.dur, 21]],
+  cam: (sc) => { const a = sayAt(sc, "The camera is too slow"); return [[0, 1, 960, 540], [a + .3, 1, 960, 540], [a + 1.1, 1.3, 1160, 420]]; },
+  html: `<div class="callout amber" id="o5" style="left:470px;bottom:180px">130 Hz &gt; 120 Hz, the most a 240 fps camera can measure<small>so the honest answer is “Inconclusive: record at ≥ 325 fps”</small></div>`,
+  over(r, lt, sc) { show($("#o5", r), prog(lt, sayAt(sc, "so HumSight"), sayAt(sc, "so HumSight") + .4)); },
+});
+S.washer = recScene("washer", {
+  keys: (sc) => [[0, .8], [3.4, 9.4], [5.4, 55.9], [sayAt(sc, "The display") - .2, 61.6], [sc.dur, 73.5]],
+  cam: (sc) => [[0, 1, 960, 540], [5.4, 1, 960, 540], [6.1, 1.3, 1160, 450], [sayAt(sc, "The display") - .6, 1.3, 1160, 450], [sayAt(sc, "The display"), 1, 960, 540]],
+  html: `<div class="ff" id="o6">▶▶ sped up · real run 45.8 s on AWS Lambda</div>
+         <div class="callout amber" id="o7" style="right:60px;top:110px">1400 RPM ÷ 60 = 23.3 Hz<small>the display's set speed, not a measured reference</small></div>
+         <div class="abs tag" style="left:28px;bottom:120px;background:rgba(8,12,28,.85);color:#cfd6f2;padding:8px 14px;border-radius:10px">Real clip: “Washing machine 120fps” by Golha, CC BY-SA 4.0, via Wikimedia Commons</div>`,
+  over(r, lt, sc) {
+    $("#o6", r).style.opacity = prog(lt, 3.2, 3.5) * (1 - prog(lt, 5.5, 5.9));
+    show($("#o7", r), prog(lt, sayAt(sc, "The display"), sayAt(sc, "The display") + .4));
+  },
+});
+
+S.results = {
+  build(r) {
+    const bars = [["Agent · rules", 12, "#3ccf8e", "12 / 12"], ["Agent · live Gemini", 12, "#4c8dff", "11 / 12, then 12 / 12 on a rerun"], ["Fixed pipeline", 5, "#ff5a5f", "5 / 12 · magnified the shake 6 times"]];
+    r.innerHTML = `
+      <div class="abs h2" style="left:90px;top:105px">We measured it.</div>
+      <div class="abs tag" style="left:90px;top:185px">12 test clips: shake + fault, shake only, fault only, nothing · correct verdicts (E5)</div>
+      ${bars.map((b, i) => `<div class="abs" style="left:90px;top:${250 + i * 110}px;width:1100px"><div class="h3" style="font-size:28px;margin-bottom:8px">${b[0]}</div>
+        <div style="position:relative;height:56px"><div class="bar rb" data-v="${b[1]}" style="top:0;background:${b[2]};height:56px;width:0"></div>
+        <div class="abs rl" style="top:10px;font-size:28px;font-weight:700;opacity:0;white-space:nowrap">${b[3]}</div></div></div>`).join("")}
+      <div class="row" style="left:90px;top:620px">
+        <div class="card tile" id="t1"><div class="big" style="color:var(--amber)">0.005 Hz</div><div class="lab">median frequency error at 0.05 px (E1)</div></div>
+        <div class="card tile" id="t2"><div class="big" style="color:var(--amber)">24 / 24</div><div class="lab">faults localized in the right part (E4)</div></div>
+        <div class="card tile" id="t3"><div class="big" style="color:var(--amber)">9 / 9</div><div class="lab">aliasing cases sent to review (E6)</div></div>
+      </div>
+      <div class="abs card" id="t4" style="left:1260px;top:250px;width:580px;padding:30px 34px;opacity:0">
+        <div class="tag">COOL vs STOCK OPENCV · EC2 c8g.large · GRAVITON4</div>
+        <div class="big" style="font-size:64px;font-weight:800;margin:10px 0">0.98×–1.03×</div>
+        <div class="lab" style="font-size:26px;color:var(--ink2)">No meaningful speed-up on this workload. Reported as measured.</div></div>
+      <div class="abs tag" style="left:90px;top:840px">E1–E6 use synthetic clips with exact ground truth · eval/results/summary.md · bench/RESULTS.md</div>`;
+  },
+  update(r, lt, sc) {
+    const a = sayAt(sc, "On twelve");
+    r.querySelectorAll(".rb").forEach((b, i) => {
+      const t0 = i === 2 ? sayAt(sc, "The fixed pipeline") : a + i * .5, k = prog(lt, t0, t0 + .9);
+      b.style.width = (k * (+b.dataset.v / 12) * 760) + "px";
+      const l = b.parentElement.querySelector(".rl"); l.style.left = (k * (+b.dataset.v / 12) * 760 + 20) + "px"; l.style.opacity = k;
+    });
+    show($("#t1", r), prog(lt, sayAt(sc, "Median"), sayAt(sc, "Median") + .5));
+    show($("#t2", r), prog(lt, sayAt(sc, "Median") + .6, sayAt(sc, "Median") + 1.1));
+    show($("#t3", r), prog(lt, sayAt(sc, "Median") + 1.2, sayAt(sc, "Median") + 1.7));
+    show($("#t4", r), prog(lt, sayAt(sc, "We also ran"), sayAt(sc, "We also ran") + .5));
+  },
+};
+
+S.close = {
+  build(r) {
+    r.innerHTML = `
+      <div class="fill" id="cl1">
+        <div class="abs h2" style="left:120px;top:150px">Honest about its limits</div>
+        <div class="abs" style="left:120px;top:280px;display:flex;flex-direction:column;gap:22px">
+          ${["Indicative, camera-based measurement. Not a certified ISO assessment.", "Frequency is valid only up to half the capture frame rate.", "Compression, low texture and lighting flicker can mask or fake sub-pixel motion.", "A first screen: confirm with a contact accelerometer before acting."].map((x) => `<div class="card lim" style="padding:22px 30px;font-size:32px;opacity:0">${x}</div>`).join("")}
+        </div></div>
+      <div class="fill" id="cl2" style="opacity:0">
+        <svg class="wave" width="900" height="140" viewBox="0 0 900 140" style="top:220px"><path id="clW" fill="none" stroke="#f5b400" stroke-width="6" stroke-linecap="round"/></svg>
+        <div class="logo" style="top:380px">HumSight</div>
+        <div class="tagline" style="top:560px">See what machines are humming.</div>
+        <div class="abs" style="left:0;right:0;top:680px;text-align:center;font-size:40px;font-weight:700;color:#fff">santiwari07.github.io/HumSight</div>
+        <div class="abs" style="left:0;right:0;top:745px;text-align:center;font-size:30px;color:var(--ink2)">github.com/SanTiwari07/HumSight</div>
+        <div class="foot" style="bottom:150px">OpenCV 5 · AWS Lambda (arm64) · S3 · SSM · CloudWatch · COOL on Graviton4 · OpenCV AI Competition 2026</div>
+      </div>`;
+  },
+  update(r, lt, sc) {
+    r.querySelectorAll(".lim").forEach((n, i) => show(n, prog(lt, .6 + i * .45, 1.1 + i * .45)));
+    const e = sayAt(sc, "See what your");
+    $("#cl1", r).style.opacity = 1 - prog(lt, e - .3, e + .2); $("#cl2", r).style.opacity = prog(lt, e - .2, e + .4);
+    let d = ""; for (let x = 0; x <= 900; x += 6) { const env = Math.exp(-Math.pow((x - 450) / 230, 2)); d += (x ? "L" : "M") + x + " " + (70 + Math.sin(x / 18 - lt * 6) * 52 * env).toFixed(1); }
+    $("#clW", r).setAttribute("d", d);
+  },
+};
+
+// ------------------------------------------------------------------ engine
+const roots = {};
+for (const sc of T.scenes) {
+  const r = document.createElement("section"); r.className = "scene" + (S[sc.id].rec ? " rec" : ""); r.id = "sc_" + sc.id;
+  stage.insertBefore(r, $("#chapter")); S[sc.id].build(r, sc); roots[sc.id] = r;
+}
+const XF = .45; // crossfade
+async function render(t) {
+  const waits = [];
+  let idx = T.scenes.findIndex((s) => t >= s.start && t < s.start + s.dur); if (idx < 0) idx = T.scenes.length - 1;
+  const sc = T.scenes[idx], nx = T.scenes[idx + 1];
+  for (const s of T.scenes) roots[s.id].style.display = "none";
+  const draw = (s, op) => { const r = roots[s.id]; r.style.display = "block"; r.style.opacity = op; r.style.zIndex = op < 1 ? 2 : 1; S[s.id].update(r, t - s.start, s, waits); };
+  draw(sc, 1);
+  if (nx && t > nx.start - XF) draw(nx, clamp((t - (nx.start - XF)) / XF));
+  // chrome
+  const lt = t - sc.start;
+  const cap = sc.captions.find((c) => lt >= c.t0 && lt < c.t1 + .15);
+  $("#cap").textContent = cap ? cap.text : ""; $("#cap").style.opacity = cap ? 1 : 0;
+  $("#chapter").innerHTML = sc.chapter ? sc.chapter.replace(/^(\d+) ·/, "<b>$1</b> ·") : ""; $("#chapter").style.opacity = sc.chapter ? 1 : 0;
+  const onRec = !!S[sc.id].rec, ch = $("#chapter");
+  ch.style.left = onRec ? "50%" : "48px"; ch.style.top = onRec ? "14px" : "40px"; ch.style.transform = onRec ? "translateX(-50%)" : "none";
+  $("#brand").style.opacity = ["cold", "title", "close"].includes(sc.id) || onRec ? 0 : 1;
+  $("#prog").style.width = (t / T.total * 100) + "%";
+  $("#fade").style.opacity = Math.max(1 - clamp(t / .6), clamp((t - (T.total - 1.2)) / 1.2));
+  await Promise.all(waits);
+  if (document.fonts) await document.fonts.ready;
+}
+window.render = render; window.TOTAL = T.total;
+
+// ------------------------------------------------------------------ interactive player
+const isRender = /render=1/.test(location.search);
+if (isRender) document.body.classList.add("render");
+function fit() { const s = Math.min(innerWidth / 1920, innerHeight / 1080); stage.style.transform = `scale(${s})`; }
+addEventListener("resize", fit); fit();
+if (!isRender) {
+  const aud = $("#aud"), pp = $("#pp"), sb = $("#scrub"), jump = $("#jump");
+  T.scenes.forEach((s) => { const o = document.createElement("option"); o.value = s.start; o.textContent = `${fmt(s.start)}  ${s.chapter || s.id}`; jump.appendChild(o); });
+  let playing = false, t0 = 0, w0 = 0, cur = 0;
+  const now = () => (playing ? (aud.readyState > 1 && !aud.paused ? aud.currentTime : w0 + (performance.now() - t0) / 1000) : cur);
+  function seek(t) { cur = clamp(t, 0, T.total); aud.currentTime = cur; w0 = cur; t0 = performance.now(); render(cur); }
+  pp.onclick = () => { playing = !playing; pp.textContent = playing ? "Pause" : "Play"; if (playing) { w0 = cur; t0 = performance.now(); aud.currentTime = cur; aud.play().catch(() => {}); } else { cur = now(); aud.pause(); } };
+  sb.oninput = () => seek(sb.value / 1000 * T.total);
+  jump.onchange = () => seek(+jump.value);
+  (function loop() { if (playing) { cur = now(); if (cur >= T.total) { playing = false; pp.textContent = "Play"; } render(cur); sb.value = cur / T.total * 1000; $("#clock").textContent = fmt(cur); } requestAnimationFrame(loop); })();
+  render(0);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,331 @@
+1
+00:00:00,500 --> 00:00:02,470
+This pump looks perfectly still.
+
+2
+00:00:02,470 --> 00:00:03,308
+It isn't.
+
+3
+00:00:03,308 --> 00:00:06,952
+One part of it is vibrating fifty-eight and a half times a second,
+
+4
+00:00:06,952 --> 00:00:09,120
+by less than a twentieth of a pixel.
+
+5
+00:00:09,120 --> 00:00:10,449
+Nothing touched it.
+
+6
+00:00:10,449 --> 00:00:12,173
+A handheld camera found it.
+
+7
+00:00:14,173 --> 00:00:15,360
+This is HumSight.
+
+8
+00:00:15,360 --> 00:00:19,347
+It turns a slow-motion phone video into a grid of virtual vibration sensors,
+
+9
+00:00:19,347 --> 00:00:24,047
+and tells you whether a machine has a real fault, or whether it was just your hand shaking.
+
+10
+00:00:25,247 --> 00:00:27,978
+Machines vibrate abnormally before they fail.
+
+11
+00:00:27,978 --> 00:00:31,996
+Contact sensors catch that, but they are fitted one machine at a time,
+
+12
+00:00:31,996 --> 00:00:34,315
+so many machines are never monitored.
+
+13
+00:00:34,315 --> 00:00:35,654
+Video should help.
+
+14
+00:00:35,654 --> 00:00:40,549
+But the classic trick, magnifying all motion in the video, also magnifies camera shake.
+
+15
+00:00:40,549 --> 00:00:43,537
+Film handheld, and a healthy machine looks broken.
+
+16
+00:00:44,737 --> 00:00:49,716
+It's for maintenance technicians checking an unmonitored machine with the phone they already carry.
+
+17
+00:00:49,716 --> 00:00:52,786
+Plant managers deciding which machines need a real sensor.
+
+18
+00:00:52,786 --> 00:00:55,625
+Field engineers who need visual proof for a customer.
+
+19
+00:00:55,625 --> 00:00:58,742
+And students learning frequency and aliasing on real video.
+
+20
+00:00:59,942 --> 00:01:01,205
+Here's the idea.
+
+21
+00:01:01,205 --> 00:01:05,101
+We split the frame into patches, and every patch becomes a sensor.
+
+22
+00:01:05,101 --> 00:01:10,313
+For each one, OpenCV 5 measures motion smaller than a twentieth of a pixel, frame by frame,
+
+23
+00:01:10,313 --> 00:01:14,525
+and turns it into a frequency, an amplitude and a signal-to-noise ratio.
+
+24
+00:01:14,525 --> 00:01:18,157
+One video, forty-eight sensors, nothing wired to the machine.
+
+25
+00:01:19,358 --> 00:01:23,518
+Then an agent decides what to measure next, based on what it just measured.
+
+26
+00:01:23,518 --> 00:01:27,978
+On this clip, the whole frame moves about half a pixel at three and a half hertz.
+
+27
+00:01:27,978 --> 00:01:31,586
+That's the hand, not the machine, so it removes the shake first.
+
+28
+00:01:31,586 --> 00:01:35,746
+Underneath, a fifty-eight and a half hertz peak appears in one region only.
+
+29
+00:01:35,746 --> 00:01:40,156
+It zooms in with a finer scan, magnifies just that band, and files a work order.
+
+30
+00:01:40,156 --> 00:01:42,111
+Every number comes from OpenCV.
+
+31
+00:01:42,111 --> 00:01:44,717
+The language model only picks the next step,
+
+32
+00:01:44,717 --> 00:01:47,774
+and a guard rejects any number that no tool produced.
+
+33
+00:01:48,974 --> 00:01:50,883
+Here's how it runs on AWS.
+
+34
+00:01:50,883 --> 00:01:53,577
+The web page is static, on GitHub Pages.
+
+35
+00:01:53,577 --> 00:01:56,889
+When you press run, it calls a Lambda Function URL.
+
+36
+00:01:56,889 --> 00:02:02,390
+Lambda, on arm64 Graviton, pulls the clip from S3, runs the OpenCV pipeline and the agent,
+
+37
+00:02:02,390 --> 00:02:06,208
+writes the magnified video, heatmap and spectrum back to S3,
+
+38
+00:02:06,208 --> 00:02:08,902
+and returns short-lived presigned links.
+
+39
+00:02:08,902 --> 00:02:13,954
+The browser loads the results straight from S3, and uploads go straight to S3 too.
+
+40
+00:02:13,954 --> 00:02:18,333
+The Gemini key sits in SSM Parameter Store, CloudWatch logs every run,
+
+41
+00:02:18,333 --> 00:02:20,298
+and a budget caps the cost.
+
+42
+00:02:20,298 --> 00:02:22,936
+Only compact numbers ever reach Gemini.
+
+43
+00:02:22,936 --> 00:02:24,452
+Never video frames.
+
+44
+00:02:29,651 --> 00:02:30,962
+And it's live.
+
+45
+00:02:30,962 --> 00:02:34,953
+This is the public endpoint answering: OpenCV 5 on aarch64.
+
+46
+00:02:34,953 --> 00:02:39,361
+These are real Lambda invocations in CloudWatch, one per analysis.
+
+47
+00:02:40,562 --> 00:02:41,835
+So let's run it.
+
+48
+00:02:41,835 --> 00:02:44,433
+This is the live site, recorded for real.
+
+49
+00:02:44,433 --> 00:02:46,289
+We pick the pump test clip.
+
+50
+00:02:46,289 --> 00:02:51,008
+It's synthetic, so we know the exact truth: a fifty-eight and a half hertz fault,
+
+51
+00:02:51,008 --> 00:02:52,917
+hidden under handheld shake.
+
+52
+00:02:52,917 --> 00:02:56,470
+Two hundred forty frames per second, agent with rules, run.
+
+53
+00:02:57,669 --> 00:02:59,076
+It's on Lambda now.
+
+54
+00:02:59,076 --> 00:03:00,691
+We've sped up the wait.
+
+55
+00:03:00,691 --> 00:03:03,452
+The real run took about twenty-seven seconds.
+
+56
+00:03:04,652 --> 00:03:05,337
+Alarm.
+
+57
+00:03:05,337 --> 00:03:09,983
+Localized vibration at fifty-eight and a half hertz, zero point zero four seven pixels,
+
+58
+00:03:09,983 --> 00:03:11,842
+with the camera shake removed.
+
+59
+00:03:11,842 --> 00:03:14,825
+In the magnified video, only the faulty region moves.
+
+60
+00:03:14,825 --> 00:03:18,396
+The spectrum separates shake from fault, the heatmap shows where,
+
+61
+00:03:18,396 --> 00:03:22,357
+and the activity log shows every decision with the measurement behind it.
+
+62
+00:03:22,357 --> 00:03:25,145
+The work order is ready for a maintenance ticket.
+
+63
+00:03:26,345 --> 00:03:29,982
+Now the same clip through a fixed, magnify-everything pipeline.
+
+64
+00:03:29,982 --> 00:03:32,697
+It reports a fault at three and a half hertz.
+
+65
+00:03:32,697 --> 00:03:34,336
+That's the camera shake.
+
+66
+00:03:34,336 --> 00:03:37,153
+Exactly the mistake HumSight is built to avoid.
+
+67
+00:03:38,353 --> 00:03:43,012
+Next, a one hundred thirty hertz fault filmed at two hundred forty frames per second.
+
+68
+00:03:43,012 --> 00:03:47,270
+The camera is too slow to measure it honestly, so HumSight says Inconclusive,
+
+69
+00:03:47,270 --> 00:03:50,978
+and asks for at least three hundred twenty-five frames per second.
+
+70
+00:03:52,178 --> 00:03:57,243
+And real footage: a washing machine, filmed handheld at one hundred twenty frames per second.
+
+71
+00:03:57,243 --> 00:04:00,251
+The hand shake at three point nine hertz is removed,
+
+72
+00:04:00,251 --> 00:04:03,511
+and a vibration at twenty-two point seven hertz is found.
+
+73
+00:04:03,511 --> 00:04:07,422
+The display's fourteen hundred R P M implies twenty-three point three.
+
+74
+00:04:07,422 --> 00:04:09,729
+Indicative, not a validated benchmark.
+
+75
+00:04:10,929 --> 00:04:12,164
+We measured it.
+
+76
+00:04:12,164 --> 00:04:16,297
+On twelve test clips, the agent was right twelve times out of twelve.
+
+77
+00:04:16,297 --> 00:04:20,108
+The fixed pipeline, five, and six times it magnified the shake.
+
+78
+00:04:20,108 --> 00:04:23,329
+Median frequency error: five thousandths of a hertz.
+
+79
+00:04:23,329 --> 00:04:26,979
+We also ran the pipeline under COOL on a Graviton4 instance.
+
+80
+00:04:26,979 --> 00:04:30,790
+It gave no meaningful speed-up, and we report that as measured.
+
+81
+00:04:31,990 --> 00:04:36,688
+HumSight is indicative, not a certified ISO measurement, and it says so on every report.
+
+82
+00:04:36,688 --> 00:04:40,603
+It's a first screen that tells you which machine deserves a real sensor.
+
+83
+00:04:40,603 --> 00:04:42,707
+See what your machines are humming.
