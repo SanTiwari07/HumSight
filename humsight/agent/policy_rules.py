@@ -132,6 +132,7 @@ class RulesProvider:
         ref = fine["result"].get("refined")
         f_hz = ref["f_hz"] if ref else fault["f_hz"]
         amp = ref["amp_px"] if ref else fault["amp_px"]
+        snr = max(fault["snr"], ref["snr"]) if ref else fault["snr"]   # same rule as JobState.best_fault
         roi = ref["roi"] if ref else fault.get("roi_tight", fault["roi"])
 
         # 6. magnify (reduce alpha / narrow band if artifacts)
@@ -155,6 +156,6 @@ class RulesProvider:
             shake_txt = f" Camera shake at {sh['f_hz']} Hz ({sh['amp_px']} px) was compensated and rejected."
         return act("file_report", {
             "verdict": "FAULT",
-            "summary": f"Localized vibration at {f_hz} Hz with amplitude {amp} px (SNR {fault['snr']}) "
+            "summary": f"Localized vibration at {f_hz} Hz with amplitude {amp} px (SNR {snr}) "
                        f"in ROI {roi}.{shake_txt}"},
             "Evidence is sufficient: file the work order.")

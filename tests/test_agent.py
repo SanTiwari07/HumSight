@@ -26,6 +26,7 @@ def test_shake_rejected_and_fault_found(shake_fault, tmp_path):
     gt = shake_fault[1]["parts"][0]
     assert abs(f["f_hz"] - gt["f_hz"]) < 1.0
     assert abs(f["amp_px"] - gt["amp_px"]) / gt["amp_px"] < 0.25
+    assert f"SNR {f['snr']})" in r["summary"]          # summary quotes the same SNR as the findings
     assert "compensate_shake" in _tools(r)
     comp = next(e for e in r["trace"] if e["tool"] == "compensate_shake")
     assert comp["result"]["bg_peak_hz"] == pytest.approx(3.5, abs=0.3)   # a measurement drove the next call

@@ -345,7 +345,7 @@ _No heatmap: the agent stopped before measuring any motion._
 
 - scene: 15 Hz, 6 px fault (far outside the sub-pixel regime)
 - ideal: one FAULT at 15 Hz, amplitude 6 px
-- actual: **FAULT** - Localized vibration at 15.0 Hz with amplitude 5.63568 px (SNR 7505.15) in ROI [96, 32, 96, 96].
+- actual: **FAULT** - Localized vibration at 15.0 Hz with amplitude 5.63568 px (SNR 7548.47) in ROI [96, 32, 96, 96].
 - texture coverage: 1.0; noise floor: 0.005586 px; lighting_flicker: False
 - why: Magnification and the sub-pixel estimator assume small motion. The main peak is found (amplitude within a few percent) but the estimator's nonlinearity adds spurious harmonic peaks that are also classified as faults; do not trust secondary findings or magnification for motion of several pixels.
 

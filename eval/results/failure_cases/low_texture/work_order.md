@@ -1,6 +1,6 @@
 # HumSight work order: REVIEW
 
-_2026-10-24T05:50:02+00:00_ · policy: rules
+_2026-10-24T06:24:12+00:00_ · policy: rules
 
 ## Summary
 low texture: only 0% of patches have enough gradient energy for sub-pixel tracking
