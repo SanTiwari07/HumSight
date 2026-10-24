@@ -118,6 +118,10 @@ Follow `scripts/teardown_checklist.md`: terminate the instance, no leftover volu
 | browser blocks S3 or Lambda responses | CORS origin must be lowercase: browsers send `https://santiwari07.github.io` and S3 matches case-sensitively | templates in `deploy/` use the lowercase origin |
 | outputs served as `binary/octet-stream` | `upload_file` without a content type | the handler now sets `ContentType` from the file extension |
 | videos empty on the page only when hosted | presigned URLs end in `?AWSAccessKeyId=...`, and a `.webm$` test failed | `web/app.js` tests the path part only |
+| the COOL benchmark process is `Killed` | the default 640x360, 4 s benchmark clip needs more than the c8g.large's 3.8 GB of RAM | `bench.py --width 480 --height 270 --dur 2` (size is recorded in the JSON) |
+| `import cv2` fails with the COOL venv's python | the venv is root-owned and `cv2` is found only through the `activate` script (`PYTHONPATH`, `LD_LIBRARY_PATH`) | `source /opt/cool/venvs/python_3.12/bin/activate`; do not `pip install` into it |
+| the first COOL image has OpenCV 4.14 | `COOL-Graviton4-v2` (April) contains `cv2 4.14.0-pre`; the July image is `5.1.0-dev` | check `cv2.__version__` before benchmarking |
+| Spot `InsufficientInstanceCapacity` in the cheapest zone | us-east-1f had no `c8g.large` capacity | try the next-cheapest zone (1d worked) |
 | page keeps running old JavaScript after a deploy | GitHub Pages caches assets for about 10 minutes | `index.html` versions the asset URLs (`?v=N`); bump N on each web change |
 
 ## Resources created (for teardown)

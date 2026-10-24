@@ -6,7 +6,7 @@ Copy into the Devpost form. Fields marked **TODO** depend on the deployment and 
 
 **Tagline:** See what machines are humming.
 
-**Paths entered:** Agentic Vision with OpenCV 5; Best Use of COOL (only if the Graviton4 benchmark is completed, otherwise leave this one out).
+**Paths entered:** Agentic Vision with OpenCV 5; Best Use of COOL. The COOL benchmark was run and found **no meaningful speed-up** for this workload (see `docs/COOL.md`); enter the COOL path only if you are comfortable presenting an honest measured null result, which is what the rubric asks for ("measurements against an appropriate baseline"), and say so plainly.
 
 ## Inspiration
 

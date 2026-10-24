@@ -12,7 +12,7 @@ Every number shown anywhere is computed by OpenCV/NumPy code in this repo. The L
 
 > Indicative, camera-based measurement. Not a certified ISO assessment.
 
-Built for the [OpenCV AI Competition 2026, powered by AWS](https://opencv26.devpost.com/) (paths: Agentic Vision with OpenCV 5; Best Use of COOL once benchmarked).
+Built for the [OpenCV AI Competition 2026, powered by AWS](https://opencv26.devpost.com/) (paths: Agentic Vision with OpenCV 5; Best Use of COOL, with an honest null benchmark result).
 
 ![Architecture](docs/architecture.svg)
 
@@ -22,15 +22,15 @@ Each row is something the competition asks for, where it lives, and its honest s
 
 | Requirement | Where | Status |
 |---|---|---|
-| Technical report (problem, users, architecture, OpenCV 5, AWS, evaluation, limitations, responsible use) | [docs/TECHNICAL_REPORT.md](docs/TECHNICAL_REPORT.md) | written; AWS and COOL sections state they are not run yet |
+| Technical report (problem, users, architecture, OpenCV 5, AWS, evaluation, limitations, responsible use) | [docs/TECHNICAL_REPORT.md](docs/TECHNICAL_REPORT.md) | written; AWS and COOL sections report the 24 Oct 2026 runs |
 | Code repository, pinned dependencies | this repo, `requirements.txt`, `requirements-lambda.txt` | done |
 | Build, deployment and test instructions | [docs/JUDGING.md](docs/JUDGING.md) (test), [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) (AWS) | test: done and verified; AWS steps written, **not executed** |
 | Architecture diagram (OpenCV 5, AWS, COOL, agent) | [docs/architecture.svg](docs/architecture.svg), [docs/agent_workflow.svg](docs/agent_workflow.svg) | done |
 | Working web endpoint or live screen-share | `lambda_fn/`, `server/`, `web/` | **live**: page https://santiwari07.github.io/HumSight/ calling an AWS Lambda Function URL; also runs locally |
-| Meaningful component on AWS | Lambda (arm64) + S3 + SSM run the whole OpenCV 5 pipeline and the agent | **deployed and tested**; EC2 Graviton4 / COOL **not run yet** |
+| Meaningful component on AWS | Lambda (arm64) + S3 + SSM run the whole OpenCV 5 pipeline and the agent; a COOL Graviton4 instance ran the benchmark | **deployed and tested** (the instance is terminated) |
 | Evaluation evidence with failure cases | `eval/results/summary.md`, `eval/results/failure_cases.md` | done on synthetic ground truth; real clip (E8) **not run** |
 | Agentic Vision evidence: workflow diagram, trace where OpenCV output changes a later call, failure handling, human control | [docs/agent_workflow.svg](docs/agent_workflow.svg), [docs/example_trace.md](docs/example_trace.md) | done; the Gemini policy was run live on Lambda once (8 model-chosen tool calls, FAULT); not yet evaluated systematically |
-| Best Use of COOL evidence: version, instance, method, results | [docs/COOL.md](docs/COOL.md), `bench/` | harness tested; **no COOL run yet** |
+| Best Use of COOL evidence: version, instance, method, results | [docs/COOL.md](docs/COOL.md), `bench/`, [evidence/](evidence/README.md) | **run on a Graviton4 Spot instance; null result** (0.98x to 1.03x vs stock, OpenCV 5.1.0-dev vs 5.0.0); screenshots and renders kept |
 | Video, 5 minutes or less | | **pending, after deployment** |
 | Devpost text | [docs/DEVPOST_SUBMISSION.md](docs/DEVPOST_SUBMISSION.md) | draft with TODOs |
 
