@@ -168,24 +168,44 @@ Fault injected into 1 of 4 textured parts (0.1 px); the other parts are static. 
 
 | clip | truth | agent (rules) | agent (Gemini) | fixed pipeline |
 |---|---|---|---|---|
-| shake+fault #1 | FAULT | FAULT ✓ | not run (no key) | FAULT ✗ · shake magnified |
-| shake+fault #2 | FAULT | FAULT ✓ | not run (no key) | FAULT ✗ · shake magnified |
-| shake+fault #3 | FAULT | FAULT ✓ | not run (no key) | FAULT ✗ · shake magnified |
-| shake only #1 | NO_FAULT | NO_FAULT ✓ | not run (no key) | FAULT ✗ · shake magnified |
-| shake only #2 | NO_FAULT | NO_FAULT ✓ | not run (no key) | FAULT ✗ · shake magnified |
-| shake only #3 | NO_FAULT | NO_FAULT ✓ | not run (no key) | FAULT ✗ · shake magnified |
-| fault only #1 | FAULT | FAULT ✓ | not run (no key) | NO_FAULT ✗ |
-| fault only #2 | FAULT | FAULT ✓ | not run (no key) | FAULT ✓ |
-| fault only #3 | FAULT | FAULT ✓ | not run (no key) | FAULT ✓ |
-| nothing #1 | NO_FAULT | NO_FAULT ✓ | not run (no key) | NO_FAULT ✓ |
-| nothing #2 | NO_FAULT | NO_FAULT ✓ | not run (no key) | NO_FAULT ✓ |
-| nothing #3 | NO_FAULT | NO_FAULT ✓ | not run (no key) | NO_FAULT ✓ |
+| shake+fault #1 | FAULT | FAULT ✓ | FAULT ✓ | FAULT ✗ · shake magnified |
+| shake+fault #2 | FAULT | FAULT ✓ | FAULT ✓ | FAULT ✗ · shake magnified |
+| shake+fault #3 | FAULT | FAULT ✓ | FAULT ✓ | FAULT ✗ · shake magnified |
+| shake only #1 | NO_FAULT | NO_FAULT ✓ | NO_FAULT ✓ | FAULT ✗ · shake magnified |
+| shake only #2 | NO_FAULT | NO_FAULT ✓ | REVIEW ✗ | FAULT ✗ · shake magnified |
+| shake only #3 | NO_FAULT | NO_FAULT ✓ | NO_FAULT ✓ | FAULT ✗ · shake magnified |
+| fault only #1 | FAULT | FAULT ✓ | FAULT ✓ | NO_FAULT ✗ |
+| fault only #2 | FAULT | FAULT ✓ | FAULT ✓ | FAULT ✓ |
+| fault only #3 | FAULT | FAULT ✓ | FAULT ✓ | FAULT ✓ |
+| nothing #1 | NO_FAULT | NO_FAULT ✓ | NO_FAULT ✓ | NO_FAULT ✓ |
+| nothing #2 | NO_FAULT | NO_FAULT ✓ | NO_FAULT ✓ | NO_FAULT ✓ |
+| nothing #3 | NO_FAULT | NO_FAULT ✓ | NO_FAULT ✓ | NO_FAULT ✓ |
 
 | policy | correct | shake wrongly magnified |
 |---|---|---|
 | agent (rules) | 12/12 | 0 |
-| agent (Gemini) | not run | - |
+| agent (Gemini) | 11/12 | 0 |
 | fixed | 5/12 | 6 |
+
+Gemini column: live API run on 2026-10-24 (model `gemini-flash-latest`, sequential, paced at 7 s between calls). 84 of 84 tool calls were chosen by the model; 12 of 12 clips ran entirely on Gemini and 0 fell back to the rules policy partway; the number guard fired 0 time(s).
+### Gemini run details
+
+| clip | verdict | tool calls (model / total) | tool sequence | fallback / guard notes | seconds |
+|---|---|---|---|---|---|
+| shake+fault #1 | FAULT | 8/8 | probe clip > scan motion > compensate shake > classify peaks > scan motion > assess severity > magnify > file report | - | 61.5 |
+| shake+fault #2 | FAULT | 8/8 | probe clip > scan motion > compensate shake > classify peaks > scan motion > assess severity > magnify > file report | - | 59.2 |
+| shake+fault #3 | FAULT | 8/8 | probe clip > scan motion > compensate shake > classify peaks > scan motion > assess severity > magnify > file report | - | 72.0 |
+| shake only #1 | NO_FAULT | 7/7 | probe clip > scan motion > compensate shake > classify peaks > compensate shake > classify peaks > file report | - | 60.0 |
+| shake only #2 | REVIEW | 8/8 | probe clip > scan motion > compensate shake > classify peaks > compensate shake > classify peaks > compensate shake > file report | NO_FAULT filed before classify_peaks; downgraded to REVIEW | 63.9 |
+| shake only #3 | NO_FAULT | 8/8 | probe clip > scan motion > compensate shake > classify peaks > scan motion > compensate shake > classify peaks > file report | - | 66.3 |
+| fault only #1 | FAULT | 7/7 | probe clip > scan motion > classify peaks > scan motion > assess severity > magnify > file report | - | 54.0 |
+| fault only #2 | FAULT | 7/7 | probe clip > scan motion > classify peaks > scan motion > assess severity > magnify > file report | - | 50.8 |
+| fault only #3 | FAULT | 7/7 | probe clip > scan motion > classify peaks > scan motion > assess severity > magnify > file report | - | 48.3 |
+| nothing #1 | NO_FAULT | 6/6 | probe clip > scan motion > classify peaks > scan motion > scan motion > file report | - | 51.5 |
+| nothing #2 | NO_FAULT | 6/6 | probe clip > scan motion > classify peaks > scan motion > classify peaks > file report | - | 47.9 |
+| nothing #3 | NO_FAULT | 4/4 | probe clip > scan motion > classify peaks > file report | - | 45.7 |
+
+The model's tool sequence differed from the rules policy's on 11 of 12 clips.
 
 ## E6 Aliasing guard
 
