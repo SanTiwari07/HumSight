@@ -117,3 +117,11 @@ def test_number_guard_replaces_invented_summary(quiet, tmp_path):
 def test_unsupported_fault_verdict_downgraded(quiet, tmp_path):
     _, r = _run(quiet, tmp_path, provider=_Scripted("FAULT", "Fault found."))
     assert r["verdict"] == "REVIEW"
+
+
+def test_low_texture_asks_for_review_instead_of_no_fault(tmp_path):
+    import numpy as np
+    flat = np.full((480, 192, 256), 128, np.uint8)
+    flat = (flat + np.random.default_rng(1).normal(0, 1.0, flat.shape)).clip(0, 255).astype(np.uint8)
+    _, r = _run((flat, {}), tmp_path)
+    assert r["verdict"] == "REVIEW" and "low texture" in r["reason"]

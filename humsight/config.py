@@ -25,6 +25,7 @@ PEAK_EXCLUDE_BINS = 3     # bins around a peak excluded from the noise estimate
 COARSE_GRID = (8, 6)      # cols, rows over the full frame
 FINE_PATCH_PX = 32
 ITER_L2SIZE = 5           # phaseCorrelateIterative neighbourhood (tuned on synthetic data)
+MIN_TEXTURE_COVERAGE = 0.25  # below this fraction of usable patches the agent asks for review
 TEXTURE_MIN = 2.0e-3      # mean Sobel gradient energy on the reference frame
 
 # --- agent / rules ---------------------------------------------------------

@@ -415,6 +415,8 @@ def file_report(state: JobState, verdict: str, summary: str) -> dict:
         verdict, note = "REVIEW", "verdict FAULT without a classified fault was downgraded to REVIEW"
     elif verdict == "NO_FAULT" and cls.get("faults"):
         verdict, note = "REVIEW", "verdict NO_FAULT contradicts a classified fault; downgraded to REVIEW"
+    elif verdict == "NO_FAULT" and cls and cls.get("n_valid_patches", 1) == 0:
+        verdict, note = "REVIEW", "NO_FAULT with no usable (textured) patches downgraded to REVIEW"
     elif verdict == "NO_FAULT" and not cls:
         verdict, note = "REVIEW", "NO_FAULT filed before classify_peaks; downgraded to REVIEW"
     if note:

@@ -69,16 +69,18 @@ def main():
     flat = flat + np.random.default_rng(1).normal(0, 1.2, flat.shape)
     flat = np.clip(flat, 0, 255).astype(np.uint8)
     r, probe, cls = run_case("low_texture", flat, 240.0)
-    rows.append(("Low texture", "24.5 Hz, 0.1 px fault on a nearly flat surface (6% contrast)", "FAULT at 24.5 Hz", r, probe, cls,
-                 "Phase correlation needs gradient energy. Patches below TEXTURE_MIN are dropped and the probe reports low coverage."))
+    rows.append(("Low texture", "24.5 Hz, 0.1 px fault on a nearly flat surface (6% contrast)", "FAULT at 24.5 Hz or REVIEW", r, probe, cls,
+                 "Phase correlation needs gradient energy. Patches below TEXTURE_MIN are dropped; with almost none left the agent must "
+                 "ask for review rather than report a negative (an earlier version filed NO_FAULT here: fixed)."))
 
     # 4. large motion
     sp = C.spec(f=15.0, amp=6.0, noise=0.004)
     fr, _ = C.generate(sp)
     r, probe, cls = run_case("large_motion", fr, 240.0)
-    rows.append(("Large motion", "15 Hz, 6 px fault (far outside the sub-pixel regime)", "FAULT at 15 Hz, amplitude 6 px", r, probe, cls,
-                 "Magnification and the sub-pixel estimator assume small motion; large motion saturates the correlation "
-                 "peak and the amplitude is under-estimated."))
+    rows.append(("Large motion", "15 Hz, 6 px fault (far outside the sub-pixel regime)", "one FAULT at 15 Hz, amplitude 6 px", r, probe, cls,
+                 "Magnification and the sub-pixel estimator assume small motion. The main peak is found (amplitude within a few percent) "
+                 "but the estimator's nonlinearity adds spurious harmonic peaks that are also classified as faults; do not trust "
+                 "secondary findings or magnification for motion of several pixels."))
 
     # 5. lighting flicker (guard works): brightness modulated at the 100 Hz mains-light frequency, no motion
     sp = C.spec(amp=None, noise=0.004)
@@ -87,7 +89,7 @@ def main():
     mod = 1.0 + 0.08 * np.sin(2 * np.pi * 100.0 * t)
     fl = np.clip(fr.astype(np.float32) * mod[:, None, None], 0, 255).astype(np.uint8)
     r, probe, cls = run_case("lighting_flicker", fl, 240.0)
-    rows.append(("Lighting flicker", "no motion; 100 Hz mains-light brightness modulation (8%)", "NO_FAULT (or REVIEW)", r, probe, cls,
+    rows.append(("Lighting flicker", "no motion; 100 Hz mains-light brightness modulation (8%)", "NO_FAULT or REVIEW", r, probe, cls,
                  "Guard case: brightness oscillation is flagged from the mean-frame signal instead of being read as motion."))
 
     L = ["# Failure cases", "", "Built to break the tool; results are reported as found.", ""]

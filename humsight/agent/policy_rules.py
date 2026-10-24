@@ -42,6 +42,13 @@ class RulesProvider:
                           f"{config.ALIAS_SAFE_FRAC} x fps ({fps} fps, Nyquist {probe['f_nyquist']} Hz)",
                 "suggestion": sug}, "Expected frequency is above the safe fraction of fps.")
 
+        if probe["texture_coverage"] < config.MIN_TEXTURE_COVERAGE:
+            return act("request_review", {
+                "reason": f"low texture: only {probe['texture_coverage'] * 100:.0f}% of patches have enough "
+                          "gradient energy for sub-pixel tracking",
+                "suggestion": "film a surface with visible texture or edges, add a tape or marker, or move closer"},
+                "Too few textured patches: a negative result would be meaningless.")
+
         # 2. coarse scan
         scan = _last(H, "scan_motion", lambda h: h["args"].get("grid") == "coarse")
         if scan is None:
