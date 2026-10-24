@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 640" role="img" aria-labelledby="t d" font-family="Hanken Grotesk, Inter, Arial, sans-serif">
+  <title id="t">HumSight architecture: OpenCV 5, AWS, COOL and the agent</title>
+  <desc id="d">A browser on GitHub Pages calls an AWS Lambda Function URL running the HumSight library and agent on OpenCV 5. Uploads and outputs use S3 presigned URLs, the Gemini key lives in SSM Parameter Store, and an EC2 c8g Graviton4 instance runs the same code on COOL for the benchmark and live sessions. Dashed shapes are designed but not yet deployed.</desc>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#4a4741"/></marker>
+    <marker id="g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#af751b"/></marker>
+  </defs>
+  <rect width="1040" height="640" fill="#f7f1e8"/>
+  <text x="24" y="34" font-size="12" font-weight="700" letter-spacing="1.2" fill="#1c1b1a">HUMSIGHT ARCHITECTURE</text>
+
+  <!-- browser -->
+  <rect x="24" y="70" width="210" height="150" rx="24" fill="#ffffff" stroke="#e1dcd3"/>
+  <text x="44" y="102" font-size="16" font-weight="700" fill="#1c1b1a">Browser</text>
+  <text x="44" y="124" font-size="13" fill="#4a4741">static page (web/)</text>
+  <text x="44" y="144" font-size="13" fill="#4a4741">GitHub Pages</text>
+  <text x="44" y="170" font-size="12" fill="#838280">upload, trace replay/SSE,</text>
+  <text x="44" y="188" font-size="12" fill="#838280">side-by-side video, spectrum</text>
+  <rect x="24" y="70" width="210" height="150" rx="24" fill="none" stroke="#4a4741" stroke-dasharray="6 5"/>
+
+  <!-- AWS boundary -->
+  <rect x="290" y="56" width="720" height="560" rx="24" fill="none" stroke="#4a4741" stroke-width="1.5"/>
+  <text x="310" y="84" font-size="12" font-weight="700" letter-spacing="1.2" fill="#4a4741">AWS (us-east-1)</text>
+
+  <!-- lambda -->
+  <rect x="320" y="104" width="430" height="250" rx="24" fill="#ffffff" stroke="#224228" stroke-width="1.5" stroke-dasharray="6 5"/>
+  <text x="340" y="134" font-size="16" font-weight="700" fill="#1c1b1a">Lambda Function URL</text>
+  <text x="340" y="154" font-size="11.5" fill="#4a4741">arm64 · python3.12 · 3008 MB · 120 s · concurrency 2</text>
+  <rect x="340" y="172" width="390" height="160" rx="12" fill="#f7f1e8" stroke="#e1dcd3"/>
+  <text x="356" y="196" font-size="13.5" font-weight="700" fill="#224228">humsight library · OpenCV 5.0 (headless wheel)</text>
+  <text x="356" y="216" font-size="11.5" fill="#4a4741">phaseCorrelateIterative · calcOpticalFlowPyrLK</text>
+  <text x="356" y="232" font-size="11.5" fill="#4a4741">findHomography(USAC_MAGSAC) · warpPerspective</text>
+  <text x="356" y="248" font-size="11.5" fill="#4a4741">pyrDown/pyrUp · connectedComponentsWithStats</text>
+  <rect x="356" y="260" width="358" height="58" rx="12" fill="#ffffff" stroke="#224228"/>
+  <text x="370" y="282" font-size="13" font-weight="700" fill="#224228">Agent loop (≤ 10 tool calls)</text>
+  <text x="370" y="302" font-size="11.5" fill="#4a4741">Gemini (google-genai), rules fallback, number guard</text>
+
+  <!-- S3 -->
+  <rect x="320" y="388" width="200" height="96" rx="24" fill="#ffffff" stroke="#6b443d" stroke-dasharray="6 5"/>
+  <text x="340" y="418" font-size="15" font-weight="700" fill="#1c1b1a">S3 bucket</text>
+  <text x="340" y="438" font-size="12" fill="#4a4741">uploads/ outputs/ demo/</text>
+  <text x="340" y="456" font-size="11.5" fill="#4a4741">presigned URLs, 7-day expiry</text>
+  <text x="340" y="474" font-size="12" fill="#838280">public access blocked</text>
+
+  <!-- SSM -->
+  <rect x="540" y="388" width="210" height="96" rx="24" fill="#ffffff" stroke="#6b443d" stroke-dasharray="6 5"/>
+  <text x="560" y="418" font-size="15" font-weight="700" fill="#1c1b1a">SSM Parameter Store</text>
+  <text x="560" y="438" font-size="12" fill="#4a4741">SecureString: Gemini key</text>
+  <text x="560" y="456" font-size="12" fill="#4a4741">read once per cold start</text>
+  <text x="560" y="474" font-size="12" fill="#838280">CloudWatch Logs + Budgets</text>
+
+  <!-- EC2 COOL -->
+  <rect x="320" y="508" width="670" height="92" rx="24" fill="#ffffff" stroke="#af751b" stroke-width="2" stroke-dasharray="6 5"/>
+  <text x="340" y="536" font-size="15" font-weight="700" fill="#684d07">EC2 c8g.large Spot · Graviton4 · COOL AMI</text>
+  <text x="340" y="557" font-size="11.5" fill="#4a4741">COOL venv /opt/cool/venvs/python_3.12  vs  stock venv ~/stock, same instance</text>
+  <text x="340" y="577" font-size="11.5" fill="#4a4741">bench/bench.py per-stage timings · FastAPI + SSE live session · banner prints COOL=True</text>
+
+  <!-- Gemini -->
+  <rect x="780" y="128" width="210" height="130" rx="24" fill="#ffffff" stroke="#e1dcd3"/>
+  <text x="800" y="160" font-size="15" font-weight="700" fill="#1c1b1a">Gemini API</text>
+  <text x="800" y="182" font-size="12" fill="#4a4741">external, free tier</text>
+  <text x="800" y="204" font-size="11.5" fill="#4a4741">compact numbers only</text>
+  <text x="800" y="222" font-size="11.5" fill="#4a4741">(≤ 1.5 KB), never frames</text>
+
+  <!-- arrows -->
+  <path d="M234 120 H320" stroke="#4a4741" stroke-width="1.5" fill="none" marker-end="url(#a)"/>
+  <text x="240" y="112" font-size="11" fill="#4a4741">POST /jobs</text>
+  <path d="M130 220 V436 H320" stroke="#4a4741" stroke-width="1.5" fill="none" marker-end="url(#a)"/>
+  <text x="140" y="428" font-size="11" fill="#4a4741">presigned PUT / GET</text>
+  <path d="M470 354 V388" stroke="#4a4741" stroke-width="1.5" fill="none" marker-end="url(#a)" marker-start="url(#a)"/>
+  <path d="M640 354 V388" stroke="#4a4741" stroke-width="1.5" fill="none" marker-end="url(#a)"/>
+  <path d="M750 190 H780" stroke="#4a4741" stroke-width="1.5" fill="none" marker-end="url(#a)" marker-start="url(#a)"/>
+  <path d="M60 220 V556 H320" stroke="#af751b" stroke-width="1.5" fill="none" marker-end="url(#g)"/>
+  <text x="70" y="624" font-size="11" fill="#684d07">?api=http://EC2:8000 (live COOL session)</text>
+
+  <!-- legend -->
+  <rect x="780" y="300" width="210" height="64" rx="12" fill="none" stroke="#e1dcd3"/>
+  <line x1="796" y1="322" x2="832" y2="322" stroke="#4a4741" stroke-dasharray="6 5"/>
+  <text x="840" y="326" font-size="11" fill="#4a4741">designed, not yet deployed</text>
+  <text x="796" y="348" font-size="11" fill="#4a4741">code in repo, tested locally</text>
+</svg>

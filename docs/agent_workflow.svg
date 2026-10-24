@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 560" role="img" aria-labelledby="t d" font-family="Hanken Grotesk, Inter, Arial, sans-serif">
+  <title id="t">HumSight agent workflow: perception, decision, action</title>
+  <desc id="d">OpenCV 5 tools measure motion, spectra and shake. A decision layer (Gemini or the rules policy) reads the measured numbers and chooses the next tool or a terminal action. Actions are a fine scan, shake compensation, magnification, a report, or a request for human review. Measurements feed back and change the next call.</desc>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#4a4741"/></marker>
+  </defs>
+  <rect width="1040" height="560" fill="#f7f1e8"/>
+  <text x="24" y="34" font-size="12" font-weight="700" letter-spacing="1.2" fill="#1c1b1a">AGENT WORKFLOW: PERCEPTION, DECISION, ACTION</text>
+
+  <!-- perception -->
+  <rect x="24" y="64" width="300" height="300" rx="24" fill="#ffffff" stroke="#224228" stroke-width="1.5"/>
+  <text x="44" y="96" font-size="16" font-weight="700" fill="#224228">Perception · OpenCV 5</text>
+  <text x="44" y="122" font-size="13" font-weight="700" fill="#1c1b1a">probe_clip</text>
+  <text x="44" y="140" font-size="12" fill="#4a4741">fps, Nyquist, texture, flicker</text>
+  <text x="44" y="168" font-size="13" font-weight="700" fill="#1c1b1a">scan_motion (coarse | fine)</text>
+  <text x="44" y="186" font-size="12" fill="#4a4741">phaseCorrelateIterative per patch</text>
+  <text x="44" y="214" font-size="13" font-weight="700" fill="#1c1b1a">compensate_shake</text>
+  <text x="44" y="232" font-size="12" fill="#4a4741">subtract | LK + MAGSAC + warp</text>
+  <text x="44" y="260" font-size="13" font-weight="700" fill="#1c1b1a">classify_peaks</text>
+  <text x="44" y="278" font-size="12" fill="#4a4741">shake / fault / noise, ROI, alias, flicker</text>
+  <text x="44" y="306" font-size="13" font-weight="700" fill="#1c1b1a">magnify · assess_severity</text>
+  <text x="44" y="324" font-size="12" fill="#4a4741">artifact ratio, mm/s (if scale)</text>
+  <text x="44" y="350" font-size="11" fill="#838280">returns only measured numbers</text>
+
+  <!-- decision -->
+  <rect x="372" y="64" width="300" height="300" rx="24" fill="#ffffff" stroke="#6b443d" stroke-width="1.5"/>
+  <text x="392" y="96" font-size="16" font-weight="700" fill="#6b443d">Decision</text>
+  <text x="392" y="122" font-size="13" fill="#1c1b1a">Gemini (google-genai) picks the next tool</text>
+  <text x="392" y="140" font-size="13" fill="#1c1b1a">Rules policy = same tools, fallback on error</text>
+  <text x="392" y="172" font-size="12" font-weight="700" fill="#4a4741">Guardrails</text>
+  <text x="392" y="192" font-size="12" fill="#4a4741">• schema-validated arguments</text>
+  <text x="392" y="210" font-size="12" fill="#4a4741">• ≤ 10 tool calls, ≤ 3 magnify</text>
+  <text x="392" y="228" font-size="12" fill="#4a4741">• 10th call forced to a terminal tool</text>
+  <text x="392" y="246" font-size="12" fill="#4a4741">• number guard on summary + rationale</text>
+  <text x="392" y="264" font-size="12" fill="#4a4741">• FAULT without evidence → REVIEW</text>
+  <text x="392" y="296" font-size="12" font-weight="700" fill="#4a4741">LLM sees only compact numbers</text>
+  <text x="392" y="314" font-size="12" fill="#4a4741">(≤ 1.5 KB per result), never video</text>
+
+  <!-- action -->
+  <rect x="720" y="64" width="296" height="300" rx="24" fill="#ffffff" stroke="#af751b" stroke-width="1.5"/>
+  <text x="740" y="96" font-size="16" font-weight="700" fill="#684d07">Action</text>
+  <text x="740" y="124" font-size="13" fill="#1c1b1a">next tool call: fine scan, warp, re-magnify</text>
+  <text x="740" y="152" font-size="13" font-weight="700" fill="#1c1b1a">file_report</text>
+  <text x="740" y="170" font-size="12" fill="#4a4741">FAULT / NO_FAULT work order, heatmap,</text>
+  <text x="740" y="186" font-size="12" fill="#4a4741">spectrum, magnified ROI video</text>
+  <text x="740" y="214" font-size="13" font-weight="700" fill="#1c1b1a">request_review (human in the loop)</text>
+  <text x="740" y="232" font-size="12" fill="#4a4741">aliasing, lighting flicker, low texture,</text>
+  <text x="740" y="248" font-size="12" fill="#4a4741">motion below noise floor, ambiguous peak,</text>
+  <text x="740" y="264" font-size="12" fill="#4a4741">step limit, with a recording suggestion</text>
+
+  <path d="M324 214 H372" stroke="#4a4741" stroke-width="1.5" marker-end="url(#a)"/>
+  <path d="M672 214 H720" stroke="#4a4741" stroke-width="1.5" marker-end="url(#a)"/>
+  <path d="M868 364 V404 H174 V364" stroke="#4a4741" stroke-width="1.5" fill="none" marker-end="url(#a)"/>
+  <text x="330" y="396" font-size="12" font-weight="700" fill="#4a4741">the measurement changes the next call (loop, bounded)</text>
+
+  <!-- decisions -->
+  <rect x="24" y="428" width="992" height="112" rx="24" fill="#ffffff" stroke="#e1dcd3"/>
+  <text x="44" y="456" font-size="12" font-weight="700" letter-spacing="1" fill="#1c1b1a">MEASUREMENT → DECISION (all logged in the trace)</text>
+  <text x="44" y="480" font-size="12" fill="#4a4741">background peak ≈ strongest patch peak → compensate_shake(subtract)</text>
+  <text x="44" y="498" font-size="12" fill="#4a4741">motion left at the shake frequency &gt; 0.02 px → try warp, keep whichever left less</text>
+  <text x="44" y="516" font-size="12" fill="#4a4741">fault candidate → fine 32 px scan inside its ROI before magnifying</text>
+  <text x="530" y="480" font-size="12" fill="#4a4741">artifact_ratio &gt; 0.5 → narrower band, lower alpha</text>
+  <text x="530" y="498" font-size="12" fill="#4a4741">expected Hz &gt; 0.45 × fps, or peak near Nyquist → REVIEW (aliasing)</text>
+  <text x="530" y="516" font-size="12" fill="#4a4741">brightness flickers at the peak, &lt; 25% textured patches, ambiguous SNR → REVIEW</text>
+</svg>
