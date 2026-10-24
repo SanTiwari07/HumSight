@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HumSight</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+<header class="top">
+  <div>
+    <h1>Hum<span>Sight</span></h1>
+    <p class="tag">See what machines are humming.</p>
+  </div>
+  <nav>
+    <span id="envBadge" class="badge muted">connecting…</span>
+    <a id="repoLink" href="#" target="_blank" rel="noopener">GitHub</a>
+    <a id="videoLink" href="#" target="_blank" rel="noopener" hidden>Video</a>
+  </nav>
+</header>
+
+<main>
+  <section class="grid2">
+    <form id="form" class="card">
+      <h2>1 · Clip</h2>
+      <label>Demo clip
+        <select id="demo"><option value="">— upload my own —</option></select>
+      </label>
+      <label id="uploadRow">Upload video <small>(≤ 25 MB)</small>
+        <input type="file" id="file" accept="video/*,.npz">
+      </label>
+      <label>Capture fps <small>(required; slow-mo files often report 30)</small>
+        <input type="number" id="fps" min="1" step="any" placeholder="240" required>
+      </label>
+
+      <details>
+        <summary>Optional inputs</summary>
+        <div class="two">
+          <label>Expected Hz <input type="number" id="expHz" min="0" step="any"></label>
+          <label>or RPM <input type="number" id="rpm" min="0" step="any"></label>
+          <label>Search from (Hz) <input type="number" id="fmin" min="0" step="any"></label>
+          <label>to (Hz) <input type="number" id="fmax" min="0" step="any"></label>
+          <label>mm per pixel <input type="number" id="mmpx" min="0" step="any"></label>
+        </div>
+      </details>
+
+      <h2>2 · Policy</h2>
+      <div class="seg" id="policy">
+        <label><input type="radio" name="policy" value="llm"><span>Agent (Gemini)</span></label>
+        <label><input type="radio" name="policy" value="rules" checked><span>Agent (rules)</span></label>
+        <label><input type="radio" name="policy" value="fixed"><span>Fixed pipeline</span></label>
+      </div>
+      <p class="hint">Compare: the fixed pipeline picks the strongest peak anywhere and magnifies it, camera shake included.</p>
+      <button id="go" type="submit">Analyze</button>
+      <p id="err" class="err" hidden></p>
+    </form>
+
+    <section class="card">
+      <h2>Agent trace <span id="replayTag" class="badge muted" hidden>recorded trace</span></h2>
+      <ol id="trace" class="trace"><li class="empty">Run an analysis to see each tool call, the numbers it measured, and why the next call was chosen.</li></ol>
+    </section>
+  </section>
+
+  <section id="results" class="card" hidden>
+    <div class="verdictRow">
+      <span id="verdict" class="verdict">—</span>
+      <p id="summary"></p>
+    </div>
+    <div class="vids">
+      <figure><video id="vOrig" muted playsinline loop></video><figcaption>Original</figcaption></figure>
+      <figure><video id="vMag" muted playsinline loop></video><figcaption id="magCap">Magnified</figcaption></figure>
+    </div>
+    <div class="ctl">
+      <button type="button" id="play">Play</button>
+      <input type="range" id="seek" min="0" max="1000" value="0">
+      <select id="rate"><option>1</option><option>0.5</option><option>0.25</option></select>×
+    </div>
+
+    <div class="grid2 res">
+      <div>
+        <h3>Spectrum</h3>
+        <canvas id="chart" height="220"></canvas>
+        <p class="hint" id="chartHint"></p>
+      </div>
+      <div>
+        <h3>Amplitude per patch</h3>
+        <img id="heat" alt="heatmap" class="heat">
+      </div>
+    </div>
+
+    <h3>Findings</h3>
+    <table id="findings"><thead><tr><th>f (Hz)</th><th>amplitude (px)</th><th>SNR</th><th>ROI [x,y,w,h]</th></tr></thead><tbody></tbody></table>
+    <p id="sev" class="hint"></p>
+    <p id="warn" class="hint"></p>
+    <p class="dl">Work order: <a id="dlMd" target="_blank">Markdown</a> · <a id="dlJson" target="_blank">JSON</a></p>
+  </section>
+</main>
+
+<footer>Indicative, camera-based measurement. Not a certified ISO assessment. Every number shown comes from OpenCV/NumPy code; the LLM only chooses tools and writes prose.</footer>
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
